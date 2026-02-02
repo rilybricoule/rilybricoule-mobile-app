@@ -1,0 +1,12 @@
+name: Mobile Client CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Mobile CI is running"
