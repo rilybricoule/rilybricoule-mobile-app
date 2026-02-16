@@ -19,6 +19,7 @@ class _RegisterViewState extends State<RegisterView> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _agreedToTerms = false;
 
   @override
   void dispose() {
@@ -137,10 +138,77 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                   ),
                   const SizedBox(height: 30),
+                 //TERMS & PRIVACY
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _agreedToTerms,
+                        onChanged: (value) {
+                          setState(() {
+                            _agreedToTerms = value ?? false;
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 12),
+                          child: Wrap(
+                            children: [
+                              Text(
+                                'I agree to the ',
+                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  print('Terms of Service');
+                                },
+                                child: Text(
+                                  'Terms of Service',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                ' and ',
+                                style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  print('Privacy Policy');
+                                },
+                                child: Text(
+                                  'Privacy Policy',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
                   AuthButton(
                     text: 'REGISTER',
                     isLoading: authViewModel.isLoading,
                     onPressed: () async {
+                      if (!_agreedToTerms) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please agree to Terms & Privacy')),
+                        );
+                        return;
+                      }
                       if (_formKey.currentState!.validate()) {
                         final success = await authViewModel.register(
                           _emailController.text,

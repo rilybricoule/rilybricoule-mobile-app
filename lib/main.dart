@@ -7,6 +7,7 @@ import 'features/auth/view/splash_view.dart';
 import 'features/auth/view/login_view.dart';
 import 'features/auth/view/register_view.dart';
 import 'features/auth/view/forgot_password_view.dart';
+import 'features/auth/view/welcome_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         initialRoute: AppRoutes.splash,
         routes: {
           AppRoutes.splash: (context) => const SplashView(),
+          AppRoutes.welcome: (context) => const WelcomeView(),
           AppRoutes.login: (context) => const LoginView(),
           AppRoutes.register: (context) => const RegisterView(),
           AppRoutes.forgotPassword: (context) => const ForgotPasswordView(),
