@@ -49,7 +49,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
   _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 4));
     if (mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      Navigator.pushReplacementNamed(context, AppRoutes.welcome);
     }
   }
 

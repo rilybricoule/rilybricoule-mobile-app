@@ -7,6 +7,7 @@ import '../../../core/routes/app_routes.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_textfield.dart';
+import '../widgets/social_icon_button.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -19,6 +20,7 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _rememberMe = false;
 
   @override
   void dispose() {
@@ -186,6 +188,88 @@ class _LoginViewState extends State<LoginView> {
                             },
                           ),
                         ),
+
+                        const SizedBox(height: 20),
+
+// Divider
+                        Row(
+                          children: [
+                            Expanded(child: Divider(color: Colors.grey.shade400)),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                'or continue with',
+                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                              ),
+                            ),
+                            Expanded(child: Divider(color: Colors.grey.shade400)),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+// Social Login Icons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SocialIconButton(
+                              provider: 'google',
+                              onPressed: () {
+                                print('Google Sign In');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Google Sign In - Coming Soon!')),
+                                );
+                              },
+                            ),
+                            SizedBox(width: 16),
+                            SocialIconButton(
+                              provider: 'facebook',
+                              onPressed: () {
+                                print('Facebook Sign In');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Facebook Sign In - Coming Soon!')),
+                                );
+                              },
+                            ),
+                            SizedBox(width: 16),
+                            SocialIconButton(
+                              provider: 'twitter',
+                              onPressed: () {
+                                print('Twitter Sign In');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Apple Sign In - Coming Soon!')),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        // After password field container
+                        const SizedBox(height: 10),
+
+// Remember Me Checkbox
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe, // TODO: Connect to state later
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberMe = value ?? false;
+                                });
+                              },
+                              activeColor: AppColors.primary,
+                            ),
+                            Text(
+                              'Remember me',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 5),  // Reduce spacing before social login
 
                         // Forgot password
                         Align(
