@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
-class AuthButton extends StatelessWidget {
+class GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
 
-  const AuthButton({
+  const GradientButton({
     super.key,
     required this.text,
     required this.onPressed,
@@ -16,13 +16,11 @@ class AuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.secondary,    // Orange à gauche
-            AppColors.primary,      // Bleu à droite
+            AppColors.primary,      // Bleu
+            AppColors.secondary,    // Orange
           ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -30,9 +28,9 @@ class AuthButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.secondary.withOpacity(0.4),
-            blurRadius: 12,
-            offset: Offset(0, 6),
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -44,23 +42,23 @@ class AuthButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          padding: EdgeInsets.symmetric(vertical: 16),
         ),
         child: isLoading
             ? SizedBox(
-          height: 24,
-          width: 24,
+          height: 20,
+          width: 20,
           child: CircularProgressIndicator(
-            strokeWidth: 2.5,
+            strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ),
         )
             : Text(
           text,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            letterSpacing: 0.5,
           ),
         ),
       ),

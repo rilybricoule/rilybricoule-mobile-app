@@ -52,8 +52,9 @@ class _LoginViewState extends State<LoginView> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.primary,
-                      AppColors.primary.withOpacity(0.8),
+                      AppColors.primary,                    // Bleu
+                      AppColors.primary.withOpacity(0.9),
+                      AppColors.secondary.withOpacity(0.3), // Touch d'orange
                     ],
                   ),
                 ),
@@ -233,9 +234,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             SizedBox(width: 16),
                             SocialIconButton(
-                              provider: 'twitter',
+                              provider: 'apple',
                               onPressed: () {
-                                print('Twitter Sign In');
+                                print('Apple Sign In');
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Apple Sign In - Coming Soon!')),
                                 );
@@ -257,7 +258,7 @@ class _LoginViewState extends State<LoginView> {
                                   _rememberMe = value ?? false;
                                 });
                               },
-                              activeColor: AppColors.primary,
+                              activeColor: AppColors.secondary,  // CHANGÉ: Orange au lieu de bleu
                             ),
                             Text(
                               'Remember me',
