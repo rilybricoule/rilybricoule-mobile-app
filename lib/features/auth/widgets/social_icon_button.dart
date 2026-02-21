@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SocialIconButton extends StatelessWidget {
-  final String provider; // 'google', 'facebook', 'twitter'
+  final String provider; // 'google', 'facebook', 'apple'
   final VoidCallback onPressed;
 
   const SocialIconButton({
@@ -47,27 +47,8 @@ class SocialIconButton extends StatelessWidget {
         );
       case 'facebook':
         return Icon(Icons.facebook, color: Color(0xFF1877F2), size: 32);
-    case 'twitter':
-    case 'x':
-    return Container(
-    width: 28,
-    height: 28,
-    decoration: BoxDecoration(
-    color: Colors.black,
-    borderRadius: BorderRadius.circular(4),
-    ),
-    child: Center(
-    child: Text(
-    '𝕏',
-    style: TextStyle(
-    color: Colors.white,
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-    ),
-    ),
-    ),
-      );
-
+      case 'apple':
+        return Icon(Icons.apple, color: Colors.black, size: 32);
       default:
         return Icon(Icons.login, color: Colors.grey, size: 28);
     }

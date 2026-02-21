@@ -30,13 +30,14 @@ class _LanguagePickerState extends State<LanguagePicker> {
         setState(() {
           selectedLanguage = value;
         });
-        // TODO: Implement language change later
-        print('Selected language: $value');
+        print('Language changed to: $value');
+        // TODO: Implement actual language change when you add translations
       },
-      offset: Offset(0, 50),
+      offset: Offset(0, 45),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      color: Colors.white,
       itemBuilder: (BuildContext context) {
         return languages.entries.map((entry) {
           return PopupMenuItem<String>(
@@ -45,23 +46,25 @@ class _LanguagePickerState extends State<LanguagePicker> {
               children: [
                 Text(
                   entry.value,
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 22),
                 ),
                 SizedBox(width: 12),
                 Text(
                   entry.key,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: selectedLanguage == entry.key
                         ? FontWeight.bold
                         : FontWeight.normal,
+                    color: selectedLanguage == entry.key
+                        ? Colors.blue[700]
+                        : Colors.black87,
                   ),
                 ),
-                if (selectedLanguage == entry.key)
-                  Padding(
-                    padding: EdgeInsets.only(left: 8),
-                    child: Icon(Icons.check, size: 18, color: Colors.green),
-                  ),
+                if (selectedLanguage == entry.key) ...[
+                  Spacer(),
+                  Icon(Icons.check, size: 18, color: Colors.green),
+                ],
               ],
             ),
           );
@@ -73,8 +76,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
           color: widget.backgroundColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: widget.iconColor.withOpacity(0.3),
-            width: 1,
+            color: widget.iconColor.withOpacity(0.5),
+            width: 1.5,
           ),
         ),
         child: Row(
@@ -82,14 +85,14 @@ class _LanguagePickerState extends State<LanguagePicker> {
           children: [
             Text(
               languages[selectedLanguage]!,
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 18),
             ),
             SizedBox(width: 6),
             Text(
               selectedLanguage,
               style: TextStyle(
                 color: widget.iconColor,
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -97,7 +100,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
             Icon(
               Icons.keyboard_arrow_down,
               color: widget.iconColor,
-              size: 18,
+              size: 16,
             ),
           ],
         ),
