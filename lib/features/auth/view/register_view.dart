@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../../models/user_role.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/auth_textfield.dart';
+import '../widgets/client_signup_form.dart';
+import '../widgets/prestataire_signup_form.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -14,10 +18,20 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  UserRole _selectedRole = UserRole.client;
+  
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  
+  // Prestataire specific
+  final _experienceController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  String? _selectedCategory;
+  
   final _formKey = GlobalKey<FormState>();
   bool _agreedToTerms = false;
 
@@ -25,8 +39,12 @@ class _RegisterViewState extends State<RegisterView> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _experienceController.dispose();
+    _cityController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -51,7 +69,7 @@ class _RegisterViewState extends State<RegisterView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Text(
+                  Text(
                     'Join Us!',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -66,79 +84,111 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                   ),
                   const SizedBox(height: 30),
-                  AuthTextField(
-                    controller: _nameController,
-                    label: 'Full Name',
-                    hint: 'Enter your full name',
-                    prefixIcon: Icons.person_outline,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  AuthTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    hint: 'Enter your email',
-                    prefixIcon: Icons.email_outlined,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  AuthTextField(
-                    controller: _passwordController,
-                    label: 'Password',
-                    hint: 'Enter your password',
-                    prefixIcon: Icons.lock_outline,
-                    obscureText: authViewModel.isObscure,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        authViewModel.isObscure
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: AppColors.textSecondary,
-                      ),
-                      onPressed: () {
-                        authViewModel.toggleVisibility();
-                      },
+                  
+                  // Role Toggle
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  AuthTextField(
-                    controller: _confirmPasswordController,
-                    label: 'Confirm Password',
-                    hint: 'Confirm your password',
-                    prefixIcon: Icons.lock_outline,
-                    obscureText: authViewModel.isObscure,
-                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedRole = UserRole.client;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _selectedRole == UserRole.client
+                                    ? AppColors.primary
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Client',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  color: _selectedRole == UserRole.client
+                                      ? Colors.white
+                                      : AppColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedRole = UserRole.prestataire;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _selectedRole == UserRole.prestataire
+                                    ? AppColors.primary
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Prestataire',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  color: _selectedRole == UserRole.prestataire
+                                      ? Colors.white
+                                      : AppColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 30),
-                 //TERMS & PRIVACY
+                  
+                  // Animated Form Switcher
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _selectedRole == UserRole.client
+                        ? ClientSignUpForm(
+                            key: const ValueKey('client'),
+                            nameController: _nameController,
+                            emailController: _emailController,
+                            phoneController: _phoneController,
+                            passwordController: _passwordController,
+                            confirmPasswordController: _confirmPasswordController,
+                            isObscure: authViewModel.isObscure,
+                            onToggleVisibility: () => authViewModel.toggleVisibility(),
+                          )
+                        : PrestataireSignUpForm(
+                            key: const ValueKey('prestataire'),
+                            nameController: _nameController,
+                            emailController: _emailController,
+                            phoneController: _phoneController,
+                            passwordController: _passwordController,
+                            confirmPasswordController: _confirmPasswordController,
+                            experienceController: _experienceController,
+                            cityController: _cityController,
+                            descriptionController: _descriptionController,
+                            isObscure: authViewModel.isObscure,
+                            onToggleVisibility: () => authViewModel.toggleVisibility(),
+                            onCategoryChanged: (value) {
+                              _selectedCategory = value;
+                            },
+                          ),
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Terms & Privacy
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -153,7 +203,7 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.only(top: 12),
+                          padding: const EdgeInsets.only(top: 12),
                           child: Wrap(
                             children: [
                               Text(
@@ -161,9 +211,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  print('Terms of Service');
-                                },
+                                onTap: () {},
                                 child: Text(
                                   'Terms of Service',
                                   style: TextStyle(
@@ -179,9 +227,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  print('Privacy Policy');
-                                },
+                                onTap: () {},
                                 child: Text(
                                   'Privacy Policy',
                                   style: TextStyle(
@@ -198,28 +244,32 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                     ],
                   ),
-
+                  const SizedBox(height: 10),
+                  
                   AuthButton(
                     text: 'REGISTER',
                     isLoading: authViewModel.isLoading,
                     onPressed: () async {
                       if (!_agreedToTerms) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please agree to Terms & Privacy')),
+                          const SnackBar(content: Text('Please agree to Terms & Privacy')),
                         );
                         return;
                       }
                       if (_formKey.currentState!.validate()) {
-                        final success = await authViewModel.register(
+                        final user = await authViewModel.register(
                           _emailController.text,
                           _passwordController.text,
                           _nameController.text,
+                          _selectedRole,
                         );
-                         if (success && context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Registration Successful!')),
-                          );
-                          Navigator.pop(context); // Go back to login
+                        if (user != null && context.mounted) {
+                          // Route based on role
+                          if (user.role == UserRole.client) {
+                            Navigator.pushReplacementNamed(context, AppRoutes.home);
+                          } else {
+                            Navigator.pushReplacementNamed(context, AppRoutes.prestataireDashboard);
+                          }
                         }
                       }
                     },

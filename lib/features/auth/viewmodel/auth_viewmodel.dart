@@ -1,44 +1,62 @@
 import 'package:flutter/material.dart';
+import '../../../models/user.dart';
+import '../../../models/user_role.dart';
+import '../domain/auth_repository.dart';
 
 class AuthViewModel extends ChangeNotifier {
+  final AuthRepository _authRepository;
+  
+  AuthViewModel(this._authRepository);
+  
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   bool _isObscure = true;
   bool get isObscure => _isObscure;
 
+  User? _currentUser;
+  User? get currentUser => _currentUser;
+
   void toggleVisibility() {
     _isObscure = !_isObscure;
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<User?> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
     
-    // Simulate network request
-    await Future.delayed(const Duration(seconds: 2));
-    
-    _isLoading = false;
-    notifyListeners();
-    
-    // Check if email and password are valid (mock logic)
-    if (email.isNotEmpty && password.isNotEmpty) {
-      return true;
+    try {
+      _currentUser = await _authRepository.login(email, password);
+      _isLoading = false;
+      notifyListeners();
+      return _currentUser;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return null;
     }
-    return false;
   }
 
-  Future<bool> register(String email, String password, String name) async {
+  Future<User?> register(String email, String password, String name, UserRole role) async {
     _isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 2));
-
-    _isLoading = false;
-    notifyListeners();
-    
-    return true;
+    try {
+      _currentUser = await _authRepository.register(
+        email: email,
+        password: password,
+        name: name,
+        role: role,
+      );
+      _isLoading = false;
+      notifyListeners();
+      return _currentUser;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
   }
 
   Future<bool> forgotPassword(String email) async {
@@ -51,5 +69,11 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
     
     return true;
+  }
+  
+  Future<void> logout() async {
+    await _authRepository.logout();
+    _currentUser = null;
+    notifyListeners();
   }
 }
