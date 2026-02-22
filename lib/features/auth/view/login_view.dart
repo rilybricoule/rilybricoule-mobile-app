@@ -4,6 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../models/user_role.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_textfield.dart';
@@ -297,14 +298,17 @@ class _LoginViewState extends State<LoginView> {
                           isLoading: authViewModel.isLoading,
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              final success = await authViewModel.login(
+                              final user = await authViewModel.login(
                                 _emailController.text,
                                 _passwordController.text,
                               );
-                              if (success && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Login Successful!')),
-                                );
+                              if (user != null && context.mounted) {
+                                // Route based on user role
+                                if (user.role == UserRole.client) {
+                                  Navigator.pushReplacementNamed(context, AppRoutes.home);
+                                } else {
+                                  Navigator.pushReplacementNamed(context, AppRoutes.prestataireDashboard);
+                                }
                               } else if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
