@@ -71,13 +71,13 @@ class ProviderCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.mainAppPrimary.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.verified,
                           size: 16,
-                          color: AppColors.primary,
+                          color: AppColors.mainAppPrimary,
                         ),
                       ),
                   ],
@@ -141,7 +141,7 @@ class ProviderCard extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: AppColors.mainAppPrimary,
                           ),
                         ),
                       ],
@@ -149,7 +149,7 @@ class ProviderCard extends StatelessWidget {
                     ElevatedButton(
                       onPressed: onTap,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: AppColors.mainAppPrimary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(

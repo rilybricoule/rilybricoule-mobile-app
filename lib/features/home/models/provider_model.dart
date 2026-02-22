@@ -9,6 +9,8 @@ class ProviderModel {
   final String priceLabel;
   final String price;
   final bool isVerified;
+  final double priceValue;
+  final bool isAvailable;
 
   ProviderModel({
     required this.id,
@@ -20,6 +22,8 @@ class ProviderModel {
     required this.distance,
     required this.priceLabel,
     required this.price,
+    required this.priceValue,
     this.isVerified = false,
+    this.isAvailable = true,
   });
 }
