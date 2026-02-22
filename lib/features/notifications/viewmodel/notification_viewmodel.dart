@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import '../domain/notification_repository.dart';
+import '../model/notification_model.dart';
+
+class NotificationViewModel extends ChangeNotifier {
+  final NotificationRepository _repository;
+
+  NotificationViewModel(this._repository);
+
+  List<AppNotification> _notifications = [];
+  List<AppNotification> get notifications => _notifications;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  Future<void> loadNotifications() async {
+    _isLoading = true;
+    _hasError = false;
+    notifyListeners();
+
+    try {
+      _notifications = await _repository.getNotifications();
+    } catch (e) {
+      _hasError = true;
+      _notifications = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> markAllAsRead() async {
+    try {
+      await _repository.markAllAsRead();
+      for (var notification in _notifications) {
+        notification.isRead = true;
+      }
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> markAsRead(String id) async {
+    try {
+      await _repository.markAsRead(id);
+      final notification = _notifications.firstWhere((n) => n.id == id);
+      notification.isRead = true;
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteNotification(String id) async {
+    try {
+      await _repository.deleteNotification(id);
+      _notifications.removeWhere((n) => n.id == id);
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteAllNotifications() async {
+    try {
+      await _repository.deleteAllNotifications();
+      _notifications.clear();
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+}

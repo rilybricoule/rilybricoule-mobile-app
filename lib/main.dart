@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
+import 'core/constants/app_colors.dart';
 import 'features/auth/data/mock_auth_repository.dart';
 import 'features/auth/viewmodel/auth_viewmodel.dart';
 import 'features/auth/view/splash_view.dart';
@@ -9,8 +11,13 @@ import 'features/auth/view/login_view.dart';
 import 'features/auth/view/register_view.dart';
 import 'features/auth/view/forgot_password_view.dart';
 import 'features/auth/view/welcome_view.dart';
-import 'features/home/view/home_view.dart';
+import 'features/client_main_view.dart';
 import 'features/home/view/prestataire_dashboard_view.dart';
+import 'features/home/providers/home_provider.dart';
+import 'features/search/data/mock_search_repository.dart';
+import 'features/search/viewmodel/search_viewmodel.dart';
+import 'features/notifications/data/mock_notification_repository.dart';
+import 'features/notifications/viewmodel/notification_viewmodel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,12 +28,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dependency Injection: Create repository instance
+    // Set status bar style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
+    
+    // Dependency Injection: Create repository instances
     final authRepository = MockAuthRepository();
+    final searchRepository = MockSearchRepository();
+    final notificationRepository = MockNotificationRepository();
     
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
+        ChangeNotifierProvider(create: (_) => SearchViewModel(searchRepository)),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel(notificationRepository)),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
       ],
       child: MaterialApp(
         title: 'RilyBricoule',
@@ -39,7 +60,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.login: (context) => const LoginView(),
           AppRoutes.register: (context) => const RegisterView(),
           AppRoutes.forgotPassword: (context) => const ForgotPasswordView(),
-          AppRoutes.home: (context) => const HomeView(),
+          AppRoutes.home: (context) => const ClientMainView(),
           AppRoutes.prestataireDashboard: (context) => const PrestataireDashboardView(),
         },
       ),

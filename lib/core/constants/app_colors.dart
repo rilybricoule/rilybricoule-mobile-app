@@ -5,6 +5,9 @@ class AppColors {
   static const Color primary = Color(0xFF2C5F8D);        // Bleu foncé du logo
   static const Color secondary = Color(0xFFFF6B35);      // Orange du logo
   static const Color accent = Color(0xFF1E3A5F);         // Bleu plus foncé
+  
+  // Nouvelle couleur pour l'app principale
+  static const Color mainAppPrimary = Color(0xFF1A227F);  // Nouveau bleu pour l'app principale
 
   // Couleurs de texte
   static const Color textPrimary = Color(0xFF2C3E50);

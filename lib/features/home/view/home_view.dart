@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../notifications/view/notifications_view.dart';
+import '../../notifications/viewmodel/notification_viewmodel.dart';
 import '../models/category_model.dart';
 import '../models/provider_model.dart';
+import '../providers/home_provider.dart';
 import '../widgets/category_item.dart';
 import '../widgets/promo_banner.dart';
 import '../widgets/provider_card.dart';
-import '../widgets/custom_bottom_nav_bar.dart';
+import '../widgets/sort_bottom_sheet.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  final Function({bool showFilters})? onNavigateToSearch;
+  final Function(String)? onCategorySelected;
+  
+  const HomeView({super.key, this.onNavigateToSearch, this.onCategorySelected});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  int _currentNavIndex = 0;
-
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NotificationViewModel>().loadNotifications();
+      context.read<HomeProvider>().setProviders(_providers);
+    });
+  }
   // Mock data - Categories
   final List<CategoryModel> _categories = [
     CategoryModel(
@@ -69,7 +82,9 @@ class _HomeViewState extends State<HomeView> {
       distance: 2.3,
       priceLabel: 'À partir de',
       price: '150 MAD',
+      priceValue: 150.0,
       isVerified: true,
+      isAvailable: true,
     ),
     ProviderModel(
       id: '2',
@@ -81,7 +96,9 @@ class _HomeViewState extends State<HomeView> {
       distance: 1.1,
       priceLabel: 'À partir de',
       price: '100 MAD/h',
+      priceValue: 100.0,
       isVerified: true,
+      isAvailable: false,
     ),
     ProviderModel(
       id: '3',
@@ -93,7 +110,9 @@ class _HomeViewState extends State<HomeView> {
       distance: 3.8,
       priceLabel: 'À partir de',
       price: '200 MAD',
+      priceValue: 200.0,
       isVerified: true,
+      isAvailable: true,
     ),
   ];
 
@@ -120,7 +139,10 @@ class _HomeViewState extends State<HomeView> {
                     _buildCategoriesSection(),
                     const SizedBox(height: 24),
                     // Promo Banner
-                    const PromoBanner(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: const PromoBanner(),
+                    ),
                     const SizedBox(height: 24),
                     // Nearby Providers Section
                     _buildProvidersSection(),
@@ -131,15 +153,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentNavIndex,
-        onTap: (index) {
-          setState(() {
-            _currentNavIndex = index;
-          });
-          // TODO: Navigate to other screens based on index
-        },
       ),
     );
   }
@@ -156,7 +169,7 @@ class _HomeViewState extends State<HomeView> {
             height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary, width: 2),
+              border: Border.all(color: AppColors.mainAppPrimary, width: 2),
             ),
             child: ClipOval(
               child: Image.asset(
@@ -164,8 +177,8 @@ class _HomeViewState extends State<HomeView> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: AppColors.primary.withOpacity(0.1),
-                    child: const Icon(Icons.person, color: AppColors.primary),
+                    color: AppColors.mainAppPrimary.withOpacity(0.1),
+                    child: const Icon(Icons.person, color: AppColors.mainAppPrimary),
                   );
                 },
               ),
@@ -212,26 +225,42 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           // Notification Icon with Badge
-          Stack(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_outlined),
-                color: AppColors.textPrimary,
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
+          Consumer<NotificationViewModel>(
+            builder: (context, notificationViewModel, child) {
+              final unreadCount = notificationViewModel.notifications
+                  .where((n) => !n.isRead)
+                  .length;
+              
+              return Stack(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsView(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.notifications_outlined),
+                    color: AppColors.textPrimary,
                   ),
-                ),
-              ),
-            ],
+                  if (unreadCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: AppColors.error,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -244,45 +273,51 @@ class _HomeViewState extends State<HomeView> {
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: AppColors.textSecondary),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Rechercher un service...',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
+            child: GestureDetector(
+              onTap: () => widget.onNavigateToSearch?.call(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: AppColors.textSecondary),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Rechercher un service...',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.tune,
-              color: Colors.white,
-              size: 24,
+          GestureDetector(
+            onTap: () => widget.onNavigateToSearch?.call(showFilters: true),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.mainAppPrimary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.tune,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
           ),
         ],
@@ -313,7 +348,7 @@ class _HomeViewState extends State<HomeView> {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                    color: AppColors.mainAppPrimary,
                   ),
                 ),
               ),
@@ -332,7 +367,7 @@ class _HomeViewState extends State<HomeView> {
               return CategoryItem(
                 category: _categories[index],
                 onTap: () {
-                  // TODO: Navigate to category results
+                  widget.onCategorySelected?.call(_categories[index].name);
                 },
               );
             },
@@ -343,51 +378,63 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildProvidersSection() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Prestataires proches',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.sort, size: 18),
-                label: Text(
-                  'Trier par',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, child) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Prestataires proches',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
+                  TextButton.icon(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const SortBottomSheet(),
+                      );
+                    },
+                    icon: Icon(Icons.sort, size: 18, color: AppColors.mainAppPrimary),
+                    label: Text(
+                      'Trier par',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.mainAppPrimary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _providers.length,
-          itemBuilder: (context, index) {
-            return ProviderCard(
-              provider: _providers[index],
-              onTap: () {
-                // TODO: Navigate to provider profile
+            ),
+            const SizedBox(height: 12),
+            ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: homeProvider.providers.length,
+              itemBuilder: (context, index) {
+                return ProviderCard(
+                  provider: homeProvider.providers[index],
+                  onTap: () {
+                    // TODO: Navigate to provider profile
+                  },
+                );
               },
-            );
-          },
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

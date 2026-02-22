@@ -55,7 +55,7 @@ class CustomBottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isActive ? AppColors.primary : AppColors.textSecondary,
+              color: isActive ? AppColors.mainAppPrimary : AppColors.textSecondary,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -64,7 +64,7 @@ class CustomBottomNavBar extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 10,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                color: isActive ? AppColors.mainAppPrimary : AppColors.textSecondary,
               ),
             ),
           ],
