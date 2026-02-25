@@ -18,6 +18,11 @@ import 'features/search/data/mock_search_repository.dart';
 import 'features/search/viewmodel/search_viewmodel.dart';
 import 'features/notifications/data/mock_notification_repository.dart';
 import 'features/notifications/viewmodel/notification_viewmodel.dart';
+import 'features/provider_profile/view/provider_profile_screen.dart';
+import 'features/booking/view/booking_date_time_screen.dart';
+import 'features/booking/view/booking_summary_view.dart';
+import 'features/booking/view/booking_payment_view.dart';
+import 'features/booking/view/booking_status_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,6 +67,11 @@ class MyApp extends StatelessWidget {
           AppRoutes.forgotPassword: (context) => const ForgotPasswordView(),
           AppRoutes.home: (context) => const ClientMainView(),
           AppRoutes.prestataireDashboard: (context) => const PrestataireDashboardView(),
+          AppRoutes.providerProfile: (context) => const ProviderProfileScreen(),
+          AppRoutes.bookingDateTime: (context) => const BookingDateTimeScreen(),
+          AppRoutes.bookingSummary: (context) => const BookingSummaryView(),
+          AppRoutes.bookingPayment: (context) => const BookingPaymentView(),
+          AppRoutes.bookingStatus: (context) => const BookingStatusView(),
         },
       ),
     );

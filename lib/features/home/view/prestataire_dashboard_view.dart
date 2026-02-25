@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 
@@ -7,7 +8,12 @@ class PrestataireDashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) SystemNavigator.pop();
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text(
           'Prestataire Dashboard',
@@ -76,6 +82,7 @@ class PrestataireDashboardView extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

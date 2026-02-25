@@ -16,6 +16,15 @@ class SearchViewModel extends ChangeNotifier {
   String _currentQuery = '';
   String get currentQuery => _currentQuery;
 
+  // View mode: 'list' or 'map'
+  String _viewMode = 'list';
+  String get viewMode => _viewMode;
+
+  void setViewMode(String mode) {
+    _viewMode = mode;
+    notifyListeners();
+  }
+
   // Filter values
   double _minPrice = 0;
   double _maxPrice = 2000;
