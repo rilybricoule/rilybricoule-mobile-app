@@ -21,7 +21,7 @@ class AppColors {
   static const Color info = Color(0xFF3498DB);
 
   // Couleurs de fond
-  static const Color background = Color(0xFFF8F9FA);
+  static const Color background = Color(0xFFF5F5F5);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
 

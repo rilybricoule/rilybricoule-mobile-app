@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../home/widgets/provider_card.dart';
 import '../viewmodel/search_viewmodel.dart';
+import 'search_map_view.dart';
 
 class SearchView extends StatefulWidget {
   final bool shouldShowFilters;
@@ -83,32 +84,38 @@ class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: Consumer<SearchViewModel>(
-                builder: (context, viewModel, child) {
-                  if (viewModel.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+        child: Consumer<SearchViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.viewMode == 'map') {
+              return SearchMapView(
+                onShowFilters: (callback) => _showFilters(),
+                onSwitchToList: () => viewModel.setViewMode('list'),
+                onSearchTap: () => _focusNode.requestFocus(),
+              );
+            }
 
-                  return Column(
-                    children: [
-                      _buildResultsHeader(viewModel.providers.length),
-                      Expanded(
-                        child: viewModel.providers.isEmpty
-                            ? _buildEmptyState()
-                            : _buildProvidersList(viewModel.providers),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+            return Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: viewModel.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          children: [
+                            _buildResultsHeader(viewModel.providers.length),
+                            Expanded(
+                              child: viewModel.providers.isEmpty
+                                  ? _buildEmptyState()
+                                  : _buildProvidersList(viewModel.providers),
+                            ),
+                          ],
+                        ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -117,7 +124,16 @@ class _SearchViewState extends State<SearchView> {
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Row(
@@ -161,60 +177,98 @@ class _SearchViewState extends State<SearchView> {
             ],
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.format_list_bulleted, size: 18, color: AppColors.mainAppPrimary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Liste',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.mainAppPrimary,
+          Consumer<SearchViewModel>(
+            builder: (context, viewModel, child) {
+              return Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => viewModel.setViewMode('list'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            color: viewModel.viewMode == 'list'
+                                ? Colors.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.format_list_bulleted,
+                                size: 18,
+                                color: viewModel.viewMode == 'list'
+                                    ? AppColors.mainAppPrimary
+                                    : Colors.grey[600],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Liste',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: viewModel.viewMode == 'list'
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: viewModel.viewMode == 'list'
+                                      ? AppColors.mainAppPrimary
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.map, size: 18, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Carte',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[600],
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => viewModel.setViewMode('map'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            color: viewModel.viewMode == 'map'
+                                ? Colors.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.map,
+                                size: 18,
+                                color: viewModel.viewMode == 'map'
+                                    ? AppColors.mainAppPrimary
+                                    : Colors.grey[600],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Carte',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: viewModel.viewMode == 'map'
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: viewModel.viewMode == 'map'
+                                      ? AppColors.mainAppPrimary
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -253,7 +307,13 @@ class _SearchViewState extends State<SearchView> {
             children: [
               ProviderCard(
                 provider: provider,
-                onTap: isBusy ? () {} : () {},
+                onTap: isBusy ? () {} : () {
+                  Navigator.pushNamed(
+                    context,
+                    '/provider-profile',
+                    arguments: provider.id,
+                  );
+                },
               ),
               if (isBusy)
                 Positioned.fill(

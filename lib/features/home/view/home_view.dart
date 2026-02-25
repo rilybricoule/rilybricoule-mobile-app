@@ -119,7 +119,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -160,7 +160,16 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildTopAppBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           // Profile Picture
@@ -427,7 +436,11 @@ class _HomeViewState extends State<HomeView> {
                 return ProviderCard(
                   provider: homeProvider.providers[index],
                   onTap: () {
-                    // TODO: Navigate to provider profile
+                    Navigator.pushNamed(
+                      context,
+                      '/provider-profile',
+                      arguments: homeProvider.providers[index].id,
+                    );
                   },
                 );
               },

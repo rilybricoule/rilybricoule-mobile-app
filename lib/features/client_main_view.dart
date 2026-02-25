@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../core/constants/app_colors.dart';
 import 'home/view/home_view.dart';
 import 'home/widgets/custom_bottom_nav_bar.dart';
 import 'search/view/search_view.dart';
 
 class ClientMainView extends StatefulWidget {
-  const ClientMainView({super.key});
+  final int initialIndex;
+  
+  const ClientMainView({super.key, this.initialIndex = 0});
 
   @override
   State<ClientMainView> createState() => _ClientMainViewState();
 }
 
 class _ClientMainViewState extends State<ClientMainView> {
-  int _currentIndex = 0;
+  late int _currentIndex;
   VoidCallback? _showFiltersCallback;
   VoidCallback? _focusSearchCallback;
   Function(String)? _applyQueryCallback;
@@ -21,6 +25,7 @@ class _ClientMainViewState extends State<ClientMainView> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
     _screens = [
       HomeView(
         onNavigateToSearch: navigateToSearch,
@@ -62,18 +67,30 @@ class _ClientMainViewState extends State<ClientMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
@@ -87,12 +104,45 @@ class _PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Text(
-          '$title\n(To be implemented)',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  '$title\n(To be implemented)',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
