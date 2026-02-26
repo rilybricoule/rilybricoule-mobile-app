@@ -268,7 +268,7 @@ class _RegisterViewState extends State<RegisterView> {
                           if (user.role == UserRole.client) {
                             Navigator.pushReplacementNamed(context, AppRoutes.home);
                           } else {
-                            Navigator.pushReplacementNamed(context, AppRoutes.prestataireDashboard);
+                            Navigator.pushReplacementNamed(context, AppRoutes.providerMain);
                           }
                         }
                       }

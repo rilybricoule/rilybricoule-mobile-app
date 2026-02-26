@@ -5,7 +5,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot_password';
   static const String welcome = '/welcome';
   static const String home = '/home';
-  static const String prestataireDashboard = '/prestataire_dashboard';
+  static const String providerMain = '/provider-main';
   static const String providerProfile = '/provider-profile';
   static const String bookingDateTime = '/booking-date-time';
   static const String bookingSummary = '/booking-summary';
