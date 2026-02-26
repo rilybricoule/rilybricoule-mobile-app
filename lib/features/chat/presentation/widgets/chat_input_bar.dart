@@ -1,0 +1,228 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/constants/app_colors.dart';
+
+class ChatInputBar extends StatefulWidget {
+  final Function(String) onSendText;
+  final Function(String) onSendImage;
+  final Function(String, int) onSendVoice;
+
+  const ChatInputBar({
+    super.key,
+    required this.onSendText,
+    required this.onSendImage,
+    required this.onSendVoice,
+  });
+
+  @override
+  State<ChatInputBar> createState() => _ChatInputBarState();
+}
+
+class _ChatInputBarState extends State<ChatInputBar> {
+  final TextEditingController _controller = TextEditingController();
+  bool _hasText = false;
+  bool _isRecording = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        _hasText = _controller.text.trim().isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleSend() {
+    if (_hasText) {
+      widget.onSendText(_controller.text);
+      _controller.clear();
+    }
+  }
+
+  void _showAttachmentMenu() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image, color: AppColors.mainAppPrimary),
+              title: Text(
+                'Envoyer une photo',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSendImage();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.attach_file, color: AppColors.mainAppPrimary),
+              title: Text(
+                'Envoyer un fichier (bientôt)',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Fonction bientôt disponible', style: GoogleFonts.poppins()),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _pickAndSendImage() {
+    // Mock: send a sample image
+    final sampleImages = [
+      'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400',
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
+      'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400',
+    ];
+    final randomImage = sampleImages[DateTime.now().millisecond % sampleImages.length];
+    widget.onSendImage(randomImage);
+  }
+
+  void _startRecording() {
+    setState(() {
+      _isRecording = true;
+    });
+    // Mock: simulate recording for 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (_isRecording) {
+        _stopRecording();
+      }
+    });
+  }
+
+  void _stopRecording() {
+    if (!_isRecording) return;
+    setState(() {
+      _isRecording = false;
+    });
+    // Mock: send voice message with random duration
+    final duration = 3 + (DateTime.now().millisecond % 10);
+    widget.onSendVoice('mock_voice_url', duration);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Message vocal envoyé (${duration}s)', style: GoogleFonts.poppins()),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: _isRecording ? _buildRecordingUI() : _buildNormalUI(),
+      ),
+    );
+  }
+
+  Widget _buildNormalUI() {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: _showAttachmentMenu,
+          icon: const Icon(Icons.add_circle_outline),
+          color: AppColors.mainAppPrimary,
+        ),
+        IconButton(
+          onPressed: _pickAndSendImage,
+          icon: const Icon(Icons.image_outlined),
+          color: AppColors.mainAppPrimary,
+        ),
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Écrire un message…',
+              hintStyle: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
+            style: GoogleFonts.poppins(fontSize: 14),
+            maxLines: null,
+            textCapitalization: TextCapitalization.sentences,
+            onSubmitted: (_) => _handleSend(),
+          ),
+        ),
+        if (_hasText)
+          IconButton(
+            onPressed: _handleSend,
+            icon: const Icon(Icons.send),
+            color: AppColors.mainAppPrimary,
+          )
+        else
+          GestureDetector(
+            onLongPressStart: (_) => _startRecording(),
+            onLongPressEnd: (_) => _stopRecording(),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: Icon(
+                Icons.mic,
+                color: AppColors.mainAppPrimary,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildRecordingUI() {
+    return Row(
+      children: [
+        Icon(Icons.mic, color: AppColors.error),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            'Enregistrement en cours...',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: AppColors.error,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: _stopRecording,
+          icon: const Icon(Icons.send),
+          color: AppColors.mainAppPrimary,
+        ),
+      ],
+    );
+  }
+}

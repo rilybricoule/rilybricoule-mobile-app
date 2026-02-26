@@ -10,6 +10,8 @@ import '../widgets/review_card.dart';
 import '../widgets/rating_summary.dart';
 import 'all_services_screen.dart';
 import 'all_reviews_screen.dart';
+import '../../chat/domain/chat_service.dart';
+import '../../chat/domain/models/user_summary.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
   const ProviderProfileScreen({super.key});
@@ -524,13 +526,25 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Chat avec ${_provider!.name}'),
-                      backgroundColor: AppColors.mainAppPrimary,
-                    ),
+                onPressed: () async {
+                  // Create or get conversation with this provider
+                  final chatRepo = ChatService().repository;
+                  final providerUser = UserSummary(
+                    id: _provider!.id,
+                    name: _provider!.name,
+                    avatarUrl: _provider!.avatar,
+                    isOnline: true,
                   );
+                  
+                  final conversation = await chatRepo.getOrCreateConversationWithUser(providerUser);
+                  
+                  if (mounted) {
+                    Navigator.pushNamed(
+                      context,
+                      '/chat/${conversation.id}',
+                      arguments: conversation,
+                    );
+                  }
                 },
                 icon: const Icon(Icons.chat_bubble_outline),
                 color: AppColors.mainAppPrimary,
