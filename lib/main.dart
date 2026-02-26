@@ -12,7 +12,7 @@ import 'features/auth/view/register_view.dart';
 import 'features/auth/view/forgot_password_view.dart';
 import 'features/auth/view/welcome_view.dart';
 import 'features/client_main_view.dart';
-import 'features/home/view/prestataire_dashboard_view.dart';
+import 'features/home/view/provider/provider_main_view.dart';
 import 'features/home/providers/home_provider.dart';
 import 'features/search/data/mock_search_repository.dart';
 import 'features/search/viewmodel/search_viewmodel.dart';
@@ -41,17 +41,18 @@ class MyApp extends StatelessWidget {
         statusBarBrightness: Brightness.light,
       ),
     );
-    
+
     // Dependency Injection: Create repository instances
     final authRepository = MockAuthRepository();
     final searchRepository = MockSearchRepository();
     final notificationRepository = MockNotificationRepository();
-    
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
         ChangeNotifierProvider(create: (_) => SearchViewModel(searchRepository)),
-        ChangeNotifierProvider(create: (_) => NotificationViewModel(notificationRepository)),
+        ChangeNotifierProvider(
+            create: (_) => NotificationViewModel(notificationRepository)),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
       ],
       child: MaterialApp(
@@ -66,7 +67,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.register: (context) => const RegisterView(),
           AppRoutes.forgotPassword: (context) => const ForgotPasswordView(),
           AppRoutes.home: (context) => const ClientMainView(),
-          AppRoutes.prestataireDashboard: (context) => const PrestataireDashboardView(),
+          AppRoutes.providerMain: (context) => const ProviderMainView(),
           AppRoutes.providerProfile: (context) => const ProviderProfileScreen(),
           AppRoutes.bookingDateTime: (context) => const BookingDateTimeScreen(),
           AppRoutes.bookingSummary: (context) => const BookingSummaryView(),

@@ -307,7 +307,7 @@ class _LoginViewState extends State<LoginView> {
                                 if (user.role == UserRole.client) {
                                   Navigator.pushReplacementNamed(context, AppRoutes.home);
                                 } else {
-                                  Navigator.pushReplacementNamed(context, AppRoutes.prestataireDashboard);
+                                  Navigator.pushReplacementNamed(context, AppRoutes.providerMain);
                                 }
                               } else if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
