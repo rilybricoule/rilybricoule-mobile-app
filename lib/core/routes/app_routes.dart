@@ -11,4 +11,12 @@ class AppRoutes {
   static const String bookingSummary = '/booking-summary';
   static const String bookingPayment = '/booking-payment';
   static const String bookingStatus = '/booking-status';
+  static const String reservationDetails = '/reservation-details';
+  static const String leaveReview = '/leave-review';
+  static const String invoice = '/invoice';
+  static const String tracking = '/tracking';
+  static const String messages = '/messages';
+  
+  // Dynamic route for chat thread
+  static String chatThread(String conversationId) => '/chat/$conversationId';
 }

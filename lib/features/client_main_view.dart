@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/constants/app_colors.dart';
+import 'package:provider/provider.dart';
+import '../core/constants/app_colors.dart';
+import 'chat/controllers/conversations_controller.dart';
+import 'chat/domain/chat_service.dart';
+import 'chat/presentation/screens/conversation_list_screen.dart';
 import 'home/view/home_view.dart';
 import 'home/widgets/custom_bottom_nav_bar.dart';
+import 'reservations/view/reservations_view.dart';
 import 'search/view/search_view.dart';
 
 class ClientMainView extends StatefulWidget {
@@ -26,6 +31,7 @@ class _ClientMainViewState extends State<ClientMainView> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    final chatRepository = ChatService().repository;
     _screens = [
       HomeView(
         onNavigateToSearch: navigateToSearch,
@@ -37,10 +43,20 @@ class _ClientMainViewState extends State<ClientMainView> {
         onFocusReady: (callback) => _focusSearchCallback = callback,
         onQueryReady: (callback) => _applyQueryCallback = callback,
       ),
-      const _PlaceholderScreen(title: 'Réservations'),
-      const _PlaceholderScreen(title: 'Favoris'),
+      const ReservationsView(),
+      ChangeNotifierProvider(
+        create: (_) => ConversationsController(chatRepository),
+        child: ConversationListScreen(
+          onNavigateToSearch: () => navigateToSearch(),
+        ),
+      ),
       const _PlaceholderScreen(title: 'Profil'),
     ];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void navigateToSearch({bool showFilters = false}) {

@@ -32,9 +32,9 @@ class CustomBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(0, Icons.home, 'Accueil'),
-              _buildNavItem(1, Icons.search, 'Rechercher'),
-              _buildNavItem(2, Icons.calendar_today, 'Réservations'),
-              _buildNavItem(3, Icons.favorite_border, 'Favoris'),
+              _buildNavItem(1, Icons.search, 'Recherche'),
+              _buildNavItem(2, Icons.calendar_today, 'Réservation'),
+              _buildNavItem(3, Icons.chat_bubble_outline, 'Messages'),
               _buildNavItem(4, Icons.person_outline, 'Profil'),
             ],
           ),
@@ -49,7 +49,7 @@ class CustomBottomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -62,7 +62,7 @@ class CustomBottomNavBar extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 color: isActive ? AppColors.mainAppPrimary : AppColors.textSecondary,
               ),
