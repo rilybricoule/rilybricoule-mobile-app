@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Couleurs principales basées sur le logo RiLy Bricoule
-  static const Color primary = Color(0xFF2C5F8D);        // Bleu foncé du logo
+  static const Color primary = Color(0xFF2C5F8D);
+  static const Color primaryLight = Color(0xFF6B9FCC);// Bleu foncé du logo
   static const Color secondary = Color(0xFFFF6B35);      // Orange du logo
   static const Color accent = Color(0xFF1E3A5F);         // Bleu plus foncé
   

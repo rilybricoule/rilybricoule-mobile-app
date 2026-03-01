@@ -58,9 +58,20 @@ class _ChatInputBarState extends State<ChatInputBar> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
+              leading: const Icon(Icons.phone, color: AppColors.mainAppPrimary),
+              title: Text(
+                'Make a Call',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _mockCall();
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.image, color: AppColors.mainAppPrimary),
               title: Text(
-                'Envoyer une photo',
+                'Send an Image',
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
@@ -69,23 +80,45 @@ class _ChatInputBarState extends State<ChatInputBar> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.attach_file, color: AppColors.mainAppPrimary),
+              leading: const Icon(Icons.picture_as_pdf, color: AppColors.mainAppPrimary),
               title: Text(
-                'Envoyer un fichier (bientôt)',
+                'Send PDF / Document',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _mockSendPDF();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.location_on, color: AppColors.mainAppPrimary),
+              title: Text(
+                'Share Location',
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Fonction bientôt disponible', style: GoogleFonts.poppins()),
-                  ),
+                  const SnackBar(content: Text('Location shared (mock)')),
                 );
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _mockCall() {
+     ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Starting voice call... (mock)')),
+    );
+  }
+
+  void _mockSendPDF() {
+     widget.onSendText('📄 Attached Document: invoice_repair.pdf');
+     ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('PDF document sent (mock)')),
     );
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_status_chip.dart';
-import 'provider_mission_details_view.dart';
+import 'mission_details_view.dart';
 
 class ProviderBookingsView extends StatefulWidget {
   const ProviderBookingsView({super.key});
@@ -93,7 +93,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
             ),
             _BookingsList(
               bookings:
-                  _bookings.where((b) => b.status == _BookingStatus.inProgress).toList(),
+              _bookings.where((b) => b.status == _BookingStatus.inProgress).toList(),
               emptyLabel: 'No bookings in progress',
               showActions: false,
             ),
@@ -170,16 +170,16 @@ class _BookingsList extends StatelessWidget {
                         Text(
                           b.clientName,
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           b.serviceName,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -208,9 +208,9 @@ class _BookingsList extends StatelessWidget {
                   Text(
                     b.priceLabel,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),

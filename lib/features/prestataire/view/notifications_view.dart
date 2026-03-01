@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
 
@@ -16,7 +16,7 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
     _MockNotification(
       id: 'n1',
       title: 'New booking request',
-      message: 'Sarah requested “Plumbing Repair” for today at 14:00.',
+      message: 'Sarah orquested “Plumbing Repair” for today at 14:00.',
       timeLabel: '2 min',
       read: false,
     ),
@@ -78,8 +78,11 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: AppColors.surface,
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.white,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         actions: [
@@ -87,7 +90,7 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
             IconButton(
               tooltip: 'Delete',
               onPressed: _deleteSelected,
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Icons.delete_outline, color: AppColors.error),
             ),
             IconButton(
               tooltip: 'Cancel',
@@ -101,10 +104,10 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
           ? Center(
               child: Text(
                 'No notifications',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: AppColors.textSecondary),
+                style: GoogleFonts.poppins(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
               ),
             )
           : ListView.separated(
@@ -130,14 +133,14 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                       GestureDetector(
                         onTap: () => _toggleSelect(n.id),
                         child: Container(
-                          width: 22,
-                          height: 22,
+                          width: 20,
+                          height: 20,
                           margin: const EdgeInsets.only(top: 2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: selected
                                 ? AppColors.primary
-                                : AppColors.primary.withOpacity(0.08),
+                                : Colors.white,
                             border: Border.all(
                               color: selected
                                   ? AppColors.primary
@@ -146,7 +149,7 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                           ),
                           child: selected
                               ? const Icon(Icons.check,
-                                  size: 14, color: Colors.white)
+                                  size: 12, color: Colors.white)
                               : null,
                         ),
                       ),
@@ -160,32 +163,31 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                                 Expanded(
                                   child: Text(
                                     n.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                          fontWeight:
-                                              n.read ? FontWeight.w500 : FontWeight.w700,
-                                          color: AppColors.textPrimary,
-                                        ),
+                                    style: GoogleFonts.poppins(
+                                      fontWeight:
+                                          n.read ? FontWeight.w500 : FontWeight.w700,
+                                      color: AppColors.textPrimary,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   n.timeLabel,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(color: AppColors.textSecondary),
+                                  style: GoogleFonts.poppins(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 4),
                             Text(
                               n.message,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
+                              style: GoogleFonts.poppins(
+                                color: AppColors.textSecondary,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),
@@ -195,7 +197,7 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                         Container(
                           width: 8,
                           height: 8,
-                          margin: const EdgeInsets.only(top: 6),
+                          margin: const EdgeInsets.only(top: 8),
                           decoration: const BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
