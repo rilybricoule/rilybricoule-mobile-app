@@ -5,8 +5,22 @@ import '../models/reservation_status.dart';
 
 class ReservationsViewModel extends ChangeNotifier {
   final ReservationsRepository _repository;
+  bool _disposed = false;
 
   ReservationsViewModel(this._repository);
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   bool _isLoading = false;
   String? _error;

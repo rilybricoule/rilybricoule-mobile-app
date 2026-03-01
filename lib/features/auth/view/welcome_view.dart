@@ -1,14 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../data/models/app_user.dart';
+import '../../../models/user_role.dart';
+import '../../../features/client_main_view.dart';
+import '../../../features/home/view/provider/provider_main_view.dart';
+import '../../profile/data/user_session.dart';
+import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/language_picker.dart';
 import '../widgets/social_icon_button.dart';
 
-class WelcomeView extends StatelessWidget {
+class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
+
+  @override
+  State<WelcomeView> createState() => _WelcomeViewState();
+}
+
+class _WelcomeViewState extends State<WelcomeView> {
+  Future<void> _handleSocialLogin(String provider) async {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    
+    AppUser? user;
+    try {
+      debugPrint('WelcomeView: Starting $provider Sign In...');
+      
+      switch (provider) {
+        case 'google':
+          debugPrint('WelcomeView: Calling signInWithGoogle...');
+          user = await authViewModel.signInWithGoogle(UserRole.client);
+          debugPrint('WelcomeView: signInWithGoogle returned: $user');
+          break;
+        case 'facebook':
+          debugPrint('WelcomeView: Calling signInWithFacebook...');
+          user = await authViewModel.signInWithFacebook(UserRole.client);
+          debugPrint('WelcomeView: signInWithFacebook returned: $user');
+          break;
+        case 'apple':
+          debugPrint('WelcomeView: Calling signInWithApple...');
+          user = await authViewModel.signInWithApple(UserRole.client);
+          debugPrint('WelcomeView: signInWithApple returned: $user');
+          break;
+      }
+      
+      if (user != null && mounted) {
+        debugPrint('WelcomeView: User signed in successfully: ${user.uid}');
+        await UserSession.saveUser(
+          id: user.uid,
+          name: user.fullName,
+          email: user.email,
+          memberSince: 'Janvier 2024',
+        );
+        
+        // Store role locally before async gap
+        final isClient = user.role == UserRole.client;
+        
+        // Navigate directly using MaterialPageRoute
+        if (mounted) {
+          debugPrint('WelcomeView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => isClient 
+                ? const ClientMainView() 
+                : const ProviderMainView(),
+            ),
+            (route) => false,
+          );
+        }
+      } else if (mounted) {
+        debugPrint('WelcomeView: Sign in failed - user is null');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$provider Sign In Failed. User is null.')),
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint('WelcomeView: $provider Sign In Error: $e');
+      debugPrint('WelcomeView: StackTrace: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$provider Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,17 +203,17 @@ class WelcomeView extends StatelessWidget {
                                 children: [
                                   SocialIconButton(
                                     provider: 'google',
-                                    onPressed: () => print('Google Sign In'),
+                                    onPressed: () => _handleSocialLogin('google'),
                                   ),
                                   SizedBox(width: 10),
                                   SocialIconButton(
                                     provider: 'facebook',
-                                    onPressed: () => print('Facebook Sign In'),
+                                    onPressed: () => _handleSocialLogin('facebook'),
                                   ),
                                   SizedBox(width: 10),
                                   SocialIconButton(
                                     provider: 'apple',
-                                    onPressed: () => print('Apple Sign In'),
+                                    onPressed: () => _handleSocialLogin('apple'),
                                   ),
                                 ],
                               ),

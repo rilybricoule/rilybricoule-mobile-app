@@ -4,8 +4,22 @@ import '../domain/search_repository.dart';
 
 class SearchViewModel extends ChangeNotifier {
   final SearchRepository _searchRepository;
+  bool _disposed = false;
 
   SearchViewModel(this._searchRepository);
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   List<ProviderModel> _providers = [];
   List<ProviderModel> get providers => _providers;

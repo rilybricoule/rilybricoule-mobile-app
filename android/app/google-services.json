@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "231570855103",
+    "project_id": "rilybricoule-dc18b",
+    "storage_bucket": "rilybricoule-dc18b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231570855103:android:780f27e739d756a76c620a",
+        "android_client_info": {
+          "package_name": "com.example.rilybricoule_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231570855103-du6a7013jsfa7fjfe2n2f3a7pmin0rl6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rilybricoule_mobile_app",
+            "certificate_hash": "15c6bdf49633062392c93250808a307abdb8dddb"
+          }
+        },
+        {
+          "client_id": "231570855103-g31krpi3pumv7umjc8k5sa4vbt62bh1g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNU6jEg67DnNyQmbxjHQdfyVeAwgTJyaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231570855103-g31krpi3pumv7umjc8k5sa4vbt62bh1g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "231570855103-jpgsb73nrmfnsavd3htgvtmdb24qpko2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rilybricouleMobileApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

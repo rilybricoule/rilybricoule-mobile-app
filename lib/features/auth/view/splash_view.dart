@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../data/datasources/firebase_auth_datasource.dart';
+import '../../../data/repositories/firebase_auth_repository.dart';
+import '../../../domain/repositories/auth_repository.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -14,6 +18,7 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late final AuthRepository _authRepository;
 
   @override
   void initState() {
@@ -29,14 +34,33 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     );
 
     _controller.forward();
-    _navigateToWelcome();
+    
+    _authRepository = FirebaseAuthRepository(FirebaseAuthDataSource());
+    _navigateBasedOnAuth();
   }
 
-  _navigateToWelcome() async {
+  _navigateBasedOnAuth() async {
     await Future.delayed(const Duration(milliseconds: 1500));
 
-    if (mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+    if (!mounted) return;
+
+    // Check Firebase Auth state
+    final currentUser = _authRepository.currentUser;
+    
+    if (currentUser != null) {
+      // User is logged in, redirect based on role after build phase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (currentUser.role.name == 'client') {
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.providerMain);
+        }
+      });
+    } else {
+      // User not logged in, go to welcome after build phase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+      });
     }
   }
 

@@ -3,10 +3,24 @@ import '../models/provider_model.dart';
 import '../models/sort_option.dart';
 
 class HomeProvider extends ChangeNotifier {
+  bool _disposed = false;
   List<ProviderModel> _originalProviders = [];
   List<ProviderModel> _sortedProviders = [];
   SortOption? _currentSortOption;
   SortOption? _selectedSortOption;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   List<ProviderModel> get providers => _sortedProviders;
   SortOption? get currentSortOption => _currentSortOption;
