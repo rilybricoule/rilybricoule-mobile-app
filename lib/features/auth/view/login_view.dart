@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../models/user_role.dart';
+import '../../../features/client_main_view.dart';
+import '../../../features/home/view/provider/provider_main_view.dart';
+import '../../profile/data/user_session.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_textfield.dart';
 import '../widgets/social_icon_button.dart';
+import 'register_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -33,7 +38,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -216,31 +220,139 @@ class _LoginViewState extends State<LoginView> {
                           children: [
                             SocialIconButton(
                               provider: 'google',
-                              onPressed: () {
-                                print('Google Sign In');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Google Sign In - Coming Soon!')),
-                                );
+                              onPressed: () async {
+                                try {
+                                  debugPrint('Starting Google Sign In...');
+                                  final user = await authViewModel.signInWithGoogle(UserRole.client);
+                                  debugPrint('Google Sign In result: $user');
+                                  
+                                  if (user != null && context.mounted) {
+                                    debugPrint('User signed in: ${user.uid}, role: ${user.role}');
+                                    await UserSession.saveUser(
+                                      id: user.uid,
+                                      name: user.fullName,
+                                      email: user.email,
+                                      memberSince: 'Janvier 2024',
+                                    );
+                                    
+                                    // Store role locally before async gap
+                                    final isClient = user.role == UserRole.client;
+                                    
+                                    // COMPLETELY reset navigation stack
+                                    if (context.mounted) {
+                                      try {
+                                        debugPrint('LoginView: REPLACING all routes with ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                        
+                                        // Use the root navigator and clear everything
+                                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                                          PageRouteBuilder(
+                                            pageBuilder: (context, animation1, animation2) => isClient 
+                                              ? const ClientMainView() 
+                                              : const ProviderMainView(),
+                                            transitionDuration: Duration.zero,
+                                            settings: const RouteSettings(name: '/home'),
+                                          ),
+                                          (route) => false,
+                                        );
+                                        
+                                        debugPrint('LoginView: Navigation completed - should be on home now');
+                                      } catch (e, stackTrace) {
+                                        debugPrint('LoginView: Navigation ERROR: $e');
+                                        debugPrint('LoginView: StackTrace: $stackTrace');
+                                      }
+                                    }
+                                  } else if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Google Sign In Failed. User is null.'),
+                                        backgroundColor: AppColors.error,
+                                      ),
+                                    );
+                                  }
+                                } catch (e, stackTrace) {
+                                  debugPrint('Google Sign In Error: $e');
+                                  debugPrint('StackTrace: $stackTrace');
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Google Sign In Error: $e'),
+                                        backgroundColor: AppColors.error,
+                                      ),
+                                    );
+                                  }
+                                }
                               },
                             ),
                             SizedBox(width: 16),
                             SocialIconButton(
                               provider: 'facebook',
-                              onPressed: () {
-                                print('Facebook Sign In');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Facebook Sign In - Coming Soon!')),
-                                );
+                              onPressed: () async {
+                                final user = await authViewModel.signInWithFacebook(UserRole.client);
+                                if (user != null && context.mounted) {
+                                  await UserSession.saveUser(
+                                    id: user.uid,
+                                    name: user.fullName,
+                                    email: user.email,
+                                    memberSince: 'Janvier 2024',
+                                  );
+                                  
+                                  // Navigate directly using MaterialPageRoute
+                                  final isClient = user.role == UserRole.client;
+                                  if (context.mounted) {
+                                    debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => isClient 
+                                          ? const ClientMainView() 
+                                          : const ProviderMainView(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                } else if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Facebook Sign In Failed.'),
+                                      backgroundColor: AppColors.error,
+                                    ),
+                                  );
+                                }
                               },
                             ),
                             SizedBox(width: 16),
                             SocialIconButton(
                               provider: 'apple',
-                              onPressed: () {
-                                print('Apple Sign In');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Apple Sign In - Coming Soon!')),
-                                );
+                              onPressed: () async {
+                                final user = await authViewModel.signInWithApple(UserRole.client);
+                                if (user != null && context.mounted) {
+                                  await UserSession.saveUser(
+                                    id: user.uid,
+                                    name: user.fullName,
+                                    email: user.email,
+                                    memberSince: 'Janvier 2024',
+                                  );
+                                  
+                                  // Navigate directly using MaterialPageRoute
+                                  final isClient = user.role == UserRole.client;
+                                  if (context.mounted) {
+                                    debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => isClient 
+                                          ? const ClientMainView() 
+                                          : const ProviderMainView(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                } else if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Apple Sign In Failed.'),
+                                      backgroundColor: AppColors.error,
+                                    ),
+                                  );
+                                }
                               },
                             ),
                           ],
@@ -303,11 +415,26 @@ class _LoginViewState extends State<LoginView> {
                                 _passwordController.text,
                               );
                               if (user != null && context.mounted) {
-                                // Route based on user role
-                                if (user.role == UserRole.client) {
-                                  Navigator.pushReplacementNamed(context, AppRoutes.home);
-                                } else {
-                                  Navigator.pushReplacementNamed(context, AppRoutes.providerMain);
+                                // Save user session
+                                await UserSession.saveUser(
+                                  id: user.uid,
+                                  name: user.fullName,
+                                  email: user.email,
+                                  memberSince: 'Janvier 2024',
+                                );
+                                
+                                // Navigate directly using MaterialPageRoute
+                                final isClient = user.role == UserRole.client;
+                                if (context.mounted) {
+                                  debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => isClient 
+                                        ? const ClientMainView() 
+                                        : const ProviderMainView(),
+                                    ),
+                                    (route) => false,
+                                  );
                                 }
                               } else if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -336,7 +463,10 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, AppRoutes.register);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const RegisterView()),
+                                );
                               },
                               child: Text(
                                 'Register',

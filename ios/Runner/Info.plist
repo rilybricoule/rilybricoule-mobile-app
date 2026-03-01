@@ -45,5 +45,39 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Google Sign-In & Facebook Login Configuration -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Google Sign-In -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.YOUR_CLIENT_ID</string>
+			</array>
+		</dict>
+		<!-- Facebook Login -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1863011741067181</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Facebook Login Configuration -->
+	<key>FacebookAppID</key>
+	<string>1863011741067181</string>
+	<key>FacebookDisplayName</key>
+	<string>RilyBricoule</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 </dict>
 </plist>
