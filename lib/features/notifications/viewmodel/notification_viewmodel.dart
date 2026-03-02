@@ -4,8 +4,22 @@ import '../model/notification_model.dart';
 
 class NotificationViewModel extends ChangeNotifier {
   final NotificationRepository _repository;
+  bool _disposed = false;
 
   NotificationViewModel(this._repository);
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   List<AppNotification> _notifications = [];
   List<AppNotification> get notifications => _notifications;

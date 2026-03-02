@@ -9,6 +9,7 @@ import 'home/view/home_view.dart';
 import 'home/widgets/custom_bottom_nav_bar.dart';
 import 'reservations/view/reservations_view.dart';
 import 'search/view/search_view.dart';
+import 'profile/view/profile_screen.dart';
 
 class ClientMainView extends StatefulWidget {
   final int initialIndex;
@@ -50,7 +51,13 @@ class _ClientMainViewState extends State<ClientMainView> {
           onNavigateToSearch: () => navigateToSearch(),
         ),
       ),
-      const _PlaceholderScreen(title: 'Profil'),
+      ProfileScreen(
+        onNavigateToTab: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
     ];
   }
 

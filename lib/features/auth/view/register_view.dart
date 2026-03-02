@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../models/user_role.dart';
+import '../../../features/client_main_view.dart';
+import '../../../features/home/view/provider/provider_main_view.dart';
+import '../../profile/data/user_session.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/client_signup_form.dart';
@@ -264,11 +268,26 @@ class _RegisterViewState extends State<RegisterView> {
                           _selectedRole,
                         );
                         if (user != null && context.mounted) {
-                          // Route based on role
-                          if (user.role == UserRole.client) {
-                            Navigator.pushReplacementNamed(context, AppRoutes.home);
-                          } else {
-                            Navigator.pushReplacementNamed(context, AppRoutes.providerMain);
+                          // Save user session
+                          await UserSession.saveUser(
+                            id: user.uid,
+                            name: user.fullName,
+                            email: user.email,
+                            memberSince: 'Janvier 2024',
+                          );
+                          
+                          // Navigate directly using MaterialPageRoute
+                          final isClient = user.role == UserRole.client;
+                          if (context.mounted) {
+                            debugPrint('RegisterView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => isClient 
+                                  ? const ClientMainView() 
+                                  : const ProviderMainView(),
+                              ),
+                              (route) => false,
+                            );
                           }
                         }
                       }

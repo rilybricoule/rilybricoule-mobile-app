@@ -16,6 +16,11 @@ class AppRoutes {
   static const String invoice = '/invoice';
   static const String tracking = '/tracking';
   static const String messages = '/messages';
+  static const String editProfile = '/edit-profile';
+  static const String paymentMethods = '/payment-methods';
+  static const String favorites = '/favorites';
+  static const String help = '/help';
+  static const String about = '/about';
   
   // Dynamic route for chat thread
   static String chatThread(String conversationId) => '/chat/$conversationId';
