@@ -1,5 +1,11 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+enum ProviderStatus {
+  available,
+  busy,
+  offline,
+}
+
 class ProviderLocation {
   final String id;
   final String name;
@@ -7,10 +13,11 @@ class ProviderLocation {
   final String imageUrl;
   final double rating;
   final int reviewCount;
-  final double distance;
+  double distance;
   final String price;
   final LatLng position;
   final bool isVerified;
+  final ProviderStatus status;
 
   ProviderLocation({
     required this.id,
@@ -23,5 +30,6 @@ class ProviderLocation {
     required this.price,
     required this.position,
     this.isVerified = false,
+    this.status = ProviderStatus.available,
   });
 }

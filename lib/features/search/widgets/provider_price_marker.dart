@@ -5,11 +5,13 @@ import '../../../core/constants/app_colors.dart';
 class ProviderPriceMarker extends StatelessWidget {
   final String price;
   final bool isSelected;
+  final bool isBusy;
 
   const ProviderPriceMarker({
     super.key,
     required this.price,
     this.isSelected = false,
+    this.isBusy = false,
   });
 
   @override
@@ -21,7 +23,9 @@ class ProviderPriceMarker extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.mainAppPrimary : Colors.white,
+            color: isBusy
+                ? Colors.grey
+                : (isSelected ? AppColors.mainAppPrimary : Colors.white),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -32,18 +36,22 @@ class ProviderPriceMarker extends StatelessWidget {
             ],
           ),
           child: Text(
-            price,
+            isBusy ? 'OCCUPÉ' : price,
             style: GoogleFonts.poppins(
               fontSize: isSelected ? 14 : 12,
               fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : AppColors.mainAppPrimary,
+              color: isBusy
+                  ? Colors.white
+                  : (isSelected ? Colors.white : AppColors.mainAppPrimary),
             ),
           ),
         ),
         CustomPaint(
           size: const Size(10, 6),
           painter: _TrianglePainter(
-            color: isSelected ? AppColors.mainAppPrimary : Colors.white,
+            color: isBusy
+                ? Colors.grey
+                : (isSelected ? AppColors.mainAppPrimary : Colors.white),
           ),
         ),
       ],

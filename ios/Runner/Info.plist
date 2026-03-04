@@ -46,6 +46,12 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
+	<!-- Location Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nous avons besoin de votre localisation pour trouver les prestataires près de vous</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Nous avons besoin de votre localisation pour trouver les prestataires près de vous</string>
+
 	<!-- Google Sign-In & Facebook Login Configuration -->
 	<key>CFBundleURLTypes</key>
 	<array>

@@ -3,10 +3,13 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../services/location/location_service.dart';
 import '../models/provider_location.dart';
+import '../repository/providers_repository.dart';
 import '../widgets/provider_preview_card.dart';
 import '../widgets/provider_price_marker.dart';
 
@@ -30,65 +33,81 @@ class _SearchMapViewState extends State<SearchMapView> {
   GoogleMapController? _mapController;
   String? _selectedProviderId;
   final Set<Marker> _markers = {};
-
-  final List<ProviderLocation> _providers = [
-    ProviderLocation(
-      id: '1',
-      name: 'Ahmed El Mansouri',
-      category: 'Bricoleur Expert',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.9,
-      reviewCount: 42,
-      distance: 0.8,
-      price: '150 MAD',
-      position: const LatLng(33.5731, -7.5898),
-      isVerified: true,
-    ),
-    ProviderLocation(
-      id: '2',
-      name: 'Yassine Amrani',
-      category: 'Plombier',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.7,
-      reviewCount: 38,
-      distance: 1.2,
-      price: '220 MAD',
-      position: const LatLng(33.5850, -7.6050),
-      isVerified: true,
-    ),
-    ProviderLocation(
-      id: '3',
-      name: 'Omar Hassan',
-      category: 'Électricien',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.8,
-      reviewCount: 56,
-      distance: 1.5,
-      price: '180 MAD',
-      position: const LatLng(33.5650, -7.5750),
-      isVerified: true,
-    ),
-    ProviderLocation(
-      id: '4',
-      name: 'Karim Benjelloun',
-      category: 'Menuisier',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.6,
-      reviewCount: 29,
-      distance: 2.1,
-      price: '305 MAD',
-      position: const LatLng(33.5800, -7.5700),
-      isVerified: false,
-    ),
-  ];
+  List<ProviderLocation> _providers = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+  LocationPermissionStatus? _permissionStatus;
+  Position? _currentPosition;
+  final _locationService = LocationService();
+  final _repository = ProvidersRepository();
 
   @override
   void initState() {
     super.initState();
-    _createMarkers();
+    _initializeMap();
+  }
+
+  Future<void> _initializeMap() async {
+    setState(() => _isLoading = true);
+
+    final permissionStatus = await _locationService.checkPermission();
+    setState(() => _permissionStatus = permissionStatus);
+
+    if (permissionStatus == LocationPermissionStatus.granted) {
+      await _loadProviders();
+    } else {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Permission de localisation requise';
+      });
+    }
+  }
+
+  Future<void> _loadProviders() async {
+    try {
+      final position = await _locationService.getCurrentPosition();
+      if (position == null) {
+        setState(() {
+          _errorMessage = 'Impossible d\'obtenir votre position';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      setState(() => _currentPosition = position);
+
+      final providers = await _repository.fetchProvidersAround(
+        lat: position.latitude,
+        lng: position.longitude,
+        radiusKm: 10,
+      );
+
+      setState(() {
+        _providers = providers;
+        _isLoading = false;
+      });
+
+      if (providers.isNotEmpty) {
+        await _createMarkers();
+      }
+
+      // Center map on user location
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(position.latitude, position.longitude),
+          13,
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erreur lors du chargement des prestataires';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _createMarkers() async {
+    _markers.clear();
     for (var provider in _providers) {
       final marker = await _createMarkerFromWidget(
         provider,
@@ -106,6 +125,7 @@ class _SearchMapViewState extends State<SearchMapView> {
     final markerWidget = ProviderPriceMarker(
       price: provider.price.split(' ')[0],
       isSelected: isSelected,
+      isBusy: provider.status == ProviderStatus.busy,
     );
 
     final recorder = ui.PictureRecorder();
@@ -152,28 +172,124 @@ class _SearchMapViewState extends State<SearchMapView> {
   }
 
   void _onMarkerTapped(String providerId) async {
-    setState(() {
-      _selectedProviderId = providerId;
-    });
+    setState(() => _selectedProviderId = providerId);
     await _createMarkers();
   }
 
-  void _recenterMap() {
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        const LatLng(33.5731, -7.5898),
-        13,
-      ),
-    );
+  Future<void> _requestPermission() async {
+    final status = await _locationService.requestPermission();
+    setState(() => _permissionStatus = status);
+
+    if (status == LocationPermissionStatus.granted) {
+      await _initializeMap();
+    } else if (status == LocationPermissionStatus.deniedForever) {
+      await _locationService.openAppSettings();
+    }
+  }
+
+  Future<void> _enableLocation() async {
+    await _locationService.openLocationSettings();
+    await Future.delayed(const Duration(seconds: 1));
+    await _initializeMap();
+  }
+
+  void _recenterMap() async {
+    final position = await _locationService.getCurrentPosition();
+    if (position != null) {
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(position.latitude, position.longitude),
+          13,
+        ),
+      );
+    }
   }
 
   ProviderLocation? get _selectedProvider {
     if (_selectedProviderId == null) return null;
-    return _providers.firstWhere((p) => p.id == _selectedProviderId);
+    try {
+      return _providers.firstWhere((p) => p.id == _selectedProviderId);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.mainAppPrimary),
+      );
+    }
+
+    if (_permissionStatus == LocationPermissionStatus.denied ||
+        _permissionStatus == LocationPermissionStatus.deniedForever) {
+      return _buildPermissionDenied();
+    }
+
+    if (_permissionStatus == LocationPermissionStatus.disabled) {
+      return _buildLocationDisabled();
+    }
+
+    if (_errorMessage != null) {
+      return _buildError();
+    }
+
+    if (_providers.isEmpty) {
+      return Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(_currentPosition?.latitude ?? 33.5731, _currentPosition?.longitude ?? -7.5898),
+              zoom: 13,
+            ),
+            onMapCreated: (controller) => _mapController = controller,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            mapToolbarEnabled: false,
+          ),
+          _buildSearchBar(),
+          _buildMapControls(),
+          _buildShowListButton(),
+          Positioned(
+            bottom: 120,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.info_outline, color: AppColors.textSecondary, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Aucun prestataire dans cette zone',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Stack(
       children: [
         GoogleMap(
@@ -183,6 +299,7 @@ class _SearchMapViewState extends State<SearchMapView> {
           ),
           markers: _markers,
           onMapCreated: (controller) => _mapController = controller,
+          myLocationEnabled: true,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
@@ -192,6 +309,190 @@ class _SearchMapViewState extends State<SearchMapView> {
         _buildShowListButton(),
         if (_selectedProvider != null) _buildProviderPreview(),
       ],
+    );
+  }
+
+  Widget _buildPermissionDenied() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.location_off, size: 80, color: AppColors.textSecondary),
+            const SizedBox(height: 24),
+            Text(
+              'Permission de localisation requise',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Nous avons besoin de votre localisation pour trouver les prestataires près de vous',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: _requestPermission,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.mainAppPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Autoriser la localisation',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationDisabled() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.location_disabled, size: 80, color: AppColors.textSecondary),
+            const SizedBox(height: 24),
+            Text(
+              'GPS désactivé',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Veuillez activer votre GPS pour utiliser cette fonctionnalité',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: _enableLocation,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.mainAppPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Activer la localisation',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 80, color: AppColors.error),
+            const SizedBox(height: 24),
+            Text(
+              'Erreur',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _errorMessage ?? 'Une erreur est survenue',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: _initializeMap,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.mainAppPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Réessayer',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.person_search, size: 80, color: AppColors.textSecondary),
+            const SizedBox(height: 24),
+            Text(
+              'Aucun prestataire trouvé',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Il n\'y a pas de prestataires disponibles dans votre zone',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -1,4 +1,4 @@
-enum MessageType { text, image, voice }
+enum MessageType { text, image, voice, location }
 
 enum MessageStatus { sending, sent, delivered, read }
 
@@ -11,6 +11,9 @@ class Message {
   final String? imageUrl;
   final String? voiceUrl;
   final int? voiceDuration; // in seconds
+  final double? latitude;
+  final double? longitude;
+  final String? locationLabel;
   final DateTime createdAt;
   final MessageStatus status;
 
@@ -23,6 +26,9 @@ class Message {
     this.imageUrl,
     this.voiceUrl,
     this.voiceDuration,
+    this.latitude,
+    this.longitude,
+    this.locationLabel,
     required this.createdAt,
     required this.status,
   });
@@ -40,6 +46,9 @@ class Message {
       imageUrl: json['imageUrl'] as String?,
       voiceUrl: json['voiceUrl'] as String?,
       voiceDuration: json['voiceDuration'] as int?,
+      latitude: json['latitude'] as double?,
+      longitude: json['longitude'] as double?,
+      locationLabel: json['locationLabel'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       status: MessageStatus.values.firstWhere(
         (e) => e.name == json['status'],
@@ -58,6 +67,9 @@ class Message {
       'imageUrl': imageUrl,
       'voiceUrl': voiceUrl,
       'voiceDuration': voiceDuration,
+      'latitude': latitude,
+      'longitude': longitude,
+      'locationLabel': locationLabel,
       'createdAt': createdAt.toIso8601String(),
       'status': status.name,
     };
@@ -72,6 +84,9 @@ class Message {
     String? imageUrl,
     String? voiceUrl,
     int? voiceDuration,
+    double? latitude,
+    double? longitude,
+    String? locationLabel,
     DateTime? createdAt,
     MessageStatus? status,
   }) {
@@ -84,6 +99,9 @@ class Message {
       imageUrl: imageUrl ?? this.imageUrl,
       voiceUrl: voiceUrl ?? this.voiceUrl,
       voiceDuration: voiceDuration ?? this.voiceDuration,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      locationLabel: locationLabel ?? this.locationLabel,
       createdAt: createdAt ?? this.createdAt,
       status: status ?? this.status,
     );

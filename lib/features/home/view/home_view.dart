@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/marquee_text.dart';
+import '../../../services/location/location_service.dart';
 import '../../notifications/view/notifications_view.dart';
 import '../../notifications/viewmodel/notification_viewmodel.dart';
+import '../../profile/data/user_session.dart';
 import '../models/category_model.dart';
 import '../models/provider_model.dart';
 import '../providers/home_provider.dart';
@@ -11,25 +16,86 @@ import '../widgets/category_item.dart';
 import '../widgets/promo_banner.dart';
 import '../widgets/provider_card.dart';
 import '../widgets/sort_bottom_sheet.dart';
+import 'all_categories_screen.dart';
 
 class HomeView extends StatefulWidget {
   final Function({bool showFilters})? onNavigateToSearch;
   final Function(String)? onCategorySelected;
+  final Function()? onNavigateToProfile;
   
-  const HomeView({super.key, this.onNavigateToSearch, this.onCategorySelected});
+  const HomeView({
+    super.key,
+    this.onNavigateToSearch,
+    this.onCategorySelected,
+    this.onNavigateToProfile,
+  });
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
+  String _userName = 'Utilisateur';
+  String? _userAvatar;
+  String _locationText = 'Localisation...';
+  
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificationViewModel>().loadNotifications();
       context.read<HomeProvider>().setProviders(_providers);
+      _loadUserData();
+      _loadLocation();
     });
+  }
+  
+  Future<void> _loadUserData() async {
+    final user = await UserSession.getUser();
+    setState(() {
+      _userName = user['name'] ?? 'Utilisateur';
+      _userAvatar = user['avatarUrl'];
+    });
+  }
+  
+  Future<void> _loadLocation() async {
+    final locationService = LocationService();
+    final status = await locationService.checkPermission();
+    
+    if (status == LocationPermissionStatus.granted) {
+      final position = await locationService.getCurrentPosition();
+      if (position != null) {
+        try {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          if (placemarks.isNotEmpty) {
+            final place = placemarks.first;
+            final city = place.locality ?? place.administrativeArea ?? '';
+            final country = place.country ?? 'Morocco';
+            setState(() {
+              _locationText = city.isNotEmpty ? '$city, $country' : country;
+            });
+          }
+        } catch (e) {
+          setState(() {
+            _locationText = 'Morocco';
+          });
+        }
+      }
+    } else {
+      setState(() {
+        _locationText = 'Morocco';
+      });
+    }
+  }
+  
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Bonjour';
+    if (hour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
   }
   // Mock data - Categories
   final List<CategoryModel> _categories = [
@@ -173,23 +239,33 @@ class _HomeViewState extends State<HomeView> {
       child: Row(
         children: [
           // Profile Picture
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.mainAppPrimary, width: 2),
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/images/provider.png',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: AppColors.mainAppPrimary.withOpacity(0.1),
-                    child: const Icon(Icons.person, color: AppColors.mainAppPrimary),
-                  );
-                },
+          GestureDetector(
+            onTap: () {
+              widget.onNavigateToProfile?.call();
+            },
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.mainAppPrimary, width: 2),
+              ),
+              child: ClipOval(
+                child: _userAvatar != null
+                    ? Image.network(
+                        _userAvatar!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: AppColors.mainAppPrimary.withOpacity(0.1),
+                            child: Icon(Icons.person, color: AppColors.mainAppPrimary),
+                          );
+                        },
+                      )
+                    : Container(
+                        color: AppColors.mainAppPrimary.withOpacity(0.1),
+                        child: Icon(Icons.person, color: AppColors.mainAppPrimary),
+                      ),
               ),
             ),
           ),
@@ -199,8 +275,8 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Bonjour, Marouane 👋',
+                MarqueeText(
+                  text: '${_getGreeting()}, $_userName 👋',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -216,11 +292,14 @@ class _HomeViewState extends State<HomeView> {
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Casablanca, Morocco',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
+                    Expanded(
+                      child: Text(
+                        _locationText,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const Icon(
@@ -351,7 +430,18 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllCategoriesScreen(),
+                    ),
+                  ).then((selectedCategory) {
+                    if (selectedCategory != null) {
+                      widget.onCategorySelected?.call(selectedCategory);
+                    }
+                  });
+                },
                 child: Text(
                   'Voir tout',
                   style: GoogleFonts.poppins(

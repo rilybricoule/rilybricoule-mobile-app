@@ -37,6 +37,11 @@ class _ClientMainViewState extends State<ClientMainView> {
       HomeView(
         onNavigateToSearch: navigateToSearch,
         onCategorySelected: navigateToSearchWithQuery,
+        onNavigateToProfile: () {
+          setState(() {
+            _currentIndex = 4;
+          });
+        },
       ),
       SearchView(
         shouldShowFilters: false,
