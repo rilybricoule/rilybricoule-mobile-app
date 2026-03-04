@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class ProviderBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -26,7 +26,7 @@ class ProviderBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -37,15 +37,15 @@ class ProviderBottomNavBar extends StatelessWidget {
                 index: 0,
               ),
               _buildNavItem(
-                icon: Icons.calendar_today_outlined,
-                activeIcon: Icons.calendar_today,
-                label: 'Bookings',
+                icon: Icons.build_outlined,
+                activeIcon: Icons.build,
+                label: 'Services',
                 index: 1,
               ),
               _buildNavItem(
-                icon: Icons.chat_bubble_outline,
-                activeIcon: Icons.chat_bubble,
-                label: 'Chat',
+                icon: Icons.calendar_today_outlined,
+                activeIcon: Icons.calendar_today,
+                label: 'Bookings',
                 index: 2,
               ),
               _buildNavItem(
@@ -55,9 +55,9 @@ class ProviderBottomNavBar extends StatelessWidget {
                 index: 3,
               ),
               _buildNavItem(
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
-                label: 'Profile',
+                icon: Icons.chat_bubble_outline,
+                activeIcon: Icons.chat_bubble,
+                label: 'Chat',
                 index: 4,
               ),
             ],
@@ -78,7 +78,7 @@ class ProviderBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(index),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: isActive ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
@@ -89,13 +89,13 @@ class ProviderBottomNavBar extends StatelessWidget {
             Icon(
               isActive ? activeIcon : icon,
               color: isActive ? AppColors.primary : AppColors.textSecondary,
-              size: 24,
+              size: 22,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                 color: isActive ? AppColors.primary : AppColors.textSecondary,
               ),

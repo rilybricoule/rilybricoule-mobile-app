@@ -21,7 +21,7 @@ import 'features/auth/view/register_view.dart';
 import 'features/auth/view/forgot_password_view.dart';
 import 'features/auth/view/welcome_view.dart';
 import 'features/client_main_view.dart';
-import 'features/home/view/provider/provider_main_view.dart';
+import 'features/prestataire/view/provider_main_view.dart';
 import 'features/home/providers/home_provider.dart';
 // Search
 import 'features/search/data/mock_search_repository.dart';
@@ -46,6 +46,7 @@ import 'features/chat/domain/chat_service.dart';
 import 'features/chat/controllers/chat_thread_controller.dart';
 import 'features/chat/presentation/screens/chat_thread_screen.dart';
 import 'features/chat/domain/models/conversation.dart';
+import 'features/prestataire/viewmodel/provider_state.dart';
 // Profile
 import 'features/profile/view/placeholder_screens.dart';
 
@@ -97,6 +98,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => NotificationViewModel(notificationRepository)),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => ProviderState()),
       ],
       child: MaterialApp(
         title: 'RilyBricoule',

@@ -97,13 +97,13 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                 backgroundColor: AppColors.mainAppPrimary.withOpacity(0.1),
                 child: widget.conversation.otherUser.avatarUrl == null
                     ? Text(
-                        widget.conversation.otherUser.name[0].toUpperCase(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.mainAppPrimary,
-                        ),
-                      )
+                  widget.conversation.otherUser.name[0].toUpperCase(),
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.mainAppPrimary,
+                  ),
+                )
                     : null,
               ),
               if (widget.conversation.otherUser.isOnline)
@@ -253,10 +253,10 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   }
 
   void _showMessageOptions(
-    BuildContext context,
-    ChatThreadController controller,
-    Message message,
-  ) {
+      BuildContext context,
+      ChatThreadController controller,
+      Message message,
+      ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
