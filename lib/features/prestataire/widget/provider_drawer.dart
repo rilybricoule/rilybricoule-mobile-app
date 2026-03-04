@@ -4,6 +4,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../view/profile_view.dart';
+import '../view/settings_view.dart';
 
 class ProviderDrawer extends StatelessWidget {
   const ProviderDrawer({super.key});
@@ -93,6 +95,10 @@ class ProviderDrawer extends StatelessWidget {
                   title: 'Mon Profil',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProviderProfileView()),
+                    );
                   },
                 ),
                 _buildMenuItem(
@@ -101,6 +107,10 @@ class ProviderDrawer extends StatelessWidget {
                   title: 'Statistiques',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StatisticsView()),
+                    );
                   },
                 ),
                 _buildMenuItem(
@@ -109,6 +119,10 @@ class ProviderDrawer extends StatelessWidget {
                   title: 'Paramètres',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsView()),
+                    );
                   },
                 ),
                 _buildMenuItem(
@@ -127,6 +141,10 @@ class ProviderDrawer extends StatelessWidget {
                   title: 'Aide & Support',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HelpSupportView()),
+                    );
                   },
                 ),
                 _buildMenuItem(
@@ -135,6 +153,10 @@ class ProviderDrawer extends StatelessWidget {
                   title: 'Confidentialité',
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PrivacyView()),
+                    );
                   },
                 ),
               ],
@@ -191,6 +213,8 @@ class ProviderDrawer extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    final navigator = Navigator.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -206,9 +230,8 @@ class ProviderDrawer extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 Navigator.pop(dialogContext);
-                final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
                 await authViewModel.logout();
-                Navigator.pushNamedAndRemoveUntil(context, AppRoutes.welcome, (route) => false);
+                navigator.pushNamedAndRemoveUntil(AppRoutes.welcome, (route) => false);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: Text('Déconnexion'),

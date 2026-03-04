@@ -7,7 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../models/user_role.dart';
 import '../../../features/client_main_view.dart';
-import '../../../features/home/view/provider/provider_main_view.dart';
+import '../../../features/prestataire/view/provider_main_view.dart';
 import '../../profile/data/user_session.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';

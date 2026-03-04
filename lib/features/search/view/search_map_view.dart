@@ -48,7 +48,10 @@ class _SearchMapViewState extends State<SearchMapView> {
   }
 
   Future<void> _initializeMap() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
     final permissionStatus = await _locationService.checkPermission();
     setState(() => _permissionStatus = permissionStatus);
@@ -56,10 +59,7 @@ class _SearchMapViewState extends State<SearchMapView> {
     if (permissionStatus == LocationPermissionStatus.granted) {
       await _loadProviders();
     } else {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Permission de localisation requise';
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -178,7 +178,10 @@ class _SearchMapViewState extends State<SearchMapView> {
 
   Future<void> _requestPermission() async {
     final status = await _locationService.requestPermission();
-    setState(() => _permissionStatus = status);
+    setState(() {
+      _permissionStatus = status;
+      _errorMessage = null;
+    });
 
     if (status == LocationPermissionStatus.granted) {
       await _initializeMap();
