@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/widgets/app_avatar.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import 'edit_profile_view.dart';
 
 class ProviderProfileView extends StatelessWidget {
   const ProviderProfileView({super.key});
@@ -13,6 +14,15 @@ class ProviderProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -149,23 +159,43 @@ class ProviderProfileView extends StatelessWidget {
                   _buildMenuItem(
                     icon: Icons.person_outline,
                     title: 'Edit Profile',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EditProviderProfileView()),
+                      );
+                    },
                   ),
                   _buildMenuItem(
                     icon: Icons.notifications_none,
                     title: 'Notification Settings',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const NotificationSettingsView()),
+                      );
+                    },
                   ),
                   _buildMenuItem(
                     icon: Icons.language_outlined,
                     title: 'Language',
                     trailing: const Text('English'),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LanguageView()),
+                      );
+                    },
                   ),
                   _buildMenuItem(
                     icon: Icons.help_outline,
                     title: 'Help & FAQ',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HelpFAQView()),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   SizedBox(

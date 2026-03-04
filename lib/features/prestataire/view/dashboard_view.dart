@@ -13,7 +13,9 @@ import 'earnings_view.dart';
 import 'reviews_view.dart';
 
 class ProviderDashboardView extends StatefulWidget {
-  const ProviderDashboardView({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  
+  const ProviderDashboardView({super.key, this.scaffoldKey});
 
   @override
   State<ProviderDashboardView> createState() => _ProviderDashboardViewState();
@@ -45,6 +47,9 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                             builder: (_) => const ProviderNotificationsView(),
                           ),
                         );
+                      },
+                      onProfileTap: () {
+                        widget.scaffoldKey?.currentState?.openDrawer();
                       },
                     );
                   },

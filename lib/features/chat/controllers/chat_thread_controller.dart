@@ -74,6 +74,15 @@ class ChatThreadController extends ChangeNotifier {
     }
   }
 
+  Future<void> sendLocation(double lat, double lng, String label) async {
+    try {
+      await _repository.sendLocation(conversationId, lat, lng, label);
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
   Future<void> deleteMessage(String messageId) async {
     try {
       await _repository.deleteMessage(conversationId, messageId);

@@ -144,6 +144,38 @@ class LocalChatRepository implements ChatRepository {
   }
 
   @override
+  Future<void> sendLocation(String conversationId, double lat, double lng, String label) async {
+    final message = Message(
+      id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
+      conversationId: conversationId,
+      senderId: currentUserId,
+      type: MessageType.location,
+      latitude: lat,
+      longitude: lng,
+      locationLabel: label,
+      createdAt: DateTime.now(),
+      status: MessageStatus.sending,
+    );
+
+    _messages[conversationId] = _messages[conversationId] ?? [];
+    _messages[conversationId]!.add(message);
+    _notifyMessages(conversationId);
+    _updateConversationPreview(conversationId, '📍 Position partagée');
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    _updateMessageStatus(conversationId, message.id, MessageStatus.sent);
+
+    await Future.delayed(const Duration(milliseconds: 300));
+    _updateMessageStatus(conversationId, message.id, MessageStatus.delivered);
+
+    final convIndex = _conversations.indexWhere((c) => c.id == conversationId);
+    if (convIndex != -1 && _conversations[convIndex].otherUser.isOnline) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      _updateMessageStatus(conversationId, message.id, MessageStatus.read);
+    }
+  }
+
+  @override
   Future<void> markAsRead(String conversationId) async {
     final index = _conversations.indexWhere((c) => c.id == conversationId);
     if (index != -1) {

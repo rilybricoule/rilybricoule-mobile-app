@@ -26,7 +26,7 @@ class _ProviderMainViewState extends State<ProviderMainView> {
   void initState() {
     super.initState();
     _screens = [
-      const ProviderDashboardView(),
+      ProviderDashboardView(scaffoldKey: _scaffoldKey),
       const ProviderServicesView(),
       const ProviderBookingsView(),
       const ProviderPlanningView(),
@@ -37,7 +37,8 @@ class _ProviderMainViewState extends State<ProviderMainView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: ProviderDrawer(),  // AJOUTÉ
+      key: _scaffoldKey,
+      drawer: const ProviderDrawer(),
       body: _screens[_currentIndex],
       bottomNavigationBar: ProviderBottomNavBar(
         currentIndex: _currentIndex,

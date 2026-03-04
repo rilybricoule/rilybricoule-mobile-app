@@ -65,6 +65,10 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   controller.sendVoice(voiceUrl, duration);
                   _scrollToBottom();
                 },
+                onSendLocation: (lat, lng, label) {
+                  controller.sendLocation(lat, lng, label);
+                  _scrollToBottom();
+                },
               );
             },
           ),

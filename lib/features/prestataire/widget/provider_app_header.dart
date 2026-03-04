@@ -9,6 +9,7 @@ class ProviderAppHeader extends StatelessWidget {
   final VoidCallback onOnlineToggle;
   final int notificationCount;
   final VoidCallback onNotificationTap;
+  final VoidCallback? onProfileTap;
 
   const ProviderAppHeader({
     super.key,
@@ -17,6 +18,7 @@ class ProviderAppHeader extends StatelessWidget {
     required this.onOnlineToggle,
     this.notificationCount = 0,
     required this.onNotificationTap,
+    this.onProfileTap,
   });
 
   @override
@@ -38,9 +40,7 @@ class ProviderAppHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {
-              Scaffold.of(context).openDrawer();
-            },
+            onTap: onProfileTap,
             child: const AppAvatar(radius: 22),
           ),
           const SizedBox(width: 12),

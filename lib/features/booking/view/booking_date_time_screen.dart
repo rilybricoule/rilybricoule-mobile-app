@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../map/widgets/map_preview.dart';
 import '../widgets/custom_calendar.dart';
 import '../widgets/time_slot_button.dart';
 import '../widgets/edit_address_dialog.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class BookingDateTimeScreen extends StatefulWidget {
   const BookingDateTimeScreen({super.key});
@@ -458,28 +459,11 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SizedBox(
-              height: 200,
-              child: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(33.5731, -7.5898),
-                  zoom: 13,
-                ),
-                markers: {
-                  const Marker(
-                    markerId: MarkerId('address'),
-                    position: LatLng(33.5731, -7.5898),
-                  ),
-                },
-                zoomControlsEnabled: false,
-                scrollGesturesEnabled: false,
-                zoomGesturesEnabled: false,
-                tiltGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-              ),
-            ),
+          MapPreview(
+            position: const LatLng(33.5731, -7.5898),
+            height: 200,
+            borderRadius: 12,
+            interactive: false,
           ),
         ],
       ),

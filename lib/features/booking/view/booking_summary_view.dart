@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../map/widgets/map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class BookingSummaryView extends StatelessWidget {
   const BookingSummaryView({super.key});
@@ -256,6 +258,13 @@ class BookingSummaryView extends StatelessWidget {
             const SizedBox(height: 16),
             _buildDetailRow(Icons.note_alt_outlined, 'Note', note),
           ],
+          const SizedBox(height: 16),
+          MapPreview(
+            position: const LatLng(33.5731, -7.5898),
+            height: 150,
+            borderRadius: 12,
+            interactive: false,
+          ),
         ],
       ),
     );

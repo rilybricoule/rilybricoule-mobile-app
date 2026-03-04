@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../services/location/location_service.dart';
 
 class ChatInputBar extends StatefulWidget {
   final Function(String) onSendText;
   final Function(String) onSendImage;
   final Function(String, int) onSendVoice;
+  final Function(double, double, String)? onSendLocation;
 
   const ChatInputBar({
     super.key,
     required this.onSendText,
     required this.onSendImage,
     required this.onSendVoice,
+    this.onSendLocation,
   });
 
   @override
@@ -79,6 +82,18 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 _pickAndSendImage();
               },
             ),
+            if (widget.onSendLocation != null)
+              ListTile(
+                leading: const Icon(Icons.location_on, color: AppColors.mainAppPrimary),
+                title: Text(
+                  'Partager ma position',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _shareLocation();
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.picture_as_pdf, color: AppColors.mainAppPrimary),
               title: Text(
@@ -159,6 +174,50 @@ class _ChatInputBarState extends State<ChatInputBar> {
         duration: const Duration(seconds: 1),
       ),
     );
+  }
+
+  Future<void> _shareLocation() async {
+    if (widget.onSendLocation == null) return;
+
+    final locationService = LocationService();
+    final status = await locationService.checkPermission();
+
+    if (status != LocationPermissionStatus.granted) {
+      final requestStatus = await locationService.requestPermission();
+      if (requestStatus != LocationPermissionStatus.granted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Permission de localisation requise',
+                style: GoogleFonts.poppins(),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+    }
+
+    final position = await locationService.getCurrentPosition();
+    if (position != null) {
+      widget.onSendLocation!(
+        position.latitude,
+        position.longitude,
+        'Ma position',
+      );
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Impossible d\'obtenir votre position',
+              style: GoogleFonts.poppins(),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override

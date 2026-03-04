@@ -11,6 +11,7 @@ abstract class ChatRepository {
   Future<void> sendText(String conversationId, String text);
   Future<void> sendImage(String conversationId, String imageUrl);
   Future<void> sendVoice(String conversationId, String voiceUrl, int duration);
+  Future<void> sendLocation(String conversationId, double lat, double lng, String label);
   Future<void> markAsRead(String conversationId);
   Future<Conversation> getOrCreateConversationWithUser(UserSummary userSummary);
   Future<void> deleteMessage(String conversationId, String messageId);
