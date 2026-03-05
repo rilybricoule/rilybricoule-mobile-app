@@ -21,6 +21,7 @@ class AppRoutes {
   static const String favorites = '/favorites';
   static const String help = '/help';
   static const String about = '/about';
+  static const String discoverSwipe = '/discover-swipe';
   
   // Dynamic route for chat thread
   static String chatThread(String conversationId) => '/chat/$conversationId';

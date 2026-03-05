@@ -26,6 +26,10 @@ import 'features/home/providers/home_provider.dart';
 // Search
 import 'features/search/data/mock_search_repository.dart';
 import 'features/search/viewmodel/search_viewmodel.dart';
+// Discover Swipe
+import 'features/discover_swipe/view/discover_swipe_view.dart';
+import 'features/discover_swipe/viewmodel/discover_swipe_viewmodel.dart';
+import 'features/discover_swipe/repository/mock_swipe_repository.dart';
 // Notifications
 import 'features/notifications/data/mock_notification_repository.dart';
 import 'features/notifications/viewmodel/notification_viewmodel.dart';
@@ -87,6 +91,7 @@ class MyApp extends StatelessWidget {
     final AuthRepository authRepository = FirebaseAuthRepository(authDataSource);
     
     final searchRepository = MockSearchRepository();
+    final swipeRepository = MockSwipeRepository();
     final notificationRepository = MockNotificationRepository();
     final chatRepository = ChatService().repository;
     
@@ -95,6 +100,7 @@ class MyApp extends StatelessWidget {
         Provider<AuthRepository>.value(value: authRepository),
         ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
         ChangeNotifierProvider(create: (_) => SearchViewModel(searchRepository)),
+        ChangeNotifierProvider(create: (_) => DiscoverSwipeViewModel(searchRepository, swipeRepository)),
         ChangeNotifierProvider(
             create: (_) => NotificationViewModel(notificationRepository)),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
@@ -168,6 +174,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.favorites: (context) => const FavoritesScreen(),
           AppRoutes.help: (context) => const HelpScreen(),
           AppRoutes.about: (context) => const AboutScreen(),
+          AppRoutes.discoverSwipe: (context) => const DiscoverSwipeView(),
         },
       ),
     );

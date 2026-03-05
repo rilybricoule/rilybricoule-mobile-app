@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../home/widgets/provider_card.dart';
 import '../viewmodel/search_viewmodel.dart';
+import '../../discover_swipe/models/search_context_bundle.dart';
 import 'search_map_view.dart';
 
 class SearchView extends StatefulWidget {
@@ -70,6 +71,24 @@ class _SearchViewState extends State<SearchView> {
   void applyInitialQuery(String query) {
     _searchController.text = query;
     context.read<SearchViewModel>().search(query);
+  }
+
+  void _navigateToSwipe(SearchViewModel viewModel) {
+    final bundle = SearchContextBundle(
+      query: viewModel.currentQuery,
+      categoryId: viewModel.categoryId,
+      minRating: viewModel.minRating,
+      maxDistanceKm: viewModel.maxDistance,
+      availableNow: viewModel.availableNow,
+      minPrice: viewModel.minPrice,
+      maxPrice: viewModel.maxPrice,
+    );
+
+    Navigator.pushNamed(
+      context,
+      '/discover-swipe',
+      arguments: bundle,
+    );
   }
 
   void _showFilters() {
@@ -179,94 +198,139 @@ class _SearchViewState extends State<SearchView> {
           const SizedBox(height: 12),
           Consumer<SearchViewModel>(
             builder: (context, viewModel, child) {
-              return Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
+              return Column(
+                children: [
+                  if (viewModel.providers.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
                       child: GestureDetector(
-                        onTap: () => viewModel.setViewMode('list'),
+                        onTap: () => _navigateToSwipe(viewModel),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            color: viewModel.viewMode == 'list'
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.mainAppPrimary,
+                                AppColors.mainAppPrimary.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.mainAppPrimary.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.format_list_bulleted,
-                                size: 18,
+                              const Icon(Icons.explore, color: Colors.white, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Découvrir en swipe',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => viewModel.setViewMode('list'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
                                 color: viewModel.viewMode == 'list'
-                                    ? AppColors.mainAppPrimary
-                                    : Colors.grey[600],
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Liste',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: viewModel.viewMode == 'list'
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                  color: viewModel.viewMode == 'list'
-                                      ? AppColors.mainAppPrimary
-                                      : Colors.grey[600],
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.format_list_bulleted,
+                                    size: 18,
+                                    color: viewModel.viewMode == 'list'
+                                        ? AppColors.mainAppPrimary
+                                        : Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Liste',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: viewModel.viewMode == 'list'
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: viewModel.viewMode == 'list'
+                                          ? AppColors.mainAppPrimary
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => viewModel.setViewMode('map'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: viewModel.viewMode == 'map'
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.map,
-                                size: 18,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => viewModel.setViewMode('map'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
                                 color: viewModel.viewMode == 'map'
-                                    ? AppColors.mainAppPrimary
-                                    : Colors.grey[600],
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Carte',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: viewModel.viewMode == 'map'
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                  color: viewModel.viewMode == 'map'
-                                      ? AppColors.mainAppPrimary
-                                      : Colors.grey[600],
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.map,
+                                    size: 18,
+                                    color: viewModel.viewMode == 'map'
+                                        ? AppColors.mainAppPrimary
+                                        : Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Carte',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: viewModel.viewMode == 'map'
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: viewModel.viewMode == 'map'
+                                          ? AppColors.mainAppPrimary
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
