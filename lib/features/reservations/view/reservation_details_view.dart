@@ -632,7 +632,7 @@ class _ReservationDetailsContent extends StatelessWidget {
                   isOnline: tracking.isOnline,
                 );
                 
-                final conversation = await chatRepo.getOrCreateConversationWithUser(providerUser);
+                final conversation = await chatRepo.getOrCreateConversationWithProvider('1');
                 
                 if (context.mounted) {
                   Navigator.pushNamed(

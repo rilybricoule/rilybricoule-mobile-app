@@ -8,6 +8,7 @@ class BookingStatusViewModel extends ChangeNotifier {
 
   // Mock data - will be replaced with API data
   final String bookingId = 'BK-2024-001';
+  final String providerId = '1';
   final String providerName = 'Ahmed El Mansouri';
   final String providerCategory = 'Plombier Expert';
   final String serviceName = 'Réparation de fuite';

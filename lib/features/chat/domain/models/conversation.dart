@@ -8,6 +8,7 @@ class Conversation {
   final int unreadCount;
   final bool isPinned;
   final String? bookingId;
+  final String? bookingStatus;
 
   Conversation({
     required this.id,
@@ -17,6 +18,7 @@ class Conversation {
     required this.unreadCount,
     this.isPinned = false,
     this.bookingId,
+    this.bookingStatus,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class Conversation {
       unreadCount: json['unreadCount'] as int? ?? 0,
       isPinned: json['isPinned'] as bool? ?? false,
       bookingId: json['bookingId'] as String?,
+      bookingStatus: json['bookingStatus'] as String?,
     );
   }
 
@@ -40,6 +43,7 @@ class Conversation {
       'unreadCount': unreadCount,
       'isPinned': isPinned,
       'bookingId': bookingId,
+      'bookingStatus': bookingStatus,
     };
   }
 
@@ -51,6 +55,7 @@ class Conversation {
     int? unreadCount,
     bool? isPinned,
     String? bookingId,
+    String? bookingStatus,
   }) {
     return Conversation(
       id: id ?? this.id,
@@ -60,6 +65,7 @@ class Conversation {
       unreadCount: unreadCount ?? this.unreadCount,
       isPinned: isPinned ?? this.isPinned,
       bookingId: bookingId ?? this.bookingId,
+      bookingStatus: bookingStatus ?? this.bookingStatus,
     );
   }
 }

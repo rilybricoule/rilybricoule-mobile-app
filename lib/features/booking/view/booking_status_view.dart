@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../client_main_view.dart';
+import '../../chat/domain/chat_service.dart';
 import '../viewmodel/booking_status_viewmodel.dart';
 import '../widgets/booking_detail_row.dart';
 
@@ -282,22 +283,37 @@ class _BookingStatusContent extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final viewModel = context.watch<BookingStatusViewModel>();
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ClientMainView(initialIndex: 2),
-                  ),
-                  (route) => false,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final chatRepo = ChatService().repository;
+                final conversation = await chatRepo.getOrCreateConversationWithProvider(
+                  viewModel.providerId,
                 );
+                
+                if (context.mounted) {
+                  Navigator.pushNamed(
+                    context,
+                    '/chat/${conversation.id}',
+                    arguments: conversation,
+                  );
+                }
               },
+              icon: const Icon(Icons.chat_bubble_outline, size: 20),
+              label: Text(
+                'Contacter le prestataire',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.mainAppPrimary,
                 foregroundColor: Colors.white,
@@ -306,13 +322,6 @@ class _BookingStatusContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
-              ),
-              child: Text(
-                'Voir mes réservations',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ),
           ),
@@ -323,12 +332,8 @@ class _BookingStatusContent extends StatelessWidget {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => const ClientMainView(),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(opacity: animation, child: child);
-                    },
-                    transitionDuration: const Duration(milliseconds: 300),
+                  MaterialPageRoute(
+                    builder: (context) => const ClientMainView(initialIndex: 2),
                   ),
                   (route) => false,
                 );
@@ -342,10 +347,37 @@ class _BookingStatusContent extends StatelessWidget {
                 ),
               ),
               child: Text(
+                'Voir mes réservations',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const ClientMainView(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    transitionDuration: const Duration(milliseconds: 300),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: Text(
                 'Retour à l\'accueil',
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ),

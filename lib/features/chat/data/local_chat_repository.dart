@@ -3,6 +3,7 @@ import '../domain/chat_repository.dart';
 import '../domain/models/conversation.dart';
 import '../domain/models/message.dart';
 import '../domain/models/user_summary.dart';
+import '../domain/exceptions/chat_not_allowed_exception.dart';
 
 class LocalChatRepository implements ChatRepository {
   final List<Conversation> _conversations = [];
@@ -18,12 +19,20 @@ class LocalChatRepository implements ChatRepository {
   Future<List<Conversation>> getConversations({String? query}) async {
     await Future.delayed(const Duration(milliseconds: 300));
     
+    // Filter conversations to only show those with confirmed bookings
+    final validConversations = _conversations.where((c) {
+      return c.bookingId != null && 
+             (c.bookingStatus == 'confirmed' || 
+              c.bookingStatus == 'en_route' || 
+              c.bookingStatus == 'in_progress');
+    }).toList();
+    
     if (query == null || query.isEmpty) {
-      return List.from(_conversations)..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
+      return List.from(validConversations)..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
     }
     
     final lowerQuery = query.toLowerCase();
-    return _conversations
+    return validConversations
         .where((c) =>
             c.otherUser.name.toLowerCase().contains(lowerQuery) ||
             c.lastMessagePreview.toLowerCase().contains(lowerQuery))
@@ -185,23 +194,46 @@ class LocalChatRepository implements ChatRepository {
   }
 
   @override
-  Future<Conversation> getOrCreateConversationWithUser(UserSummary userSummary) async {
+  Future<bool> hasConfirmedBookingWithProvider(String providerId) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    // Mock: Check if provider ID matches any confirmed booking
+    // In real implementation, this would query the reservations API
+    return providerId == '1' || providerId == '2'; // Mock confirmed bookings
+  }
+
+  @override
+  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId}) async {
     await Future.delayed(const Duration(milliseconds: 200));
     
+    // Check if user has confirmed booking with provider
+    final hasBooking = await hasConfirmedBookingWithProvider(providerId);
+    if (!hasBooking) {
+      throw ChatNotAllowedException('CHAT_NOT_ALLOWED');
+    }
+    
     // Find existing conversation
-    final existingIndex = _conversations.indexWhere((c) => c.otherUser.id == userSummary.id);
+    final existingIndex = _conversations.indexWhere((c) => c.otherUser.id == providerId);
     
     if (existingIndex != -1) {
       return _conversations[existingIndex];
     }
     
-    // Create new conversation
+    // Create new conversation with booking info (mock data)
+    final providerUser = UserSummary(
+      id: providerId,
+      name: 'Provider $providerId',
+      avatarUrl: 'assets/images/provider.png',
+      isOnline: true,
+    );
+    
     final newConv = Conversation(
       id: 'conv_${DateTime.now().millisecondsSinceEpoch}',
-      otherUser: userSummary,
+      otherUser: providerUser,
       lastMessagePreview: 'Commencez la conversation',
       lastMessageAt: DateTime.now(),
       unreadCount: 0,
+      bookingId: bookingId ?? 'booking_$providerId',
+      bookingStatus: 'confirmed',
     );
     
     _conversations.insert(0, newConv);

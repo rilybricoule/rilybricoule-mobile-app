@@ -11,7 +11,7 @@ import '../widgets/rating_summary.dart';
 import 'all_services_screen.dart';
 import 'all_reviews_screen.dart';
 import '../../chat/domain/chat_service.dart';
-import '../../chat/domain/models/user_summary.dart';
+import '../../chat/domain/exceptions/chat_not_allowed_exception.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
   const ProviderProfileScreen({super.key});
@@ -520,39 +520,95 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.mainAppPrimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                onPressed: () async {
-                  // Create or get conversation with this provider
-                  final chatRepo = ChatService().repository;
-                  final providerUser = UserSummary(
-                    id: _provider!.id,
-                    name: _provider!.name,
-                    avatarUrl: _provider!.avatar,
-                    isOnline: true,
-                  );
-                  
-                  final conversation = await chatRepo.getOrCreateConversationWithUser(providerUser);
-                  
-                  if (mounted) {
-                    Navigator.pushNamed(
-                      context,
-                      '/chat/${conversation.id}',
-                      arguments: conversation,
-                    );
-                  }
-                },
-                icon: const Icon(Icons.chat_bubble_outline),
-                color: AppColors.mainAppPrimary,
-              ),
+            FutureBuilder<bool>(
+              future: ChatService().repository.hasConfirmedBookingWithProvider(_provider!.id),
+              builder: (context, snapshot) {
+                final hasBooking = snapshot.data ?? false;
+                return Tooltip(
+                  message: hasBooking ? 'Contacter' : 'Disponible après réservation',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: hasBooking 
+                        ? AppColors.mainAppPrimary.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      onPressed: hasBooking ? () => _openChat() : null,
+                      icon: const Icon(Icons.chat_bubble_outline),
+                      color: hasBooking ? AppColors.mainAppPrimary : Colors.grey,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _openChat() async {
+    try {
+      final chatRepo = ChatService().repository;
+      final conversation = await chatRepo.getOrCreateConversationWithProvider(_provider!.id);
+      
+      if (mounted) {
+        Navigator.pushNamed(
+          context,
+          '/chat/${conversation.id}',
+          arguments: conversation,
+        );
+      }
+    } on ChatNotAllowedException {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(
+              'Discussion indisponible',
+              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+            ),
+            content: Text(
+              'Le chat est accessible après confirmation de réservation.',
+              style: GoogleFonts.poppins(fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Retour',
+                  style: GoogleFonts.poppins(color: Colors.grey),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  if (_provider!.services.isNotEmpty) {
+                    Navigator.pushNamed(
+                      context,
+                      '/booking-date-time',
+                      arguments: {
+                        'providerId': _provider!.id,
+                        'serviceId': _provider!.services.first.id,
+                      },
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.mainAppPrimary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(
+                  'Réserver maintenant',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 }
