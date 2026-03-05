@@ -151,6 +151,8 @@ class _HomeViewState extends State<HomeView> {
       priceValue: 150.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 2,
     ),
     ProviderModel(
       id: '2',
@@ -165,6 +167,8 @@ class _HomeViewState extends State<HomeView> {
       priceValue: 100.0,
       isVerified: true,
       isAvailable: false,
+      categoryId: '3',
+      activeJobsCount: 5,
     ),
     ProviderModel(
       id: '3',
@@ -179,6 +183,8 @@ class _HomeViewState extends State<HomeView> {
       priceValue: 200.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '2',
+      activeJobsCount: 1,
     ),
   ];
 

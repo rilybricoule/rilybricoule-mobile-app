@@ -17,6 +17,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 150.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 2,
     ),
     ProviderModel(
       id: '2',
@@ -31,6 +33,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 120.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 1,
     ),
     ProviderModel(
       id: '3',
@@ -45,6 +49,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 200.0,
       isVerified: false,
       isAvailable: false,
+      categoryId: '5',
+      activeJobsCount: 7,
     ),
     ProviderModel(
       id: '4',
@@ -59,6 +65,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 180.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 0,
     ),
     ProviderModel(
       id: '5',
@@ -73,6 +81,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 100.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '3',
+      activeJobsCount: 3,
     ),
     ProviderModel(
       id: '6',
@@ -87,6 +97,8 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 160.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '2',
+      activeJobsCount: 4,
     ),
   ];
 

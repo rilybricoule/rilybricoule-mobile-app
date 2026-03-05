@@ -21,6 +21,8 @@ class ProvidersRepository {
       position: const LatLng(33.5731, -7.5898),
       isVerified: true,
       status: ProviderStatus.available,
+      categoryId: '5',
+      activeJobsCount: 2,
     ),
     ProviderLocation(
       id: '2',
@@ -34,6 +36,8 @@ class ProvidersRepository {
       position: const LatLng(33.5850, -7.6050),
       isVerified: true,
       status: ProviderStatus.available,
+      categoryId: '1',
+      activeJobsCount: 1,
     ),
     ProviderLocation(
       id: '3',
@@ -47,6 +51,8 @@ class ProvidersRepository {
       position: const LatLng(33.5650, -7.5750),
       isVerified: true,
       status: ProviderStatus.busy,
+      categoryId: '2',
+      activeJobsCount: 6,
     ),
     ProviderLocation(
       id: '4',
@@ -60,6 +66,8 @@ class ProvidersRepository {
       position: const LatLng(33.5800, -7.5700),
       isVerified: false,
       status: ProviderStatus.available,
+      categoryId: '6',
+      activeJobsCount: 0,
     ),
     ProviderLocation(
       id: '5',
@@ -73,6 +81,8 @@ class ProvidersRepository {
       position: const LatLng(33.5900, -7.5950),
       isVerified: true,
       status: ProviderStatus.available,
+      categoryId: '4',
+      activeJobsCount: 3,
     ),
   ];
 
