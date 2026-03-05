@@ -218,10 +218,20 @@ class LocalChatRepository implements ChatRepository {
       return _conversations[existingIndex];
     }
     
+    // Map provider IDs to real names
+    final providerNames = {
+      '1': 'Ahmed El Mansouri',
+      '2': 'Yassine Amrani',
+      '3': 'Omar Mansouri',
+      '4': 'Omar Hassan',
+      '5': 'Sarah Benjelloun',
+      '6': 'Fatima Zahra',
+    };
+    
     // Create new conversation with booking info (mock data)
     final providerUser = UserSummary(
       id: providerId,
-      name: 'Provider $providerId',
+      name: providerNames[providerId] ?? 'Prestataire',
       avatarUrl: 'assets/images/provider.png',
       isOnline: true,
     );

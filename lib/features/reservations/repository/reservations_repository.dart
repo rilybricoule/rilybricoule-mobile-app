@@ -240,12 +240,14 @@ class MockReservationsRepositoryTracking implements ReservationsTrackingReposito
     final status = _reservationStatuses[reservationId] ?? TrackingStatus.enRoute;
     final etaMinutes = _reservationEtas[reservationId];
     final providerName = 'Ahmed El Mansouri';
+    final providerId = '1'; // Mock: All reservations use provider '1' for testing
 
     final headerMessage = HeaderMessageBuilder.build(status, providerName);
     final steps = TrackingStepBuilder.buildSteps(status);
 
     return ReservationTracking(
       reservationId: reservationId,
+      providerId: providerId,
       status: status,
       etaMinutes: etaMinutes,
       headerTitle: headerMessage.title,

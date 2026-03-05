@@ -624,22 +624,32 @@ class _ReservationDetailsContent extends StatelessWidget {
               // Open chat with provider
               final tracking = viewModel.tracking;
               if (tracking != null) {
-                final chatRepo = ChatService().repository;
-                final providerUser = UserSummary(
-                  id: tracking.reservationId, // Use reservation ID as unique identifier
-                  name: tracking.providerName,
-                  avatarUrl: tracking.providerImageUrl,
-                  isOnline: tracking.isOnline,
-                );
-                
-                final conversation = await chatRepo.getOrCreateConversationWithProvider('1');
-                
-                if (context.mounted) {
-                  Navigator.pushNamed(
-                    context,
-                    '/chat/${conversation.id}',
-                    arguments: conversation,
+                try {
+                  final chatRepo = ChatService().repository;
+                  final conversation = await chatRepo.getOrCreateConversationWithProvider(
+                    tracking.providerId,
+                    bookingId: tracking.reservationId,
                   );
+                  
+                  if (context.mounted) {
+                    Navigator.pushNamed(
+                      context,
+                      '/chat/${conversation.id}',
+                      arguments: conversation,
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Chat disponible uniquement après réservation confirmée',
+                          style: GoogleFonts.poppins(),
+                        ),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
                 }
               }
             },

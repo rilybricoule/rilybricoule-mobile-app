@@ -3,6 +3,7 @@ import 'tracking_status.dart';
 
 class ReservationTracking {
   final String reservationId;
+  final String providerId;
   final TrackingStatus status;
   final int? etaMinutes;
   final String headerTitle;
@@ -19,6 +20,7 @@ class ReservationTracking {
 
   ReservationTracking({
     required this.reservationId,
+    required this.providerId,
     required this.status,
     this.etaMinutes,
     required this.headerTitle,
