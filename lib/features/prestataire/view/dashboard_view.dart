@@ -13,7 +13,14 @@ import 'earnings_view.dart';
 import 'reviews_view.dart';
 
 class ProviderDashboardView extends StatefulWidget {
-  const ProviderDashboardView({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final Function(int)? onNavigateToTab;  // NOUVEAU
+
+  const ProviderDashboardView({
+    super.key,
+    this.scaffoldKey,
+    this.onNavigateToTab,  // NOUVEAU
+  });
 
   @override
   State<ProviderDashboardView> createState() => _ProviderDashboardViewState();
@@ -46,6 +53,9 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                           ),
                         );
                       },
+                      onAvatarTap: () {
+                        widget.scaffoldKey?.currentState?.openDrawer();
+                      },
                     );
                   },
                 ),
@@ -66,9 +76,12 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       icon: Icons.calendar_today,
                       value: '127',
                       label: 'Total bookings',
-                      color: AppColors.primary,
+                      color: AppColors.providerPrimary,
                       trend: '+12%',
-                      onTap: () {},
+                      onTap: () {
+                        // MODIFIÉ: Navigate to Bookings tab (index 2)
+                        widget.onNavigateToTab?.call(2);
+                      },
                     ),
                     _StatCard(
                       icon: Icons.attach_money,
@@ -88,7 +101,10 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       value: '8',
                       label: 'Pending requests',
                       color: AppColors.warning,
-                      onTap: () {},
+                      onTap: () {
+                        // MODIFIÉ: Navigate to Bookings tab (index 2)
+                        widget.onNavigateToTab?.call(2);
+                      },
                     ),
                     _StatCard(
                       icon: Icons.star,
@@ -113,7 +129,10 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                     AppSectionHeader(
                       title: 'Recent bookings',
                       trailing: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // MODIFIÉ: Navigate to Bookings tab
+                          widget.onNavigateToTab?.call(2);
+                        },
                         child: const Text('See all'),
                       ),
                     ),
@@ -132,6 +151,7 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       date: 'Today • 14:00',
                       statusLabel: 'Pending',
                       statusColor: AppColors.warning,
+                      onTap: () => widget.onNavigateToTab?.call(2),  // NOUVEAU
                     ),
                     const SizedBox(height: 12),
                     _BookingPreviewCard(
@@ -140,6 +160,7 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       date: 'Tomorrow • 10:30',
                       statusLabel: 'Confirmed',
                       statusColor: AppColors.success,
+                      onTap: () => widget.onNavigateToTab?.call(2),  // NOUVEAU
                     ),
                   ]),
                 ),
@@ -153,7 +174,10 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                     AppSectionHeader(
                       title: 'Upcoming missions today',
                       trailing: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // MODIFIÉ: Navigate to Planning tab
+                          widget.onNavigateToTab?.call(3);
+                        },
                         child: const Text('View Calendar'),
                       ),
                     ),
@@ -171,6 +195,7 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       service: 'Air Conditioning',
                       time: '16:30',
                       address: 'Hay Hassani, Casablanca',
+                      onTap: () => widget.onNavigateToTab?.call(3),  // NOUVEAU
                     ),
                     const SizedBox(height: 12),
                     _MissionTodayCard(
@@ -179,6 +204,7 @@ class _ProviderDashboardViewState extends State<ProviderDashboardView> {
                       time: '18:45',
                       address: 'Oasis, Casablanca',
                       isUrgent: true,
+                      onTap: () => widget.onNavigateToTab?.call(3),  // NOUVEAU
                     ),
                   ]),
                 ),
@@ -198,6 +224,7 @@ class _MissionTodayCard extends StatelessWidget {
   final String time;
   final String address;
   final bool isUrgent;
+  final VoidCallback? onTap;  // NOUVEAU
 
   const _MissionTodayCard({
     required this.clientName,
@@ -205,6 +232,7 @@ class _MissionTodayCard extends StatelessWidget {
     required this.time,
     required this.address,
     this.isUrgent = false,
+    this.onTap,  // NOUVEAU
   });
 
   @override
@@ -221,12 +249,13 @@ class _MissionTodayCard extends StatelessWidget {
           : null,
       child: AppCard(
         padding: const EdgeInsets.all(16),
+        onTap: onTap,  // NOUVEAU
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.providerPrimary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -236,7 +265,7 @@ class _MissionTodayCard extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
-                      color: AppColors.primary,
+                      color: AppColors.providerPrimary,
                     ),
                   ),
                   Text(
@@ -244,7 +273,7 @@ class _MissionTodayCard extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
-                      color: AppColors.primary,
+                      color: AppColors.providerPrimary,
                     ),
                   ),
                 ],
@@ -303,6 +332,7 @@ class _MissionTodayCard extends StatelessWidget {
     );
   }
 }
+
 class _NotificationButton extends StatelessWidget {
   final int badgeCount;
   final VoidCallback onPressed;
@@ -345,9 +375,9 @@ class _NotificationButton extends StatelessWidget {
               child: Text(
                 '$badgeCount',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -401,9 +431,9 @@ class _StatCard extends StatelessWidget {
                     Text(
                       '$prefix ',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                   Flexible(
@@ -411,10 +441,10 @@ class _StatCard extends StatelessWidget {
                       value,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 22,
-                          ),
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                      ),
                     ),
                   ),
                   if (trend != null) ...[
@@ -422,9 +452,9 @@ class _StatCard extends StatelessWidget {
                     Text(
                       trend!,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.success,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ],
@@ -435,8 +465,8 @@ class _StatCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -452,6 +482,7 @@ class _BookingPreviewCard extends StatelessWidget {
   final String date;
   final String statusLabel;
   final Color statusColor;
+  final VoidCallback? onTap;  // NOUVEAU
 
   const _BookingPreviewCard({
     required this.clientName,
@@ -459,12 +490,13 @@ class _BookingPreviewCard extends StatelessWidget {
     required this.date,
     required this.statusLabel,
     required this.statusColor,
+    this.onTap,  // NOUVEAU
   });
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      onTap: () {},
+      onTap: onTap,  // MODIFIÉ
       padding: const EdgeInsets.all(14),
       child: Row(
         children: [
@@ -472,10 +504,10 @@ class _BookingPreviewCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.10),
+              color: AppColors.providerPrimary.withOpacity(0.10),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.person, color: AppColors.primary),
+            child: const Icon(Icons.person, color: AppColors.providerPrimary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -485,23 +517,23 @@ class _BookingPreviewCard extends StatelessWidget {
                 Text(
                   clientName,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   service,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   date,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),

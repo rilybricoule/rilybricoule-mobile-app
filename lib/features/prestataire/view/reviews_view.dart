@@ -41,7 +41,9 @@ class ProviderReviewsView extends StatelessWidget {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
-      body: ListView(
+    body: SafeArea(
+    bottom: true,
+    child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
           AppCard(
@@ -53,11 +55,11 @@ class ProviderReviewsView extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.10),
+                    color: AppColors.providerPrimary.withOpacity(0.10),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(Icons.star_rate_rounded,
-                      color: AppColors.primary),
+                      color: AppColors.providerPrimary),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -114,11 +116,11 @@ class ProviderReviewsView extends StatelessWidget {
                           width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.10),
+                            color: AppColors.providerPrimary.withOpacity(0.10),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: const Icon(Icons.person_outline,
-                              color: AppColors.primary),
+                              color: AppColors.providerPrimary),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -166,6 +168,7 @@ class ProviderReviewsView extends StatelessWidget {
           ),
         ],
       ),
+     ),
     );
   }
 }
@@ -184,7 +187,7 @@ class _Stars extends StatelessWidget {
         (i) => Icon(
           i < rating ? Icons.star_rounded : Icons.star_border_rounded,
           size: 18,
-          color: AppColors.primary,
+          color: AppColors.providerPrimary,
         ),
       ),
     );

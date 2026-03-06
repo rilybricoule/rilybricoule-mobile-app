@@ -139,11 +139,11 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: selected
-                                ? AppColors.primary
+                                ? AppColors.providerPrimary
                                 : Colors.white,
                             border: Border.all(
                               color: selected
-                                  ? AppColors.primary
+                                  ? AppColors.providerPrimary
                                   : AppColors.border,
                             ),
                           ),
@@ -199,7 +199,7 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
                           height: 8,
                           margin: const EdgeInsets.only(top: 8),
                           decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                            color: AppColors.providerPrimary,
                             shape: BoxShape.circle,
                           ),
                         ),

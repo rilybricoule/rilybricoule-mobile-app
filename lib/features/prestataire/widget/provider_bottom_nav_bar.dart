@@ -54,12 +54,7 @@ class ProviderBottomNavBar extends StatelessWidget {
                 label: 'Planning',
                 index: 3,
               ),
-              _buildNavItem(
-                icon: Icons.chat_bubble_outline,
-                activeIcon: Icons.chat_bubble,
-                label: 'Chat',
-                index: 4,
-              ),
+
             ],
           ),
         ),
@@ -80,7 +75,7 @@ class ProviderBottomNavBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          color: isActive ? AppColors.providerPrimary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -88,7 +83,7 @@ class ProviderBottomNavBar extends StatelessWidget {
           children: [
             Icon(
               isActive ? activeIcon : icon,
-              color: isActive ? AppColors.primary : AppColors.textSecondary,
+              color: isActive ? AppColors.providerPrimary : AppColors.textSecondary,
               size: 22,
             ),
             const SizedBox(height: 4),
@@ -97,7 +92,7 @@ class ProviderBottomNavBar extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                color: isActive ? AppColors.providerPrimary : AppColors.textSecondary,
               ),
             ),
           ],

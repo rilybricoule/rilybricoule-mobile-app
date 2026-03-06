@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import 'dashboard_view.dart';
 import 'bookings_view.dart';
-import 'chat/chat_list_view.dart';
 import 'planning_view.dart';
 import 'services_view.dart';
-import 'profile_view.dart';
+import 'profile/profile_view.dart';
 import '../widget/provider_bottom_nav_bar.dart';
 import '../widget/provider_drawer.dart';
 
@@ -20,32 +19,33 @@ class _ProviderMainViewState extends State<ProviderMainView> {
   int _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  late final List<Widget> _screens;
-
-  @override
-  void initState() {
-    super.initState();
-    _screens = [
-      const ProviderDashboardView(),
-      const ProviderServicesView(),
-      const ProviderBookingsView(),
-      const ProviderPlanningView(),
-      const ProviderChatListView(),
-    ];
+  // Callback pour changer de tab
+  void _changeTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //  Créer les screens ici pour passer le callback
+    final screens = [
+      ProviderDashboardView(
+        scaffoldKey: _scaffoldKey,
+        onNavigateToTab: _changeTab,
+      ),
+      ProviderServicesView(scaffoldKey: _scaffoldKey),
+      ProviderBookingsView(scaffoldKey: _scaffoldKey),
+      ProviderPlanningView(scaffoldKey: _scaffoldKey),
+    ];
+
     return Scaffold(
-      drawer: ProviderDrawer(),  // AJOUTÉ
-      body: _screens[_currentIndex],
+      key: _scaffoldKey,
+      drawer: const ProviderDrawer(),
+      body: screens[_currentIndex],
       bottomNavigationBar: ProviderBottomNavBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onTap: _changeTab,  // Utiliser le callback
       ),
     );
   }

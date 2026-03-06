@@ -17,7 +17,9 @@ class ProviderEarningsView extends StatelessWidget {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
-      body: ListView(
+    body: SafeArea(
+    bottom: true,
+    child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
           _buildWalletCard(context),
@@ -29,6 +31,7 @@ class ProviderEarningsView extends StatelessWidget {
           _buildTransactionList(),
         ],
       ),
+     ),
     );
   }
 
@@ -39,8 +42,8 @@ class ProviderEarningsView extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary,
-            AppColors.primary.withOpacity(0.8),
+            AppColors.providerPrimary,
+            AppColors.providerPrimary.withOpacity(0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
@@ -79,7 +82,7 @@ class ProviderEarningsView extends StatelessWidget {
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: AppColors.primary,
+                    foregroundColor: AppColors.providerPrimary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text('Retirer l\'argent', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -117,7 +120,7 @@ class ProviderEarningsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 20),
+          Icon(icon, color: AppColors.providerPrimary, size: 20),
           const SizedBox(height: 8),
           Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 4),

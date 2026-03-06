@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/routes/app_routes.dart';
-import '../../../../core/widgets/app_avatar.dart';
-import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/routes/app_routes.dart';
+import '../../../../../core/widgets/app_avatar.dart';
+import '../../../auth/viewmodel/auth_viewmodel.dart';
 
 class ProviderProfileView extends StatelessWidget {
   const ProviderProfileView({super.key});

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../../../../core/widgets/app_status_chip.dart';
+import 'chat/chat_thread_view.dart';
+import '../domain/conversation_model.dart';
 
 class ProviderMissionDetailsView extends StatefulWidget {
   final String clientName;
@@ -62,12 +63,32 @@ class _ProviderMissionDetailsViewState
         elevation: 0,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // NOUVEAU: Show warning dialog
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  icon: Icon(Icons.warning_amber, color: AppColors.warning, size: 48),
+                  title: Text('Mission Info'),
+                  content: Text(
+                    'Important: This is an urgent mission. Please contact the client if you encounter any issues or delays.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Got it'),
+                    ),
+                  ],
+                ),
+              );
+            },
             icon: const Icon(Icons.error_outline, color: AppColors.error),
           ),
         ],
       ),
-      body: Column(
+    body: SafeArea(
+    bottom: true,
+    child: Column(
         children: [
           _buildActiveBanner(),
           Expanded(
@@ -86,13 +107,14 @@ class _ProviderMissionDetailsViewState
           _buildBottomAction(),
         ],
       ),
+    ),
     );
   }
 
   Widget _buildActiveBanner() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: AppColors.primary,
+      color: AppColors.providerPrimary,
       child: Row(
         children: [
           const Icon(Icons.flash_on, color: Colors.white, size: 16),
@@ -119,10 +141,10 @@ class _ProviderMissionDetailsViewState
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.10),
+                  color: AppColors.providerPrimary.withOpacity(0.10),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.person, color: AppColors.primary),
+                child: const Icon(Icons.person, color: AppColors.providerPrimary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -144,7 +166,7 @@ class _ProviderMissionDetailsViewState
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   const Text('Budget', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                  const Text('250 MAD', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800, fontSize: 16)),
+                  const Text('250 MAD', style: TextStyle(color: AppColors.providerPrimary, fontWeight: FontWeight.w800, fontSize: 16)),
                 ],
               ),
             ],
@@ -155,9 +177,51 @@ class _ProviderMissionDetailsViewState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildQuickAction(Icons.call, 'Appeler', Colors.green),
-              _buildQuickAction(Icons.chat_bubble_outline, 'Message', AppColors.primary),
-              _buildQuickAction(Icons.info_outline, 'Détails', AppColors.textSecondary),
+              // APPELER
+              _buildQuickAction(
+                Icons.call,
+                'Appeler',
+                Colors.green,
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Calling ${widget.clientName}...')),
+                  );
+                },
+              ),
+              // MESSAGE (CHAT)
+              _buildQuickAction(
+                Icons.chat_bubble_outline,
+                'Message',
+                AppColors.providerPrimary,
+                onTap: () {
+                  // NOUVEAU: Ouvre le chat
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProviderChatThreadView(
+                        conversation: Conversation(
+                          id: 'conv_${widget.clientName.toLowerCase().replaceAll(' ', '_')}',
+                          clientName: widget.clientName,
+                          lastMessage: 'Mission accepted: ${widget.serviceName}',
+                          timeLabel: 'Now',
+                          unreadCount: 0,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // DÉTAILS
+              _buildQuickAction(
+                Icons.info_outline,
+                'Détails',
+                AppColors.textSecondary,
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Mission details')),
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -165,20 +229,24 @@ class _ProviderMissionDetailsViewState
     );
   }
 
-  Widget _buildQuickAction(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
-            shape: BoxShape.circle,
+  Widget _buildQuickAction(IconData icon, String label, Color color, {required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22),
           ),
-          child: Icon(icon, color: color, size: 22),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
-      ],
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+        ],
+      ),
     );
   }
 
@@ -203,12 +271,12 @@ class _ProviderMissionDetailsViewState
           Container(
             height: 140,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
+              color: AppColors.providerPrimary.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border),
             ),
             child: const Center(
-              child: Icon(Icons.map, size: 40, color: AppColors.primary),
+              child: Icon(Icons.map, size: 40, color: AppColors.providerPrimary),
             ),
           ),
           const SizedBox(height: 12),
@@ -251,7 +319,7 @@ class _ProviderMissionDetailsViewState
   Widget _buildTimelineStep(int stepIndex, String title, String time, {bool isLast = false}) {
     final bool isDone = _step > stepIndex;
     final bool isCurrent = _step == stepIndex;
-    final Color color = isDone ? AppColors.success : (isCurrent ? AppColors.primary : AppColors.border);
+    final Color color = isDone ? AppColors.success : (isCurrent ? AppColors.providerPrimary : AppColors.border);
 
     return IntrinsicHeight(
       child: Row(
@@ -293,7 +361,7 @@ class _ProviderMissionDetailsViewState
                 if (isCurrent)
                   Text(
                     'En cours...',
-                    style: TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: AppColors.providerPrimary, fontSize: 11, fontWeight: FontWeight.w600),
                   ),
                 const SizedBox(height: 16),
               ],
@@ -327,7 +395,7 @@ class _ProviderMissionDetailsViewState
         child: ElevatedButton(
           onPressed: _nextStep,
           style: ElevatedButton.styleFrom(
-            backgroundColor: _step == 3 ? AppColors.success : AppColors.primary,
+            backgroundColor: _step == 3 ? AppColors.success : AppColors.providerPrimary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           child: Text(
@@ -339,4 +407,3 @@ class _ProviderMissionDetailsViewState
     );
   }
 }
-

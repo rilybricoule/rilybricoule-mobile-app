@@ -90,10 +90,10 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.providerPrimary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.person, color: AppColors.primary, size: 24),
+              child: Icon(Icons.person, color: AppColors.providerPrimary, size: 24),
             ),
             SizedBox(width: 12),
             Expanded(
@@ -209,7 +209,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.secondary, AppColors.primary],
+                        colors: [AppColors.secondary, AppColors.providerPrimary],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -242,10 +242,10 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.providerPrimary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.person, color: AppColors.primary, size: 20),
+              child: Icon(Icons.person, color: AppColors.providerPrimary, size: 20),
             ),
             SizedBox(width: 8),
           ],
@@ -259,7 +259,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isProvider
-                        ? AppColors.primary
+                        ? AppColors.providerPrimary
                         : AppColors.surface,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(isProvider ? 16 : 4),
@@ -303,7 +303,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
               height: 36,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
+                  colors: [AppColors.providerPrimary, AppColors.secondary],
                 ),
                 shape: BoxShape.circle,
               ),

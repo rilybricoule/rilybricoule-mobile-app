@@ -2,16 +2,30 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_status_chip.dart';
+import '../widget/provider_header_wrapper.dart';
 import 'mission_details_view.dart';
 
 class ProviderBookingsView extends StatefulWidget {
-  const ProviderBookingsView({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const ProviderBookingsView({
+    super.key,
+    this.scaffoldKey,
+  });
 
   @override
   State<ProviderBookingsView> createState() => _ProviderBookingsViewState();
 }
 
 class _ProviderBookingsViewState extends State<ProviderBookingsView> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   final List<_MockBooking> _bookings = const [
     _MockBooking(
       id: 'b1',
@@ -60,54 +74,139 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
     ),
   ];
 
+  // Get filtered bookings
+  List<_MockBooking> _getFilteredBookings(_BookingStatus status) {
+    var filtered = _bookings.where((b) => b.status == status).toList();
+
+    if (_searchController.text.isNotEmpty) {
+      filtered = filtered.where((booking) {
+        final clientName = booking.clientName.toLowerCase();
+        final query = _searchController.text.toLowerCase();
+        return clientName.contains(query);
+      }).toList();
+    }
+
+    return filtered;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          title: const Text('Bookings'),
-          backgroundColor: AppColors.surface,
-          foregroundColor: AppColors.textPrimary,
-          elevation: 0,
-          bottom: TabBar(
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textSecondary,
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 3,
-            tabs: const [
-              Tab(text: 'Upcoming'),
-              Tab(text: 'In progress'),
-              Tab(text: 'Completed'),
-              Tab(text: 'Cancelled'),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // HEADER COMPACT
+              ProviderHeaderWrapper(
+                scaffoldKey: widget.scaffoldKey,
+                compact: true,
+              ),
+
+              // SEARCH + TABBAR
+              Container(
+                color: AppColors.surface,
+                child: Column(
+                  children: [
+                    // SEARCH BAR
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search by client name...',
+                          prefixIcon: const Icon(Icons.search, size: 20),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                            icon: Icon(Icons.clear, size: 20),
+                            onPressed: () {
+                              setState(() {
+                                _searchController.clear();
+                              });
+                            },
+                          )
+                              : null,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    // TABBAR
+                    TabBar(
+                      labelColor: AppColors.providerPrimary,
+                      unselectedLabelColor: AppColors.textSecondary,
+                      indicatorColor: AppColors.providerPrimary,
+                      indicatorWeight: 3,
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                      unselectedLabelStyle: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                      tabs: const [
+                        Tab(text: 'Upcoming'),
+                        Tab(text: 'Active'),
+                        Tab(text: 'Done'),
+                        Tab(text: 'Cancelled'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // TABBAR VIEW
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _BookingsList(
+                      bookings: _getFilteredBookings(_BookingStatus.upcoming),
+                      emptyLabel: _searchController.text.isNotEmpty
+                          ? 'No upcoming bookings found'
+                          : 'No upcoming bookings',
+                      showActions: true,
+                    ),
+                    _BookingsList(
+                      bookings: _getFilteredBookings(_BookingStatus.inProgress),
+                      emptyLabel: _searchController.text.isNotEmpty
+                          ? 'No active bookings found'
+                          : 'No active bookings',
+                      showActions: false,
+                    ),
+                    _BookingsList(
+                      bookings: _getFilteredBookings(_BookingStatus.completed),
+                      emptyLabel: _searchController.text.isNotEmpty
+                          ? 'No completed bookings found'
+                          : 'No completed bookings',
+                      showActions: false,
+                    ),
+                    _BookingsList(
+                      bookings: _getFilteredBookings(_BookingStatus.cancelled),
+                      emptyLabel: _searchController.text.isNotEmpty
+                          ? 'No cancelled bookings found'
+                          : 'No cancelled bookings',
+                      showActions: false,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _BookingsList(
-              bookings: _bookings.where((b) => b.status == _BookingStatus.upcoming).toList(),
-              emptyLabel: 'No upcoming bookings',
-              showActions: true,
-            ),
-            _BookingsList(
-              bookings:
-              _bookings.where((b) => b.status == _BookingStatus.inProgress).toList(),
-              emptyLabel: 'No bookings in progress',
-              showActions: false,
-            ),
-            _BookingsList(
-              bookings: _bookings.where((b) => b.status == _BookingStatus.completed).toList(),
-              emptyLabel: 'No completed bookings',
-              showActions: false,
-            ),
-            _BookingsList(
-              bookings: _bookings.where((b) => b.status == _BookingStatus.cancelled).toList(),
-              emptyLabel: 'No cancelled bookings',
-              showActions: false,
-            ),
-          ],
         ),
       ),
     );
@@ -129,12 +228,23 @@ class _BookingsList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (bookings.isEmpty) {
       return Center(
-        child: Text(
-          emptyLabel,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: AppColors.textSecondary),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.calendar_today_outlined,
+              size: 64,
+              color: AppColors.textSecondary.withOpacity(0.5),
+            ),
+            SizedBox(height: 16),
+            Text(
+              emptyLabel,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
         ),
       );
     }
@@ -157,10 +267,10 @@ class _BookingsList extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.10),
+                      color: AppColors.providerPrimary.withOpacity(0.10),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(Icons.event_note, color: AppColors.primary),
+                    child: const Icon(Icons.person, color: AppColors.providerPrimary),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -208,7 +318,7 @@ class _BookingsList extends StatelessWidget {
                   Text(
                     b.priceLabel,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.providerPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -217,8 +327,7 @@ class _BookingsList extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.location_on_outlined,
-                      size: 16, color: AppColors.textSecondary),
+                  const Icon(Icons.location_on_outlined, size: 16, color: AppColors.textSecondary),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -285,9 +394,9 @@ extension on _BookingStatus {
       case _BookingStatus.upcoming:
         return 'Upcoming';
       case _BookingStatus.inProgress:
-        return 'In progress';
+        return 'Active';
       case _BookingStatus.completed:
-        return 'Completed';
+        return 'Done';
       case _BookingStatus.cancelled:
         return 'Cancelled';
     }
