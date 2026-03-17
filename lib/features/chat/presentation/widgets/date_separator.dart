@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class DateSeparator extends StatelessWidget {
@@ -7,20 +8,18 @@ class DateSeparator extends StatelessWidget {
 
   const DateSeparator({super.key, required this.date});
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final messageDate = DateTime(date.year, date.month, date.day);
 
     if (messageDate == today) {
-      return 'Aujourd\'hui';
+      return AppLocalizations.of(context)!.today;
     } else if (messageDate == yesterday) {
-      return 'Hier';
+      return AppLocalizations.of(context)!.yesterday;
     } else {
-      final months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
-                      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-      return '${date.day} ${months[date.month - 1]} ${date.year}';
+      return MaterialLocalizations.of(context).formatMediumDate(date);
     }
   }
 
@@ -35,7 +34,7 @@ class DateSeparator extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          _formatDate(date),
+          _formatDate(context, date),
           style: GoogleFonts.poppins(
             fontSize: 12,
             fontWeight: FontWeight.w500,

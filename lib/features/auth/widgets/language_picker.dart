@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../language/viewmodel/language_viewmodel.dart';
 
-class LanguagePicker extends StatefulWidget {
+class LanguagePicker extends StatelessWidget {
   final Color iconColor;
   final Color backgroundColor;
 
@@ -11,59 +13,43 @@ class LanguagePicker extends StatefulWidget {
   });
 
   @override
-  State<LanguagePicker> createState() => _LanguagePickerState();
-}
-
-class _LanguagePickerState extends State<LanguagePicker> {
-  String selectedLanguage = 'EN';
-
-  final Map<String, String> languages = {
-    'EN': '🇬🇧',
-    'FR': '🇫🇷',
-    'AR': '🇲🇦',
-  };
-
-  @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      onSelected: (String value) {
-        setState(() {
-          selectedLanguage = value;
-        });
-        print('Language changed to: $value');
-        // TODO: Implement actual language change when you add translations
+    final languageViewModel = Provider.of<LanguageViewModel>(context);
+    final currentLocale = languageViewModel.currentLocale;
+
+    return PopupMenuButton<Locale>(
+      onSelected: (Locale locale) {
+        languageViewModel.changeLocale(locale);
       },
-      offset: Offset(0, 45),
+      offset: const Offset(0, 50),
+      elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       color: Colors.white,
       itemBuilder: (BuildContext context) {
-        return languages.entries.map((entry) {
-          return PopupMenuItem<String>(
-            value: entry.key,
+        return LanguageViewModel.supportedLocales.map((locale) {
+          final isSelected = currentLocale.languageCode == locale.languageCode;
+          return PopupMenuItem<Locale>(
+            value: locale,
             child: Row(
               children: [
                 Text(
-                  entry.value,
-                  style: TextStyle(fontSize: 22),
+                  languageViewModel.getFlag(locale),
+                  style: const TextStyle(fontSize: 22),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
-                  entry.key,
+                  locale.languageCode.toUpperCase(),
                   style: TextStyle(
                     fontSize: 15,
-                    fontWeight: selectedLanguage == entry.key
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: selectedLanguage == entry.key
-                        ? Colors.blue[700]
-                        : Colors.black87,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? Colors.blue[700] : Colors.black87,
                   ),
                 ),
-                if (selectedLanguage == entry.key) ...[
-                  Spacer(),
-                  Icon(Icons.check, size: 18, color: Colors.green),
+                if (isSelected) ...[
+                  const Spacer(),
+                  const Icon(Icons.check, size: 18, color: Colors.green),
                 ],
               ],
             ),
@@ -71,36 +57,39 @@ class _LanguagePickerState extends State<LanguagePicker> {
         }).toList();
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: widget.backgroundColor,
-          borderRadius: BorderRadius.circular(20),
+          color: backgroundColor == Colors.transparent 
+              ? iconColor.withOpacity(0.12) 
+              : backgroundColor,
+          borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: widget.iconColor.withOpacity(0.5),
-            width: 1.5,
+            color: iconColor.withOpacity(0.2),
+            width: 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              languages[selectedLanguage]!,
-              style: TextStyle(fontSize: 18),
+              languageViewModel.getFlag(currentLocale),
+              style: const TextStyle(fontSize: 18),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 8),
             Text(
-              selectedLanguage,
+              currentLocale.languageCode.toUpperCase(),
               style: TextStyle(
-                color: widget.iconColor,
-                fontSize: 13,
+                color: iconColor,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Icon(
-              Icons.keyboard_arrow_down,
-              color: widget.iconColor,
-              size: 16,
+              Icons.keyboard_arrow_down_rounded,
+              color: iconColor,
+              size: 20,
             ),
           ],
         ),

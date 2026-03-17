@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../client_main_view.dart';
 import '../../chat/domain/chat_service.dart';
@@ -38,7 +39,7 @@ class _BookingStatusContent extends StatelessWidget {
                     const SizedBox(height: 32),
                     _buildSuccessIcon(),
                     const SizedBox(height: 24),
-                    _buildSuccessMessage(),
+                    _buildSuccessMessage(context),
                     const SizedBox(height: 32),
                     _buildDetailsCard(context),
                     const SizedBox(height: 16),
@@ -92,7 +93,7 @@ class _BookingStatusContent extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              'Confirmation',
+              AppLocalizations.of(context)!.confirmation,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -131,13 +132,13 @@ class _BookingStatusContent extends StatelessWidget {
     );
   }
 
-  Widget _buildSuccessMessage() {
+  Widget _buildSuccessMessage(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
           Text(
-            'Réservation confirmée!',
+            AppLocalizations.of(context)!.bookingConfirmed,
             style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -147,7 +148,7 @@ class _BookingStatusContent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Votre demande a été acceptée. Le bricoleur vous attend à l\'heure prévue.',
+            AppLocalizations.of(context)!.bookingConfirmedMessage,
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: AppColors.textSecondary,
@@ -181,7 +182,7 @@ class _BookingStatusContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'DÉTAILS DE LA PRESTATION',
+            AppLocalizations.of(context)!.serviceDetails,
             style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -203,7 +204,7 @@ class _BookingStatusContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      viewModel.providerName,
+                      viewModel.providerName(context),
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -211,7 +212,7 @@ class _BookingStatusContent extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      viewModel.providerCategory,
+                      viewModel.providerCategory(context),
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -225,19 +226,19 @@ class _BookingStatusContent extends StatelessWidget {
           const SizedBox(height: 20),
           BookingDetailRow(
             icon: Icons.calendar_today,
-            label: 'Date',
-            value: viewModel.dateLabel,
+            label: AppLocalizations.of(context)!.date,
+            value: viewModel.getDateLabel(context),
           ),
           const SizedBox(height: 16),
           BookingDetailRow(
             icon: Icons.schedule,
-            label: 'Heure',
+            label: AppLocalizations.of(context)!.time,
             value: viewModel.timeLabel,
           ),
           const SizedBox(height: 16),
           BookingDetailRow(
             icon: Icons.location_on,
-            label: 'Adresse',
+            label: AppLocalizations.of(context)!.address,
             value: viewModel.addressLabel,
           ),
         ],
@@ -296,6 +297,7 @@ class _BookingStatusContent extends StatelessWidget {
                 final chatRepo = ChatService().repository;
                 final conversation = await chatRepo.getOrCreateConversationWithProvider(
                   viewModel.providerId,
+                  langCode: Localizations.localeOf(context).languageCode,
                 );
                 
                 if (context.mounted) {
@@ -308,7 +310,7 @@ class _BookingStatusContent extends StatelessWidget {
               },
               icon: const Icon(Icons.chat_bubble_outline, size: 20),
               label: Text(
-                'Contacter le prestataire',
+                AppLocalizations.of(context)!.contactProvider,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -347,7 +349,7 @@ class _BookingStatusContent extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Voir mes réservations',
+                AppLocalizations.of(context)!.viewMyBookings,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -373,7 +375,7 @@ class _BookingStatusContent extends StatelessWidget {
                 );
               },
               child: Text(
-                'Retour à l\'accueil',
+                AppLocalizations.of(context)!.backToHome,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

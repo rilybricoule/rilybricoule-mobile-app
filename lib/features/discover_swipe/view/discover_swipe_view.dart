@@ -8,7 +8,7 @@ import '../models/search_context_bundle.dart';
 import '../viewmodel/discover_swipe_viewmodel.dart';
 import '../widgets/provider_swipe_card.dart';
 import '../widgets/swipe_action_buttons.dart';
-import '../widgets/swipe_overlay_label.dart';
+import '../../../l10n/app_localizations.dart';
 
 class DiscoverSwipeView extends StatefulWidget {
   const DiscoverSwipeView({super.key});
@@ -26,7 +26,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bundle = ModalRoute.of(context)?.settings.arguments as SearchContextBundle?;
       if (bundle != null) {
-        context.read<DiscoverSwipeViewModel>().loadProviders(bundle);
+        context.read<DiscoverSwipeViewModel>().loadProviders(bundle, context);
       }
     });
   }
@@ -55,7 +55,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
 
             return Column(
               children: [
-                _buildContextChips(viewModel),
+                _buildContextChips(context, viewModel),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -73,7 +73,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
                       },
                       onEnd: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Plus de prestataires')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.noMoreProviders)),
                         );
                       },
                       backgroundCardCount: 2,
@@ -110,7 +110,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        'Découvrir',
+        AppLocalizations.of(context)!.discoverTitle,
         style: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -128,23 +128,23 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
     );
   }
 
-  Widget _buildContextChips(DiscoverSwipeViewModel viewModel) {
-    final context = viewModel.context;
-    if (context == null) return const SizedBox.shrink();
+  Widget _buildContextChips(BuildContext context, DiscoverSwipeViewModel viewModel) {
+    final searchContext = viewModel.context;
+    if (searchContext == null) return const SizedBox.shrink();
 
     final chips = <Widget>[];
 
-    if (context.query != null && context.query!.isNotEmpty) {
-      chips.add(_buildChip(context.query!));
+    if (searchContext.query != null && searchContext.query!.isNotEmpty) {
+      chips.add(_buildChip(searchContext.query!));
     }
-    if (context.availableNow == true) {
-      chips.add(_buildChip('Disponibles', Icons.check_circle));
+    if (searchContext.availableNow == true) {
+      chips.add(_buildChip(AppLocalizations.of(context)!.availableChip, Icons.check_circle));
     }
-    if (context.maxDistanceKm != null) {
-      chips.add(_buildChip('≤ ${context.maxDistanceKm!.toInt()} km', Icons.location_on));
+    if (searchContext.maxDistanceKm != null) {
+      chips.add(_buildChip('≤ ${searchContext.maxDistanceKm!.toInt()} km', Icons.location_on));
     }
-    if (context.minRating != null) {
-      chips.add(_buildChip('${context.minRating}+ ⭐'));
+    if (searchContext.minRating != null) {
+      chips.add(_buildChip('${searchContext.minRating}+ ⭐'));
     }
 
     if (chips.isEmpty) return const SizedBox.shrink();
@@ -197,7 +197,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
             Icon(Icons.explore_off, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 24),
             Text(
-              'Plus de prestataires',
+              AppLocalizations.of(context)!.noMoreProviders,
               style: GoogleFonts.poppins(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Aucun prestataire ne correspond à vos critères',
+              AppLocalizations.of(context)!.noMatchCriteria,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -216,10 +216,10 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () => viewModel.resetFilters(),
+              onPressed: () => viewModel.resetFilters(context),
               icon: const Icon(Icons.refresh),
               label: Text(
-                'Réinitialiser les filtres',
+                AppLocalizations.of(context)!.resetFiltersBtn,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -237,7 +237,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Retour à la recherche',
+                AppLocalizations.of(context)!.backToSearch,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -264,7 +264,7 @@ class _DiscoverSwipeViewState extends State<DiscoverSwipeView> {
       viewModel.likeProvider(provider.id);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${provider.name} ajouté aux favoris'),
+          content: Text(AppLocalizations.of(context)!.addedToFavorites(provider.name)),
           duration: const Duration(seconds: 1),
           backgroundColor: AppColors.mainAppPrimary,
         ),

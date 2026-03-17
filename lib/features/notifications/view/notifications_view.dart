@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../model/notification_model.dart';
 import '../viewmodel/notification_viewmodel.dart';
 
@@ -17,7 +18,7 @@ class _NotificationsViewState extends State<NotificationsView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NotificationViewModel>().loadNotifications();
+      context.read<NotificationViewModel>().loadNotifications(context);
     });
   }
 
@@ -33,7 +34,7 @@ class _NotificationsViewState extends State<NotificationsView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Notifications',
+          AppLocalizations.of(context)!.notificationsTitle,
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -60,7 +61,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                       children: [
                         const Icon(Icons.done_all, size: 20),
                         const SizedBox(width: 12),
-                        Text('Tout marquer comme lu', style: GoogleFonts.poppins(fontSize: 14)),
+                        Text(AppLocalizations.of(context)!.markAllAsRead, style: GoogleFonts.poppins(fontSize: 14)),
                       ],
                     ),
                   ),
@@ -70,7 +71,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                       children: [
                         const Icon(Icons.delete_sweep, size: 20, color: Colors.red),
                         const SizedBox(width: 12),
-                        Text('Supprimer tout', style: GoogleFonts.poppins(fontSize: 14, color: Colors.red)),
+                        Text(AppLocalizations.of(context)!.deleteAll, style: GoogleFonts.poppins(fontSize: 14, color: Colors.red)),
                       ],
                     ),
                   ),
@@ -145,7 +146,7 @@ class _NotificationsViewState extends State<NotificationsView> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Aucune notification',
+              AppLocalizations.of(context)!.noNotificationsMsg,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -154,7 +155,7 @@ class _NotificationsViewState extends State<NotificationsView> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Vous serez informé ici des mises à jour importantes.',
+              AppLocalizations.of(context)!.noNotificationsDesc,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 14,
@@ -172,7 +173,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                 ),
               ),
               child: Text(
-                'Retour à l\'accueil',
+                AppLocalizations.of(context)!.backToHome,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -190,19 +191,19 @@ class _NotificationsViewState extends State<NotificationsView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Supprimer toutes les notifications', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-        content: Text('Êtes-vous sûr de vouloir supprimer toutes les notifications ?', style: GoogleFonts.poppins()),
+        title: Text(AppLocalizations.of(context)!.deleteAllTitle, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        content: Text(AppLocalizations.of(context)!.deleteAllDesc, style: GoogleFonts.poppins()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+            child: Text(AppLocalizations.of(context)!.cancel, style: GoogleFonts.poppins(color: AppColors.textSecondary)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               viewModel.deleteAllNotifications();
             },
-            child: Text('Supprimer', style: GoogleFonts.poppins(color: Colors.red, fontWeight: FontWeight.w600)),
+            child: Text(AppLocalizations.of(context)!.deleteAction, style: GoogleFonts.poppins(color: Colors.red, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -218,7 +219,10 @@ class _NotificationsViewState extends State<NotificationsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Fermer', style: GoogleFonts.poppins(color: AppColors.mainAppPrimary)),
+            child: Text(
+              Localizations.localeOf(context).languageCode == 'ar' ? 'إغلاق' : Localizations.localeOf(context).languageCode == 'en' ? 'Close' : 'Fermer',
+              style: GoogleFonts.poppins(color: AppColors.mainAppPrimary)
+            ),
           ),
         ],
       ),

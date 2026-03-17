@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 
 class CustomCalendar extends StatefulWidget {
@@ -71,7 +72,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
   @override
   Widget build(BuildContext context) {
     final days = _getDaysInMonth();
-    final monthName = _getMonthName(_currentMonth.month);
 
     return Column(
       children: [
@@ -83,7 +83,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
               icon: const Icon(Icons.chevron_left),
             ),
             Text(
-              '$monthName ${_currentMonth.year}',
+              _getMonthName(_currentMonth),
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -98,8 +98,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
         ),
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day) {
+          children: _getWeekdayInitials().map((day) {
             return SizedBox(
               width: 40,
               child: Center(
@@ -170,11 +169,24 @@ class _CustomCalendarState extends State<CustomCalendar> {
     );
   }
 
-  String _getMonthName(int month) {
-    const months = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-    ];
-    return months[month - 1];
+  String _getMonthName(DateTime date) {
+    final locale = Localizations.localeOf(context).languageCode;
+    return DateFormat.yMMMM(locale).format(date);
+  }
+
+  List<String> _getWeekdayInitials() {
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    if (locale == 'ar') {
+      return ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح']; // Monday to Sunday (الاثنين to الأحد)
+    }
+    
+    final now = DateTime.now();
+    // find nearest Monday to anchor days.
+    final firstMonday = now.subtract(Duration(days: now.weekday - 1));
+    return List.generate(7, (index) {
+      final day = firstMonday.add(Duration(days: index));
+      return DateFormat.E(locale).format(day).substring(0, 1).toUpperCase();
+    });
   }
 }

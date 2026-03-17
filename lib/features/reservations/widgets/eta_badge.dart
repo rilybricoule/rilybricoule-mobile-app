@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class EtaBadge extends StatelessWidget {
@@ -51,7 +52,7 @@ class EtaBadge extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'ARRIVÉE PRÉVUE',
+            AppLocalizations.of(context)!.estimatedArrival,
             style: GoogleFonts.poppins(
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -61,7 +62,7 @@ class EtaBadge extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '$minutes min',
+            '$minutes ${AppLocalizations.of(context)!.minPlaceholder}',
             style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.bold,

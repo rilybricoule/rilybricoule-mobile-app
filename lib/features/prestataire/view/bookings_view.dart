@@ -1,3 +1,4 @@
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -19,7 +20,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
       serviceName: 'Plumbing - Repair',
       dateLabel: 'Today • 14:00',
       address: 'Maarif, Casablanca',
-      priceLabel: '150 MAD',
+      priceLabel: '150 MAD/hr',
       status: _BookingStatus.upcoming,
     ),
     _MockBooking(
@@ -28,7 +29,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
       serviceName: 'Electricity',
       dateLabel: 'Tomorrow • 10:30',
       address: 'Bourgogne, Casablanca',
-      priceLabel: '200 MAD',
+      priceLabel: '200 MAD/hr',
       status: _BookingStatus.upcoming,
     ),
     _MockBooking(
@@ -37,7 +38,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
       serviceName: 'Painting',
       dateLabel: 'Now',
       address: 'Gauthier, Casablanca',
-      priceLabel: '350 MAD',
+      priceLabel: '350 MAD/hr',
       status: _BookingStatus.inProgress,
     ),
     _MockBooking(
@@ -46,7 +47,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
       serviceName: 'Handyman',
       dateLabel: 'Yesterday • 16:00',
       address: 'Sidi Maarouf, Casablanca',
-      priceLabel: '120 MAD',
+      priceLabel: '120 MAD/hr',
       status: _BookingStatus.completed,
     ),
     _MockBooking(
@@ -55,7 +56,7 @@ class _ProviderBookingsViewState extends State<ProviderBookingsView> {
       serviceName: 'Cleaning',
       dateLabel: '05 Feb • 11:00',
       address: 'Ain Diab, Casablanca',
-      priceLabel: '100 MAD/h',
+      priceLabel: '100 MAD/hr',
       status: _BookingStatus.cancelled,
     ),
   ];

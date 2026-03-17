@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,8 +9,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../../services/location/location_service.dart';
 import '../models/provider_location.dart';
 import '../repository/providers_repository.dart';
-import '../widgets/provider_preview_card.dart';
 import '../widgets/provider_price_marker.dart';
+import '../widgets/provider_preview_card.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SearchMapView extends StatefulWidget {
   final Function(VoidCallback) onShowFilters;
@@ -68,7 +68,7 @@ class _SearchMapViewState extends State<SearchMapView> {
       final position = await _locationService.getCurrentPosition();
       if (position == null) {
         setState(() {
-          _errorMessage = 'Impossible d\'obtenir votre position';
+          _errorMessage = AppLocalizations.of(context)!.errorGettingLocation;
           _isLoading = false;
         });
         return;
@@ -99,10 +99,12 @@ class _SearchMapViewState extends State<SearchMapView> {
         ),
       );
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Erreur lors du chargement des prestataires';
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = AppLocalizations.of(context)!.errorLoadingProviders;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -278,7 +280,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                     Icon(Icons.info_outline, color: AppColors.textSecondary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Aucun prestataire dans cette zone',
+                      AppLocalizations.of(context)!.noProviderInThisArea,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -325,7 +327,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             const Icon(Icons.location_off, size: 80, color: AppColors.textSecondary),
             const SizedBox(height: 24),
             Text(
-              'Permission de localisation requise',
+              AppLocalizations.of(context)!.locationPermissionRequired,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -335,7 +337,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Nous avons besoin de votre localisation pour trouver les prestataires près de vous',
+              AppLocalizations.of(context)!.locationPermissionDesc,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -353,7 +355,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                 ),
               ),
               child: Text(
-                'Autoriser la localisation',
+                AppLocalizations.of(context)!.allowLocation,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -376,7 +378,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             const Icon(Icons.location_disabled, size: 80, color: AppColors.textSecondary),
             const SizedBox(height: 24),
             Text(
-              'GPS désactivé',
+              AppLocalizations.of(context)!.gpsDisabled,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -386,7 +388,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Veuillez activer votre GPS pour utiliser cette fonctionnalité',
+              AppLocalizations.of(context)!.gpsDisabledDesc,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -404,7 +406,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                 ),
               ),
               child: Text(
-                'Activer la localisation',
+                AppLocalizations.of(context)!.enableLocation,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -427,7 +429,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             const Icon(Icons.error_outline, size: 80, color: AppColors.error),
             const SizedBox(height: 24),
             Text(
-              'Erreur',
+              AppLocalizations.of(context)!.errorTitle,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -436,7 +438,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             ),
             const SizedBox(height: 12),
             Text(
-              _errorMessage ?? 'Une erreur est survenue',
+              _errorMessage ?? AppLocalizations.of(context)!.errorOccurred,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -454,7 +456,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                 ),
               ),
               child: Text(
-                'Réessayer',
+                AppLocalizations.of(context)!.retry,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -477,7 +479,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             const Icon(Icons.person_search, size: 80, color: AppColors.textSecondary),
             const SizedBox(height: 24),
             Text(
-              'Aucun prestataire trouvé',
+              AppLocalizations.of(context)!.noProviderFound,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -486,7 +488,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Il n\'y a pas de prestataires disponibles dans votre zone',
+              AppLocalizations.of(context)!.noProvidersInYourArea,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -531,7 +533,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Rechercher un service...',
+                        AppLocalizations.of(context)!.searchService,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: AppColors.textSecondary,
@@ -652,7 +654,7 @@ class _SearchMapViewState extends State<SearchMapView> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Afficher la liste',
+                  AppLocalizations.of(context)!.showList,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

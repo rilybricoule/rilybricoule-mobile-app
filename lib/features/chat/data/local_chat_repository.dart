@@ -3,7 +3,6 @@ import '../domain/chat_repository.dart';
 import '../domain/models/conversation.dart';
 import '../domain/models/message.dart';
 import '../domain/models/user_summary.dart';
-import '../domain/exceptions/chat_not_allowed_exception.dart';
 
 class LocalChatRepository implements ChatRepository {
   final List<Conversation> _conversations = [];
@@ -196,20 +195,20 @@ class LocalChatRepository implements ChatRepository {
   @override
   Future<bool> hasConfirmedBookingWithProvider(String providerId) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    // Mock: Check if provider ID matches any confirmed booking
-    // In real implementation, this would query the reservations API
-    return providerId == '1' || providerId == '2'; // Mock confirmed bookings
+    // Check if there's any conversation with confirmed booking for this provider
+    final existingConv = _conversations.where((c) => 
+      c.otherUser.id == providerId && 
+      c.bookingId != null && 
+      (c.bookingStatus == 'confirmed' || 
+       c.bookingStatus == 'en_route' || 
+       c.bookingStatus == 'in_progress')
+    );
+    return existingConv.isNotEmpty;
   }
 
   @override
-  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId}) async {
+  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId, String? langCode}) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    
-    // Check if user has confirmed booking with provider
-    final hasBooking = await hasConfirmedBookingWithProvider(providerId);
-    if (!hasBooking) {
-      throw ChatNotAllowedException('CHAT_NOT_ALLOWED');
-    }
     
     // Find existing conversation
     final existingIndex = _conversations.indexWhere((c) => c.otherUser.id == providerId);
@@ -220,12 +219,12 @@ class LocalChatRepository implements ChatRepository {
     
     // Map provider IDs to real names
     final providerNames = {
-      '1': 'Ahmed El Mansouri',
-      '2': 'Yassine Amrani',
-      '3': 'Omar Mansouri',
-      '4': 'Omar Hassan',
-      '5': 'Sarah Benjelloun',
-      '6': 'Fatima Zahra',
+      '1': langCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+      '2': langCode == 'ar' ? 'ياسين العمراني' : 'Yassine Amrani',
+      '3': langCode == 'ar' ? 'عمر منصور' : 'Omar Mansouri',
+      '4': langCode == 'ar' ? 'عمر حسن' : 'Omar Hassan',
+      '5': langCode == 'ar' ? 'سارة بنجلون' : 'Sarah Benjelloun',
+      '6': langCode == 'ar' ? 'فاطمة الزهراء' : 'Fatima Zahra',
     };
     
     // Create new conversation with booking info (mock data)

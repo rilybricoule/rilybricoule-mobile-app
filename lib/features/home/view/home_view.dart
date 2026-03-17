@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/marquee_text.dart';
+import '../../../domain/repositories/profile_repository.dart';
 import '../../../services/location/location_service.dart';
 import '../../notifications/view/notifications_view.dart';
 import '../../notifications/viewmodel/notification_viewmodel.dart';
 import '../../profile/data/user_session.dart';
+import '../../profile/widgets/avatar_image.dart';
 import '../models/category_model.dart';
 import '../models/provider_model.dart';
 import '../providers/home_provider.dart';
@@ -43,19 +45,70 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NotificationViewModel>().loadNotifications();
-      context.read<HomeProvider>().setProviders(_providers);
+      context.read<NotificationViewModel>().loadNotifications(context);
       _loadUserData();
       _loadLocation();
     });
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Re-generate mock providers when the locale changes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<HomeProvider>().setProviders(_getProviders(context));
+      }
+    });
+  }
   
   Future<void> _loadUserData() async {
+    // First try to get from UserSession (fast)
     final user = await UserSession.getUser();
     setState(() {
       _userName = user['name'] ?? 'Utilisateur';
       _userAvatar = user['avatarUrl'];
     });
+    
+    // Then listen to ProfileRepository for real-time updates
+    final profileRepo = context.read<ProfileRepository>();
+    
+    // Listen to profile stream for updates
+    profileRepo.profileStream.listen((profile) {
+      if (mounted && profile != null) {
+        setState(() {
+          _userName = profile.fullName;
+          _userAvatar = profile.photoUrl;
+        });
+        // Also update UserSession cache
+        UserSession.saveUser(
+          id: profile.id,
+          name: profile.fullName,
+          email: profile.email,
+          avatarUrl: profile.photoUrl,
+        );
+      }
+    });
+    
+    // Try to get current profile
+    try {
+      final currentProfile = profileRepo.currentProfile;
+      if (currentProfile != null) {
+        setState(() {
+          _userName = currentProfile.fullName;
+          _userAvatar = currentProfile.photoUrl;
+        });
+      } else {
+        // Load from repository
+        final profile = await profileRepo.getMe();
+        setState(() {
+          _userName = profile.fullName;
+          _userAvatar = profile.photoUrl;
+        });
+      }
+    } catch (e) {
+      debugPrint('HomeView: Error loading profile - $e');
+    }
   }
   
   Future<void> _loadLocation() async {
@@ -73,120 +126,129 @@ class _HomeViewState extends State<HomeView> {
           if (placemarks.isNotEmpty) {
             final place = placemarks.first;
             final city = place.locality ?? place.administrativeArea ?? '';
-            final country = place.country ?? 'Morocco';
+            final langCode = mounted ? Localizations.localeOf(context).languageCode : 'fr';
+            final fallbackCountry = langCode == 'ar' ? 'المغرب' : langCode == 'en' ? 'Morocco' : 'Maroc';
+            final country = place.country ?? fallbackCountry;
             setState(() {
               _locationText = city.isNotEmpty ? '$city, $country' : country;
             });
           }
         } catch (e) {
+          final langCode = mounted ? Localizations.localeOf(context).languageCode : 'fr';
           setState(() {
-            _locationText = 'Morocco';
+            _locationText = langCode == 'ar' ? 'المغرب' : langCode == 'en' ? 'Morocco' : 'Maroc';
           });
         }
       }
     } else {
+      final langCode = mounted ? Localizations.localeOf(context).languageCode : 'fr';
       setState(() {
-        _locationText = 'Morocco';
+        _locationText = langCode == 'ar' ? 'المغرب' : langCode == 'en' ? 'Morocco' : 'Maroc';
       });
     }
   }
   
   String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Bonjour';
-    if (hour < 18) return 'Bon après-midi';
-    return 'Bonsoir';
+    return AppLocalizations.of(context)?.hello ?? 'Bonjour';
   }
   // Mock data - Categories
-  final List<CategoryModel> _categories = [
+  List<CategoryModel> _getCategories(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
     CategoryModel(
       id: '1',
-      name: 'Plomberie',
+      name: l10n.categoryPlumbing,
       icon: Icons.plumbing,
       backgroundColor: const Color(0xFFE8EAF6),
       iconColor: const Color(0xFF3F51B5),
     ),
     CategoryModel(
       id: '2',
-      name: 'Électricité',
+      name: l10n.categoryElectricity,
       icon: Icons.electrical_services,
       backgroundColor: const Color(0xFFFFF3E0),
       iconColor: const Color(0xFFFF9800),
     ),
     CategoryModel(
       id: '3',
-      name: 'Ménage',
+      name: l10n.categoryCleaning,
       icon: Icons.cleaning_services,
       backgroundColor: const Color(0xFFE0F2F1),
       iconColor: const Color(0xFF009688),
     ),
     CategoryModel(
       id: '4',
-      name: 'Peinture',
+      name: l10n.categoryPainting,
       icon: Icons.format_paint,
       backgroundColor: const Color(0xFFF3E5F5),
       iconColor: const Color(0xFF9C27B0),
     ),
     CategoryModel(
       id: '5',
-      name: 'Bricolage',
+      name: l10n.categoryHandyman,
       icon: Icons.handyman,
       backgroundColor: const Color(0xFFFCE4EC),
       iconColor: const Color(0xFFE91E63),
     ),
   ];
+  }
 
   // Mock data - Providers
-  final List<ProviderModel> _providers = [
-    ProviderModel(
-      id: '1',
-      name: 'Yassine El Amrani',
-      service: 'Plomberie & Réparation',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.8,
-      reviewCount: 120,
-      distance: 2.3,
-      priceLabel: 'À partir de',
-      price: '150 MAD',
-      priceValue: 150.0,
-      isVerified: true,
-      isAvailable: true,
-      categoryId: '1',
-      activeJobsCount: 2,
-    ),
-    ProviderModel(
-      id: '2',
-      name: 'Sarah Benjelloun',
-      service: 'Ménage Professionnel',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.9,
-      reviewCount: 85,
-      distance: 1.1,
-      priceLabel: 'À partir de',
-      price: '100 MAD/h',
-      priceValue: 100.0,
-      isVerified: true,
-      isAvailable: false,
-      categoryId: '3',
-      activeJobsCount: 5,
-    ),
-    ProviderModel(
-      id: '3',
-      name: 'Omar Mansouri',
-      service: 'Expert Électricité',
-      imageUrl: 'assets/images/provider.png',
-      rating: 4.7,
-      reviewCount: 210,
-      distance: 3.8,
-      priceLabel: 'À partir de',
-      price: '200 MAD',
-      priceValue: 200.0,
-      isVerified: true,
-      isAvailable: true,
-      categoryId: '2',
-      activeJobsCount: 1,
-    ),
-  ];
+  List<ProviderModel> _getProviders(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final priceLabel = lang == 'en' ? 'From' : lang == 'ar' ? 'ابتداءً من' : 'À partir de';
+
+    return [
+      ProviderModel(
+        id: '1',
+        name: lang == 'ar' ? 'ياسين العمراني' : 'Yassine El Amrani',
+        service: lang == 'en' ? 'Plumbing & Repair' : lang == 'ar' ? 'السباكة والإصلاح' : 'Plomberie & Réparation',
+        imageUrl: 'assets/images/provider.png',
+        rating: 4.8,
+        reviewCount: 120,
+        distance: 2.3,
+        priceLabel: priceLabel,
+        price: '150 MAD/hr',
+        priceValue: 150.0,
+        isVerified: true,
+        isAvailable: true,
+        categoryId: '1',
+        activeJobsCount: 2,
+      ),
+      ProviderModel(
+        id: '2',
+        name: lang == 'ar' ? 'سارة بنجلون' : 'Sarah Benjelloun',
+        service: lang == 'en' ? 'Professional Cleaning' : lang == 'ar' ? 'تنظيف احترافي' : 'Ménage Professionnel',
+        imageUrl: 'assets/images/provider.png',
+        rating: 4.9,
+        reviewCount: 85,
+        distance: 1.1,
+        priceLabel: priceLabel,
+        price: '100 MAD/hr',
+        priceValue: 100.0,
+        isVerified: true,
+        isAvailable: false,
+        categoryId: '3',
+        activeJobsCount: 5,
+      ),
+      ProviderModel(
+        id: '3',
+        name: lang == 'ar' ? 'عمر المنصوري' : 'Omar Mansouri',
+        service: lang == 'en' ? 'Electrical Expert' : lang == 'ar' ? 'خبير كهرباء' : 'Expert Électricité',
+        imageUrl: 'assets/images/provider.png',
+        rating: 4.7,
+        reviewCount: 210,
+        distance: 3.8,
+        priceLabel: priceLabel,
+        price: '200 MAD/hr',
+        priceValue: 200.0,
+        isVerified: true,
+        isAvailable: true,
+        categoryId: '2',
+        activeJobsCount: 1,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,13 +292,21 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildTopAppBar() {
+    final displayUserName = _userName == 'Utilisateur' 
+        ? (Localizations.localeOf(context).languageCode == 'ar' ? 'مستخدم' : Localizations.localeOf(context).languageCode == 'en' ? 'User' : 'Utilisateur')
+        : _userName;
+    
+    final displayLocation = _locationText == 'Morocco' || _locationText == 'Localisation...'
+        ? (Localizations.localeOf(context).languageCode == 'ar' ? 'المغرب' : Localizations.localeOf(context).languageCode == 'en' ? 'Morocco' : 'Maroc')
+        : _locationText;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -244,35 +314,15 @@ class _HomeViewState extends State<HomeView> {
       ),
       child: Row(
         children: [
-          // Profile Picture
+          // Profile Picture with AvatarImage
           GestureDetector(
             onTap: () {
               widget.onNavigateToProfile?.call();
             },
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.mainAppPrimary, width: 2),
-              ),
-              child: ClipOval(
-                child: _userAvatar != null
-                    ? Image.network(
-                        _userAvatar!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.mainAppPrimary.withOpacity(0.1),
-                            child: Icon(Icons.person, color: AppColors.mainAppPrimary),
-                          );
-                        },
-                      )
-                    : Container(
-                        color: AppColors.mainAppPrimary.withOpacity(0.1),
-                        child: Icon(Icons.person, color: AppColors.mainAppPrimary),
-                      ),
-              ),
+            child: AvatarImage(
+              photoUrl: _userAvatar,
+              name: displayUserName,
+              size: 48,
             ),
           ),
           const SizedBox(width: 12),
@@ -282,7 +332,7 @@ class _HomeViewState extends State<HomeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MarqueeText(
-                  text: '${_getGreeting()}, $_userName 👋',
+                  text: AppLocalizations.of(context)?.helloUser(displayUserName) ?? '${_getGreeting()}, $displayUserName 👋',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -300,7 +350,7 @@ class _HomeViewState extends State<HomeView> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        _locationText,
+                        displayLocation,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -376,7 +426,7 @@ class _HomeViewState extends State<HomeView> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -387,7 +437,7 @@ class _HomeViewState extends State<HomeView> {
                     const Icon(Icons.search, color: AppColors.textSecondary),
                     const SizedBox(width: 12),
                     Text(
-                      'Rechercher un service...',
+                      AppLocalizations.of(context)!.searchService,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -428,7 +478,7 @@ class _HomeViewState extends State<HomeView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Catégories',
+                AppLocalizations.of(context)!.categories,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -449,7 +499,7 @@ class _HomeViewState extends State<HomeView> {
                   });
                 },
                 child: Text(
-                  'Voir tout',
+                  AppLocalizations.of(context)!.seeAll,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -466,13 +516,14 @@ class _HomeViewState extends State<HomeView> {
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
-            itemCount: _categories.length,
+            itemCount: _getCategories(context).length,
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
+              final cat = _getCategories(context)[index];
               return CategoryItem(
-                category: _categories[index],
+                category: cat,
                 onTap: () {
-                  widget.onCategorySelected?.call(_categories[index].name);
+                  widget.onCategorySelected?.call(cat.id);
                 },
               );
             },
@@ -493,7 +544,7 @@ class _HomeViewState extends State<HomeView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Prestataires proches',
+                    AppLocalizations.of(context)!.nearbyProviders,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -511,7 +562,7 @@ class _HomeViewState extends State<HomeView> {
                     },
                     icon: Icon(Icons.sort, size: 18, color: AppColors.mainAppPrimary),
                     label: Text(
-                      'Trier par',
+                      AppLocalizations.of(context)!.sortBy,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class PromoBanner extends StatelessWidget {
@@ -12,39 +13,39 @@ class PromoBanner extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.mainAppPrimary, AppColors.mainAppPrimary.withOpacity(0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          colors: [AppColors.mainAppPrimary, AppColors.mainAppPrimary.withValues(alpha: 0.8)],
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Stack(
         children: [
           // Background pattern
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             bottom: -20,
             child: Icon(
               Icons.home_repair_service,
               size: 120,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'OFFRE SPÉCIALE',
+                AppLocalizations.of(context)!.specialOffer,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   letterSpacing: 1.2,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                '20% de réduction\nsur votre 1er Ménage',
+                AppLocalizations.of(context)!.promoDiscount,
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -64,7 +65,7 @@ class PromoBanner extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Réserver',
+                  AppLocalizations.of(context)!.bookNow,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

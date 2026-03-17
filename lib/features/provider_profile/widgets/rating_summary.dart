@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class RatingSummary extends StatelessWidget {
@@ -45,7 +46,7 @@ class RatingSummary extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '$reviewCount avis',
+                AppLocalizations.of(context)!.reviewsCount(reviewCount),
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: AppColors.textSecondary,

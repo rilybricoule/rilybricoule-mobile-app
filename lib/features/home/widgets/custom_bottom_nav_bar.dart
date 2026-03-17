@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -14,6 +15,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -31,11 +33,11 @@ class CustomBottomNavBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(0, Icons.home, 'Accueil'),
-              _buildNavItem(1, Icons.search, 'Recherche'),
-              _buildNavItem(2, Icons.calendar_today, 'Réservation'),
-              _buildNavItem(3, Icons.chat_bubble_outline, 'Messages'),
-              _buildNavItem(4, Icons.person_outline, 'Profil'),
+              _buildNavItem(0, Icons.home, l10n.navHome),
+              _buildNavItem(1, Icons.search, l10n.navSearch),
+              _buildNavItem(2, Icons.calendar_today, l10n.navBooking),
+              _buildNavItem(3, Icons.chat_bubble_outline, l10n.navMessages),
+              _buildNavItem(4, Icons.person_outline, l10n.navProfile),
             ],
           ),
         ),

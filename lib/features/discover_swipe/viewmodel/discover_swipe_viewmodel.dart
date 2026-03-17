@@ -24,12 +24,13 @@ class DiscoverSwipeViewModel extends ChangeNotifier {
   SearchContextBundle? _context;
   SearchContextBundle? get context => _context;
 
-  Future<void> loadProviders(SearchContextBundle bundle) async {
+  Future<void> loadProviders(SearchContextBundle bundle, [BuildContext? context]) async {
     _context = bundle;
     _isLoading = true;
     notifyListeners();
 
     try {
+      final String? langCode = context != null ? Localizations.localeOf(context).languageCode : null;
       final rawProviders = await _searchRepository.searchProviders(
         query: bundle.query ?? '',
         minPrice: bundle.minPrice,
@@ -37,6 +38,8 @@ class DiscoverSwipeViewModel extends ChangeNotifier {
         minRating: bundle.minRating,
         maxDistance: bundle.maxDistanceKm,
         availableNow: bundle.availableNow,
+        categoryId: bundle.categoryId,
+        langCode: langCode,
       );
 
       _providers = _rankingEngine.filterAndRank(
@@ -84,12 +87,12 @@ class DiscoverSwipeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> resetFilters() async {
+  Future<void> resetFilters([BuildContext? context]) async {
     if (_context != null) {
       await loadProviders(SearchContextBundle(
         userLatitude: _context!.userLatitude,
         userLongitude: _context!.userLongitude,
-      ));
+      ), context);
     }
   }
 }

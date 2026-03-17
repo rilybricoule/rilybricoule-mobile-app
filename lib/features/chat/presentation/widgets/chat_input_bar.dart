@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../services/location/location_service.dart';
@@ -63,7 +64,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
             ListTile(
               leading: const Icon(Icons.phone, color: AppColors.mainAppPrimary),
               title: Text(
-                'Make a Call',
+                AppLocalizations.of(context)!.makeCall,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
@@ -74,7 +75,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
             ListTile(
               leading: const Icon(Icons.image, color: AppColors.mainAppPrimary),
               title: Text(
-                'Send an Image',
+                AppLocalizations.of(context)!.sendImage,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
@@ -86,7 +87,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
               ListTile(
                 leading: const Icon(Icons.location_on, color: AppColors.mainAppPrimary),
                 title: Text(
-                  'Partager ma position',
+                  AppLocalizations.of(context)!.shareLocationOption,
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 ),
                 onTap: () {
@@ -97,7 +98,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
             ListTile(
               leading: const Icon(Icons.picture_as_pdf, color: AppColors.mainAppPrimary),
               title: Text(
-                'Send PDF / Document',
+                AppLocalizations.of(context)!.sendDocument,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
@@ -114,7 +115,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Location shared (mock)')),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
                 );
               },
             ),
@@ -126,14 +127,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   void _mockCall() {
      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Starting voice call... (mock)')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
     );
   }
 
   void _mockSendPDF() {
      widget.onSendText('📄 Attached Document: invoice_repair.pdf');
      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('PDF document sent (mock)')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
     );
   }
 
@@ -170,7 +171,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
     widget.onSendVoice('mock_voice_url', duration);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Message vocal envoyé (${duration}s)', style: GoogleFonts.poppins()),
+        content: Text(AppLocalizations.of(context)!.voiceMessageSent(duration), style: GoogleFonts.poppins()),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -258,7 +259,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
           child: TextField(
             controller: _controller,
             decoration: InputDecoration(
-              hintText: 'Écrire un message…',
+              hintText: AppLocalizations.of(context)!.writeMessageHint,
               hintStyle: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -301,7 +302,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            'Enregistrement en cours...',
+            AppLocalizations.of(context)!.recordingInProgress,
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: AppColors.error,

@@ -1,4 +1,3 @@
-import 'dart:math';
 import '../../features/home/models/provider_model.dart';
 import '../models/provider_filter.dart';
 import '../models/provider_sort_mode.dart';
@@ -46,7 +45,9 @@ class ProviderRankingEngine {
       if (context.query != null && context.query!.isNotEmpty) {
         final query = context.query!.toLowerCase();
         if (!p.name.toLowerCase().contains(query) &&
-            !p.service.toLowerCase().contains(query)) return false;
+            !p.service.toLowerCase().contains(query)) {
+          return false;
+        }
       }
       return true;
     }).toList();

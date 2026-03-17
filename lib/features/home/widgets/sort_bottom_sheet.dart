@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/sort_option.dart';
 import '../providers/home_provider.dart';
@@ -37,7 +38,7 @@ class SortBottomSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Trier les prestataires',
+                      AppLocalizations.of(context)!.sortProviders,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -79,7 +80,7 @@ class SortBottomSheet extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Réinitialiser',
+                          AppLocalizations.of(context)!.reset,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -103,7 +104,7 @@ class SortBottomSheet extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Appliquer',
+                          AppLocalizations.of(context)!.apply,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -142,7 +143,7 @@ class SortBottomSheet extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                option.displayName,
+                option.getDisplayName(context),
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

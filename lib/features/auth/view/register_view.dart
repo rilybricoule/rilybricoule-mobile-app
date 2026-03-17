@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +12,7 @@ import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/client_signup_form.dart';
 import '../widgets/prestataire_signup_form.dart';
+import '../../../l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -58,7 +58,7 @@ class _RegisterViewState extends State<RegisterView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: Text(AppLocalizations.of(context)!.createAccount),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
@@ -74,7 +74,7 @@ class _RegisterViewState extends State<RegisterView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Join Us!',
+                    AppLocalizations.of(context)!.joinUs,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
@@ -82,7 +82,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Create an account to get started',
+                    AppLocalizations.of(context)!.createAccountSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -113,7 +113,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                'Client',
+                                AppLocalizations.of(context)!.client,
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
                                   color: _selectedRole == UserRole.client
@@ -141,7 +141,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                'Prestataire',
+                                AppLocalizations.of(context)!.prestataire,
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
                                   color: _selectedRole == UserRole.prestataire
@@ -211,14 +211,14 @@ class _RegisterViewState extends State<RegisterView> {
                           child: Wrap(
                             children: [
                               Text(
-                                'I agree to the ',
+                                '${AppLocalizations.of(context)!.iAgreeToThe} ',
                                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                               ),
                               GestureDetector(
                                 onTap: () {},
                                 child: Text(
-                                  'Terms of Service',
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.termsOfService,
+                                  style: const TextStyle(
                                     fontSize: 13,
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
@@ -227,14 +227,14 @@ class _RegisterViewState extends State<RegisterView> {
                                 ),
                               ),
                               Text(
-                                ' and ',
+                                ' ${AppLocalizations.of(context)!.or} ',
                                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                               ),
                               GestureDetector(
                                 onTap: () {},
                                 child: Text(
-                                  'Privacy Policy',
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.privacyPolicy,
+                                  style: const TextStyle(
                                     fontSize: 13,
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
@@ -251,12 +251,12 @@ class _RegisterViewState extends State<RegisterView> {
                   const SizedBox(height: 10),
                   
                   AuthButton(
-                    text: 'REGISTER',
+                    text: AppLocalizations.of(context)!.register,
                     isLoading: authViewModel.isLoading,
                     onPressed: () async {
                       if (!_agreedToTerms) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please agree to Terms & Privacy')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.agreeToTermsRequired)),
                         );
                         return;
                       }
@@ -297,12 +297,27 @@ class _RegisterViewState extends State<RegisterView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Already have an account?"),
+                      Text(
+                        AppLocalizations.of(context)!.alreadyHaveAccount,
+                        style: const TextStyle(fontSize: 13),
+                      ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, AppRoutes.login);
                         },
-                        child: const Text('Login'),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.only(left: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.login,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
                       ),
                     ],
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/provider_detail_model.dart';
 
@@ -75,7 +76,7 @@ class ServiceCard extends StatelessWidget {
               elevation: 0,
             ),
             child: Text(
-              'Réserver',
+              AppLocalizations.of(context)!.book,
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,

@@ -18,6 +18,8 @@ class AppRoutes {
   static const String messages = '/messages';
   static const String editProfile = '/edit-profile';
   static const String paymentMethods = '/payment-methods';
+  static const String addPaymentMethod = '/add-payment-method';
+  static const String paymentPolicyInfo = '/payment-policy-info';
   static const String favorites = '/favorites';
   static const String help = '/help';
   static const String about = '/about';

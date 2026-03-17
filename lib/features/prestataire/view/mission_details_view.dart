@@ -1,8 +1,8 @@
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../../../../core/widgets/app_status_chip.dart';
 
 class ProviderMissionDetailsView extends StatefulWidget {
   final String clientName;
@@ -45,7 +45,7 @@ class _ProviderMissionDetailsViewState
         _step++;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Affichage de la facture (mock)')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
         );
       }
     });

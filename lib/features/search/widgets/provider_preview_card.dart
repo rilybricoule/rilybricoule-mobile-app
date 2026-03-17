@@ -72,17 +72,11 @@ class ProviderPreviewCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            provider.price.split(' ')[0],
+                            provider.price,
+                            textDirection: TextDirection.ltr,
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.mainAppPrimary,
-                            ),
-                          ),
-                          Text(
-                            'MAD',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
                               color: AppColors.mainAppPrimary,
                             ),
                           ),

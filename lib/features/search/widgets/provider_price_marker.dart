@@ -37,6 +37,7 @@ class ProviderPriceMarker extends StatelessWidget {
           ),
           child: Text(
             isBusy ? 'OCCUPÉ' : price,
+            textDirection: TextDirection.ltr,
             style: GoogleFonts.poppins(
               fontSize: isSelected ? 14 : 12,
               fontWeight: FontWeight.w600,

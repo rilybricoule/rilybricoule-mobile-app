@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../home/models/provider_model.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ProviderSwipeCard extends StatelessWidget {
   final ProviderModel provider;
@@ -34,8 +34,8 @@ class ProviderSwipeCard extends StatelessWidget {
           children: [
             _buildImage(),
             _buildGradient(),
-            _buildContent(),
-            _buildTopBadges(),
+            _buildContent(context),
+            _buildTopBadges(context),
           ],
         ),
       ),
@@ -73,7 +73,7 @@ class ProviderSwipeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBadges() {
+  Widget _buildTopBadges(BuildContext context) {
     return Positioned(
       top: 16,
       left: 16,
@@ -100,7 +100,7 @@ class ProviderSwipeCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Disponible',
+                    AppLocalizations.of(context)!.availableNowBadge,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -125,7 +125,7 @@ class ProviderSwipeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Positioned(
       bottom: 0,
       left: 0,
@@ -194,6 +194,7 @@ class ProviderSwipeCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     provider.price,
+                    textDirection: TextDirection.ltr,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -209,7 +210,7 @@ class ProviderSwipeCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Top noté',
+                      AppLocalizations.of(context)!.topRatedBadge,
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -227,7 +228,7 @@ class ProviderSwipeCard extends StatelessWidget {
                     onPressed: onViewProfile,
                     icon: const Icon(Icons.info_outline, size: 18),
                     label: Text(
-                      'Voir profil',
+                      AppLocalizations.of(context)!.viewProfileBtn,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

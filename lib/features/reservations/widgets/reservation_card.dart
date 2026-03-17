@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/reservation_model.dart';
 import '../models/reservation_status.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReservationCard extends StatelessWidget {
   final ReservationModel reservation;
@@ -50,7 +51,7 @@ class ReservationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCoverImage(),
+          _buildCoverImage(context),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -71,6 +72,7 @@ class ReservationCard extends StatelessWidget {
                     ),
                     Text(
                       reservation.priceLabel,
+                      textDirection: TextDirection.ltr,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -164,7 +166,7 @@ class ReservationCard extends StatelessWidget {
                               if (reservation.expectedArrival != null)
                                 Expanded(
                                   child: Text(
-                                    'Arrivée: ${reservation.expectedArrival}',
+                                    '${AppLocalizations.of(context)!.labelArrival}: ${reservation.expectedArrival}',
                                     style: GoogleFonts.poppins(
                                       fontSize: 13,
                                       color: AppColors.textPrimary,
@@ -192,7 +194,7 @@ class ReservationCard extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(height: 16),
-                _buildActionButtons(),
+                _buildActionButtons(context),
               ],
             ),
           ),
@@ -201,7 +203,7 @@ class ReservationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCoverImage() {
+  Widget _buildCoverImage(BuildContext context) {
     return Stack(
       children: [
         ClipRRect(
@@ -230,7 +232,7 @@ class ReservationCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              reservation.status.label.toUpperCase(),
+              reservation.status.getLocalizedLabel(context),
               style: GoogleFonts.poppins(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -244,7 +246,8 @@ class ReservationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // For completed reservations with review available
     if (reservation.canReview && onLeaveReview != null) {
       return Column(
@@ -264,7 +267,7 @@ class ReservationCard extends StatelessWidget {
                     ),
                   ),
                   label: Text(
-                    'Laisser un avis',
+                    l10n.btnLeaveReview,
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -287,7 +290,7 @@ class ReservationCard extends StatelessWidget {
                       ),
                     ),
                     label: Text(
-                      'Facture',
+                      l10n.btnInvoice,
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -312,7 +315,7 @@ class ReservationCard extends StatelessWidget {
                 elevation: 0,
               ),
               child: Text(
-                'Voir détails',
+                l10n.btnViewDetails,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -343,7 +346,7 @@ class ReservationCard extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Voir détails',
+                    l10n.btnViewDetails,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -386,7 +389,7 @@ class ReservationCard extends StatelessWidget {
           elevation: 0,
         ),
         child: Text(
-          'Voir détails',
+          l10n.btnViewDetails,
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w600,

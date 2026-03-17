@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
+import 'avatar_image.dart';
 
 class ProfileHeader extends StatelessWidget {
   final String name;
   final String memberSince;
   final String? avatarUrl;
   final VoidCallback onEditProfile;
+  final VoidCallback? onAvatarTap;
 
   const ProfileHeader({
     super.key,
@@ -14,6 +17,7 @@ class ProfileHeader extends StatelessWidget {
     required this.memberSince,
     this.avatarUrl,
     required this.onEditProfile,
+    this.onAvatarTap,
   });
 
   @override
@@ -25,38 +29,32 @@ class ProfileHeader extends StatelessWidget {
         children: [
           Stack(
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.mainAppPrimary, width: 3),
-                ),
-                child: ClipOval(
-                  child: avatarUrl != null && avatarUrl!.isNotEmpty
-                      ? Image.network(
-                          avatarUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildInitials(),
-                        )
-                      : _buildInitials(),
+              GestureDetector(
+                onTap: onAvatarTap,
+                child: AvatarImage(
+                  photoUrl: avatarUrl,
+                  name: name,
+                  size: 100,
                 ),
               ),
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.mainAppPrimary,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: 16,
+                child: GestureDetector(
+                  onTap: onAvatarTap,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.mainAppPrimary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ),
@@ -73,7 +71,7 @@ class ProfileHeader extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Membre depuis $memberSince',
+            AppLocalizations.of(context)!.memberSinceDate(memberSince),
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: AppColors.textSecondary,
@@ -91,7 +89,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Modifier le profil',
+              AppLocalizations.of(context)!.editProfile,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -99,23 +97,6 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildInitials() {
-    final initials = name.split(' ').map((e) => e[0]).take(2).join().toUpperCase();
-    return Container(
-      color: AppColors.mainAppPrimary.withOpacity(0.1),
-      child: Center(
-        child: Text(
-          initials,
-          style: GoogleFonts.poppins(
-            fontSize: 32,
-            fontWeight: FontWeight.w600,
-            color: AppColors.mainAppPrimary,
-          ),
-        ),
       ),
     );
   }

@@ -7,17 +7,17 @@ class ProvidersRepository {
   factory ProvidersRepository() => _instance;
   ProvidersRepository._internal();
 
-  // Mock data - TODO: Replace with API call
-  final List<ProviderLocation> _mockProviders = [
+  List<ProviderLocation> _getMockProviders(String lang) {
+    return [
     ProviderLocation(
       id: '1',
-      name: 'Ahmed El Mansouri',
-      category: 'Bricoleur Expert',
+      name: lang == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+      category: lang == 'en' ? 'Expert Handyman' : lang == 'ar' ? 'خبير أعمال يدوية' : 'Bricoleur Expert',
       imageUrl: 'assets/images/provider.png',
       rating: 4.9,
       reviewCount: 42,
       distance: 0.8,
-      price: '150 MAD',
+      price: '150 MAD/hr',
       position: const LatLng(33.5731, -7.5898),
       isVerified: true,
       status: ProviderStatus.available,
@@ -26,13 +26,13 @@ class ProvidersRepository {
     ),
     ProviderLocation(
       id: '2',
-      name: 'Yassine Amrani',
-      category: 'Plombier',
+      name: lang == 'ar' ? 'ياسين العمراني' : 'Yassine Amrani',
+      category: lang == 'en' ? 'Plumber' : lang == 'ar' ? 'سباك' : 'Plombier',
       imageUrl: 'assets/images/provider.png',
       rating: 4.7,
       reviewCount: 38,
       distance: 1.2,
-      price: '220 MAD',
+      price: '220 MAD/hr',
       position: const LatLng(33.5850, -7.6050),
       isVerified: true,
       status: ProviderStatus.available,
@@ -41,13 +41,13 @@ class ProvidersRepository {
     ),
     ProviderLocation(
       id: '3',
-      name: 'Omar Hassan',
-      category: 'Électricien',
+      name: lang == 'ar' ? 'عمر حسن' : 'Omar Hassan',
+      category: lang == 'en' ? 'Electrician' : lang == 'ar' ? 'كهربائي' : 'Électricien',
       imageUrl: 'assets/images/provider.png',
       rating: 4.8,
       reviewCount: 56,
       distance: 1.5,
-      price: '180 MAD',
+      price: '180 MAD/hr',
       position: const LatLng(33.5650, -7.5750),
       isVerified: true,
       status: ProviderStatus.busy,
@@ -56,13 +56,13 @@ class ProvidersRepository {
     ),
     ProviderLocation(
       id: '4',
-      name: 'Karim Benjelloun',
-      category: 'Menuisier',
+      name: lang == 'ar' ? 'كريم بنجلون' : 'Karim Benjelloun',
+      category: lang == 'en' ? 'Carpenter' : lang == 'ar' ? 'نجار' : 'Menuisier',
       imageUrl: 'assets/images/provider.png',
       rating: 4.6,
       reviewCount: 29,
       distance: 2.1,
-      price: '305 MAD',
+      price: '305 MAD/hr',
       position: const LatLng(33.5800, -7.5700),
       isVerified: false,
       status: ProviderStatus.available,
@@ -71,13 +71,13 @@ class ProvidersRepository {
     ),
     ProviderLocation(
       id: '5',
-      name: 'Rachid Alami',
-      category: 'Peintre',
+      name: lang == 'ar' ? 'رشيد العلمي' : 'Rachid Alami',
+      category: lang == 'en' ? 'Painter' : lang == 'ar' ? 'صباغ' : 'Peintre',
       imageUrl: 'assets/images/provider.png',
       rating: 4.5,
       reviewCount: 33,
       distance: 2.8,
-      price: '200 MAD',
+      price: '200 MAD/hr',
       position: const LatLng(33.5900, -7.5950),
       isVerified: true,
       status: ProviderStatus.available,
@@ -85,6 +85,7 @@ class ProvidersRepository {
       activeJobsCount: 3,
     ),
   ];
+  }
 
   // TODO: Replace with actual API call
   Future<List<ProviderLocation>> fetchProvidersAround({
@@ -94,10 +95,12 @@ class ProvidersRepository {
     String? category,
     double? minRating,
     double? maxPrice,
+    String? langCode,
   }) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
-    List<ProviderLocation> filtered = List.from(_mockProviders);
+    final lang = langCode ?? 'fr';
+    List<ProviderLocation> filtered = List.from(_getMockProviders(lang));
 
     // Calculate distance and filter
     filtered = filtered.where((provider) {

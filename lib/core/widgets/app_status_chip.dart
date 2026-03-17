@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/app_colors.dart';
 
 class AppStatusChip extends StatelessWidget {
   final String label;

@@ -1,3 +1,4 @@
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../domain/conversation_model.dart';
@@ -21,17 +22,20 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
   final ScrollController _scrollController = ScrollController();
   late List<ChatMessage> _messages;
 
-  @override
-  void initState() {
-    super.initState();
-    // Charger les messages depuis mock data
-    final mockMessages = PrestataireMockData.messagesByConversation[widget.conversation.id] ?? [];
-    _messages = mockMessages.map((m) => ChatMessage.fromMap(m)).toList();
+  bool _isInit = false;
 
-    // Scroll to bottom après le build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      final mockMessages = PrestataireMockData.getMessagesByConversation(context)[widget.conversation.id] ?? [];
+      _messages = mockMessages.map((m) => ChatMessage.fromMap(m)).toList();
+      _isInit = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
   }
 
   void _scrollToBottom() {
@@ -77,6 +81,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -109,7 +114,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                     ),
                   ),
                   Text(
-                    'Active',
+                    lang == 'en' ? 'Active' : lang == 'ar' ? 'نشط' : 'Actif',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.green,
@@ -126,7 +131,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
             onPressed: () {
               // TODO: Call client
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Call ${widget.conversation.clientName}')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
               );
             },
           ),
@@ -148,7 +153,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                return _buildMessageBubble(message);
+                return _buildMessageBubble(message, lang);
               },
             ),
           ),
@@ -175,7 +180,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                     onPressed: () {
                       // TODO: Attach file
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Attach file - Coming soon')),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon)),
                       );
                     },
                   ),
@@ -191,7 +196,9 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: 'Type a message...',
+                          hintText: lang == 'en' ? 'Type a message...' 
+                                  : lang == 'ar' ? 'اكتب رسالة...' 
+                                  : 'Écrivez un message...',
                           hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -227,7 +234,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message) {
+  Widget _buildMessageBubble(ChatMessage message, String lang) {
     final isProvider = message.isFromProvider;
 
     return Padding(
@@ -285,7 +292,7 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  _formatTime(message.timestamp),
+                  _formatTime(message.timestamp, lang),
                   style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,
@@ -315,20 +322,27 @@ class _ProviderChatThreadViewState extends State<ProviderChatThreadView> {
     );
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(DateTime time, String lang) {
     final now = DateTime.now();
     final difference = now.difference(time);
 
     if (difference.inMinutes < 1) {
-      return 'Just now';
+      return lang == 'en' ? 'Just now' : lang == 'ar' ? 'الآن' : 'À l\'instant';
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}m ago';
+      return lang == 'en' ? '${difference.inMinutes}m ago' 
+           : lang == 'ar' ? 'منذ ${difference.inMinutes} دقيقة' 
+           : 'Il y a ${difference.inMinutes} min';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return lang == 'en' ? '${difference.inHours}h ago' 
+           : lang == 'ar' ? 'منذ ${difference.inHours} ساعة' 
+           : 'Il y a ${difference.inHours} h';
     } else if (difference.inDays == 1) {
-      return 'Yesterday';
+      return lang == 'en' ? 'Yesterday' : lang == 'ar' ? 'أمس' : 'Hier';
     } else {
-      return '${difference.inDays}d ago';
+      return lang == 'en' ? '${difference.inDays}d ago' 
+           : lang == 'ar' ? 'منذ ${difference.inDays} أيام' 
+           : 'Il y a ${difference.inDays} jours';
     }
   }
+
 }

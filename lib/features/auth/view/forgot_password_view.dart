@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_textfield.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({super.key});
@@ -29,7 +30,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgot Password'),
+        title: Text(AppLocalizations.of(context)!.forgotPassword),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
@@ -51,7 +52,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Reset Password',
+                    AppLocalizations.of(context)!.resetPassword,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
@@ -59,7 +60,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Enter your email to receive a reset link',
+                    AppLocalizations.of(context)!.enterEmailToReset,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
@@ -68,20 +69,20 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   const SizedBox(height: 30),
                   AuthTextField(
                     controller: _emailController,
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: AppLocalizations.of(context)!.email,
+                    hint: AppLocalizations.of(context)!.emailHint,
                     prefixIcon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return AppLocalizations.of(context)!.errorEmailRequired;
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 30),
                   AuthButton(
-                    text: 'SEND RESET LINK',
+                    text: AppLocalizations.of(context)!.sendResetLink,
                     isLoading: authViewModel.isLoading,
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
@@ -90,7 +91,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                         );
                         if (success && context.mounted) {
                            ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Reset link sent!')),
+                            SnackBar(content: Text(AppLocalizations.of(context)!.resetLinkSent)),
                           );
                           Navigator.pop(context);
                         }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../../core/config/app_config.dart';
+import '../../data/models/auth_tokens.dart';
 import '../storage/token_storage.dart';
 
 /// Client API avec Dio + intercepteurs pour JWT

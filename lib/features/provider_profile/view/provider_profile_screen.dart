@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/mock_provider_data.dart';
 import '../models/provider_detail_model.dart';
@@ -42,7 +43,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
     await Future.delayed(const Duration(seconds: 1));
     
     setState(() {
-      _provider = MockProviderData.getProviderById(providerId);
+      _provider = MockProviderData.getProviderById(providerId, context);
       _isLoading = false;
     });
   }
@@ -245,7 +246,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                             ),
                           ),
                           Text(
-                            ' (${_provider!.reviewCount} avis)',
+                            ' (${AppLocalizations.of(context)!.reviewsCount(_provider!.reviewCount)})',
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               color: AppColors.textSecondary,
@@ -271,7 +272,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'À propos',
+            AppLocalizations.of(context)!.aboutProvider,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -304,7 +305,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
           TextButton(
             onPressed: () => setState(() => _isExpanded = !_isExpanded),
             child: Text(
-              _isExpanded ? 'Voir moins' : 'Voir plus',
+              _isExpanded ? AppLocalizations.of(context)!.readLess : AppLocalizations.of(context)!.readMore,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -324,17 +325,17 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
         children: [
           Expanded(
             child: StatCard(
-              icon: Icons.access_time_outlined,
-              label: 'RÉPONSE',
-              value: _provider!.responseTime,
+              icon: Icons.access_time,
+              label: AppLocalizations.of(context)!.responseLabel,
+              value: '${_provider!.responseTime} min',
               iconColor: AppColors.mainAppPrimary,
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: StatCard(
-              icon: Icons.check_circle_outline,
-              label: 'MISSIONS',
+              icon: Icons.task_alt,
+              label: AppLocalizations.of(context)!.missionsLabel,
               value: '${_provider!.missionsCount}+',
               iconColor: AppColors.mainAppPrimary,
             ),
@@ -343,8 +344,8 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
           Expanded(
             child: StatCard(
               icon: Icons.verified_user_outlined,
-              label: 'STATUT',
-              value: 'Certifié',
+              label: AppLocalizations.of(context)!.statusLabel,
+              value: _provider!.certified ? AppLocalizations.of(context)!.certifiedStatus : 'Standard',
               iconColor: AppColors.mainAppPrimary,
             ),
           ),
@@ -363,7 +364,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Mes Services',
+                AppLocalizations.of(context)!.myServices,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -383,7 +384,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                   );
                 },
                 child: Text(
-                  'Voir tout',
+                  AppLocalizations.of(context)!.seeAll,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -419,7 +420,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Avis clients',
+            AppLocalizations.of(context)!.customerReviews,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -453,7 +454,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               ),
               child: Text(
-                'Afficher les ${_provider!.reviewCount} avis',
+                AppLocalizations.of(context)!.showAllReviews(_provider!.reviewCount),
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -502,7 +503,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                 },
                 icon: const Icon(Icons.calendar_today, size: 20),
                 label: Text(
-                  'Réserver maintenant',
+                  AppLocalizations.of(context)!.bookNow,
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -551,7 +552,10 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
   Future<void> _openChat() async {
     try {
       final chatRepo = ChatService().repository;
-      final conversation = await chatRepo.getOrCreateConversationWithProvider(_provider!.id);
+      final conversation = await chatRepo.getOrCreateConversationWithProvider(
+        _provider!.id,
+        langCode: Localizations.localeOf(context).languageCode,
+      );
       
       if (mounted) {
         Navigator.pushNamed(
@@ -601,7 +605,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: Text(
-                  'Réserver maintenant',
+                  AppLocalizations.of(context)!.bookNow,
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                 ),
               ),

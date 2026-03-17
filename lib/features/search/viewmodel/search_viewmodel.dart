@@ -98,7 +98,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> search([String? query]) async {
+  Future<void> search([String? query, BuildContext? context]) async {
     if (query != null) {
       _currentQuery = query;
     }
@@ -107,6 +107,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final String? langCode = context != null ? Localizations.localeOf(context).languageCode : null;
       final rawProviders = await _searchRepository.searchProviders(
         query: _currentQuery,
         minPrice: _minPrice,
@@ -114,6 +115,7 @@ class SearchViewModel extends ChangeNotifier {
         minRating: _minRating,
         maxDistance: _maxDistance,
         availableNow: _availableNow,
+        langCode: langCode,
       );
 
       _providers = _rankingEngine.filterAndRank(
@@ -137,8 +139,8 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initialSearch() async {
+  Future<void> initialSearch([BuildContext? context]) async {
     _currentQuery = '';
-    await search();
+    await search(null, context);
   }
 }

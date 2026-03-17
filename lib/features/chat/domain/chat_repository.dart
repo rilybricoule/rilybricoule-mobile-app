@@ -1,6 +1,5 @@
 import '../domain/models/conversation.dart';
 import '../domain/models/message.dart';
-import '../domain/models/user_summary.dart';
 
 abstract class ChatRepository {
   Future<List<Conversation>> getConversations({String? query});
@@ -12,7 +11,7 @@ abstract class ChatRepository {
   Future<void> sendVoice(String conversationId, String voiceUrl, int duration);
   Future<void> sendLocation(String conversationId, double lat, double lng, String label);
   Future<void> markAsRead(String conversationId);
-  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId});
+  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId, String? langCode});
   Future<void> deleteMessage(String conversationId, String messageId);
   Future<bool> hasConfirmedBookingWithProvider(String providerId);
 }

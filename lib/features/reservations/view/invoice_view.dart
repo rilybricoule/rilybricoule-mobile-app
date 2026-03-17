@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/reservation_status.dart';
 import '../data/mock_reservations_repository.dart';
@@ -23,7 +24,7 @@ class InvoiceView extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Facture',
+          AppLocalizations.of(context)!.invoiceTitle,
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -36,7 +37,7 @@ class InvoiceView extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Partager bientôt disponible', style: GoogleFonts.poppins()),
+                  content: Text(AppLocalizations.of(context)!.shareComingSoon, style: GoogleFonts.poppins()),
                 ),
               );
             },
@@ -46,7 +47,7 @@ class InvoiceView extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Téléchargement bientôt disponible', style: GoogleFonts.poppins()),
+                  content: Text(AppLocalizations.of(context)!.downloadComingSoon, style: GoogleFonts.poppins()),
                 ),
               );
             },
@@ -68,11 +69,11 @@ class InvoiceView extends StatelessWidget {
             orElse: () => ReservationModel(
               id: reservationId,
               status: ReservationStatus.completed,
-              title: 'Réparation Plomberie',
-              providerName: 'Ahmed El Mansouri',
-              providerSubtitle: 'Plombier Expert',
+              title: AppLocalizations.of(context)!.service,
+              providerName: Localizations.localeOf(context).languageCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+              providerSubtitle: AppLocalizations.of(context)!.plumberExpert,
               coverImageUrl: '',
-              dateLabel: '15 Oct, 2023',
+              dateLabel: Localizations.localeOf(context).languageCode == 'ar' ? '15 أكتوبر، 2023' : '15 Oct, 2023',
               timeLabel: '10:30',
               priceLabel: '350.00 MAD',
               canReview: true,
@@ -128,7 +129,7 @@ class InvoiceView extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Facture #RB-${reservation.id.padLeft(6, '0')}',
+                              AppLocalizations.of(context)!.invoiceNumber(reservation.id.padLeft(6, '0')),
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: AppColors.textSecondary,
@@ -163,7 +164,7 @@ class InvoiceView extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'Payée',
+                                      AppLocalizations.of(context)!.paidStatus,
                                       style: GoogleFonts.poppins(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -177,24 +178,24 @@ class InvoiceView extends StatelessWidget {
                             const SizedBox(height: 24),
                             
                             // Service Details
-                            _buildSectionTitle('Détails de la prestation'),
+                            _buildSectionTitle(AppLocalizations.of(context)!.serviceDetailsTitle),
                             const SizedBox(height: 12),
-                            _buildInfoRow('Service', reservation.title),
-                            _buildInfoRow('Prestataire', reservation.providerName),
-                            _buildInfoRow('Date', reservation.dateLabel),
-                            _buildInfoRow('Heure', reservation.timeLabel),
+                            _buildInfoRow(AppLocalizations.of(context)!.service, reservation.title),
+                            _buildInfoRow(AppLocalizations.of(context)!.providerLabel, reservation.providerName),
+                            _buildInfoRow(AppLocalizations.of(context)!.dateLabel, reservation.dateLabel),
+                            _buildInfoRow(AppLocalizations.of(context)!.timeLabel, reservation.timeLabel),
                             const Divider(height: 32),
                             
                             // Pricing Breakdown
-                            _buildSectionTitle('Détails du paiement'),
+                            _buildSectionTitle(AppLocalizations.of(context)!.paymentDetailsTitle),
                             const SizedBox(height: 12),
-                            _buildPriceRow('Service', reservation.priceLabel),
-                            _buildPriceRow('Frais de service', '20.00 MAD'),
-                            _buildPriceRow('TVA (20%)', 
-                              '${(double.parse(reservation.priceLabel.replaceAll(' MAD', '').replaceAll(',', '.')) * 0.2).toStringAsFixed(2)} MAD'),
+                            _buildPriceRow(AppLocalizations.of(context)!.service, reservation.priceLabel),
+                            _buildPriceRow(AppLocalizations.of(context)!.serviceFeeLabel, '20.00 MAD'),
+                            _buildPriceRow(AppLocalizations.of(context)!.taxLabel, 
+                              '${(double.parse(reservation.priceLabel.replaceAll(RegExp(r'[^0-9,\.]'), '').replaceAll(',', '.')) * 0.2).toStringAsFixed(2)} MAD'),
                             const Divider(height: 32),
-                            _buildTotalRow('Total', 
-                              '${(double.parse(reservation.priceLabel.replaceAll(' MAD', '').replaceAll(',', '.')) * 1.2 + 20).toStringAsFixed(2)} MAD'),
+                            _buildTotalRow(AppLocalizations.of(context)!.totalTotalLabel, 
+                              '${(double.parse(reservation.priceLabel.replaceAll(RegExp(r'[^0-9,\.]'), '').replaceAll(',', '.')) * 1.2 + 20).toStringAsFixed(2)} MAD'),
                           ],
                         ),
                       ),
@@ -231,14 +232,14 @@ class InvoiceView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Méthode de paiement',
+                              AppLocalizations.of(context)!.paymentMethodLabel,
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: AppColors.textSecondary,
                               ),
                             ),
                             Text(
-                              'Carte bancaire •••• 4242',
+                              AppLocalizations.of(context)!.creditCardLabel,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -261,7 +262,7 @@ class InvoiceView extends StatelessWidget {
                 
                 // Date Info
                 Text(
-                  'Facture émise le ${reservation.dateLabel}',
+                  AppLocalizations.of(context)!.invoiceIssuedOn(reservation.dateLabel.isNotEmpty ? reservation.dateLabel : '15 Oct, 2023'),
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -276,14 +277,14 @@ class InvoiceView extends StatelessWidget {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Téléchargement bientôt disponible', style: GoogleFonts.poppins()),
+                          content: Text(AppLocalizations.of(context)!.downloadComingSoon, style: GoogleFonts.poppins()),
                           backgroundColor: AppColors.success,
                         ),
                       );
                     },
                     icon: const Icon(Icons.download),
                     label: Text(
-                      'Télécharger la facture',
+                      AppLocalizations.of(context)!.downloadInvoiceBtn,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

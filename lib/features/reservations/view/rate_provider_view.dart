@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/reservation_status.dart';
 import '../data/mock_reservations_repository.dart';
@@ -18,14 +19,17 @@ class _RateProviderViewState extends State<RateProviderView> {
   double _rating = 0;
   final TextEditingController _commentController = TextEditingController();
   bool _isSubmitting = false;
-  final List<String> _quickTags = [
-    'Excellent service',
-    'Ponctuel',
-    'Travail soigné',
-    'Professionnel',
-    'À recommander',
-  ];
   final List<String> _selectedTags = [];
+
+  List<String> _getQuickTags(BuildContext context) {
+    return [
+      AppLocalizations.of(context)!.tagExcellent,
+      AppLocalizations.of(context)!.tagPunctual,
+      AppLocalizations.of(context)!.tagNeatWork,
+      AppLocalizations.of(context)!.tagProfessional,
+      AppLocalizations.of(context)!.tagRecommended,
+    ];
+  }
 
   @override
   void dispose() {
@@ -37,7 +41,7 @@ class _RateProviderViewState extends State<RateProviderView> {
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Veuillez sélectionner une note', style: GoogleFonts.poppins()),
+          content: Text(AppLocalizations.of(context)!.pleaseSelectRating, style: GoogleFonts.poppins()),
           backgroundColor: AppColors.error,
         ),
       );
@@ -53,7 +57,7 @@ class _RateProviderViewState extends State<RateProviderView> {
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Merci pour votre avis !', style: GoogleFonts.poppins()),
+          content: Text(AppLocalizations.of(context)!.thankYouReview, style: GoogleFonts.poppins()),
           backgroundColor: AppColors.success,
         ),
       );
@@ -79,7 +83,7 @@ class _RateProviderViewState extends State<RateProviderView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Laisser un avis',
+          AppLocalizations.of(context)!.leaveReview,
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -102,9 +106,9 @@ class _RateProviderViewState extends State<RateProviderView> {
             orElse: () => ReservationModel(
               id: widget.reservationId,
               status: ReservationStatus.completed,
-              title: 'Prestation',
-              providerName: 'Ahmed El Mansouri',
-              providerSubtitle: 'Plombier Expert',
+              title: AppLocalizations.of(context)!.service,
+              providerName: Localizations.localeOf(context).languageCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+              providerSubtitle: AppLocalizations.of(context)!.plumberExpert,
               coverImageUrl: '',
               dateLabel: '',
               timeLabel: '',
@@ -124,7 +128,7 @@ class _RateProviderViewState extends State<RateProviderView> {
                 
                 // Rating Section
                 Text(
-                  'Comment s\'est passée votre prestation ?',
+                  AppLocalizations.of(context)!.howWasService,
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -133,7 +137,7 @@ class _RateProviderViewState extends State<RateProviderView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Notez votre expérience avec ${reservation.providerName}',
+                  AppLocalizations.of(context)!.rateExperience(reservation.providerName),
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -149,7 +153,7 @@ class _RateProviderViewState extends State<RateProviderView> {
                 
                 // Quick Tags
                 Text(
-                  'Que pensez-vous du service ?',
+                  AppLocalizations.of(context)!.whatDoYouThink,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -157,12 +161,12 @@ class _RateProviderViewState extends State<RateProviderView> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildQuickTags(),
+                _buildQuickTags(context),
                 const SizedBox(height: 32),
                 
                 // Comment Section
                 Text(
-                  'Votre commentaire (optionnel)',
+                  AppLocalizations.of(context)!.yourCommentOptional,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -274,11 +278,12 @@ class _RateProviderViewState extends State<RateProviderView> {
     );
   }
 
-  Widget _buildQuickTags() {
+  Widget _buildQuickTags(BuildContext context) {
+    final quickTags = _getQuickTags(context);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: _quickTags.map((tag) {
+      children: quickTags.map((tag) {
         final isSelected = _selectedTags.contains(tag);
         return GestureDetector(
           onTap: () {
@@ -325,7 +330,7 @@ class _RateProviderViewState extends State<RateProviderView> {
         maxLines: 4,
         maxLength: 500,
         decoration: InputDecoration(
-          hintText: 'Décrivez votre expérience...',
+          hintText: AppLocalizations.of(context)!.describeExperience,
           hintStyle: GoogleFonts.poppins(
             fontSize: 14,
             color: AppColors.textSecondary,
@@ -365,7 +370,7 @@ class _RateProviderViewState extends State<RateProviderView> {
                 ),
               )
             : Text(
-                'Envoyer mon avis',
+                AppLocalizations.of(context)!.submitReview,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

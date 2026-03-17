@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../map/widgets/map_preview.dart';
 import '../widgets/custom_calendar.dart';
@@ -90,10 +91,10 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
 
     if (_providerId == null || _serviceId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Planification')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.scheduling)),
         body: Center(
           child: Text(
-            'Erreur: Données manquantes',
+            AppLocalizations.of(context)!.errorMissingData,
             style: GoogleFonts.poppins(fontSize: 16, color: AppColors.textSecondary),
           ),
         ),
@@ -159,7 +160,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Planification',
+                  AppLocalizations.of(context)!.scheduling,
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -174,7 +175,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PROGRESSION DE LA RÉSERVATION',
+                AppLocalizations.of(context)!.bookingProgress,
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -183,7 +184,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
                 ),
               ),
               Text(
-                'Étape 2 sur 5',
+                AppLocalizations.of(context)!.stepXofY(2, 5),
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -241,7 +242,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Choisir une date',
+                AppLocalizations.of(context)!.chooseDate,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -299,7 +300,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Créneaux disponibles',
+                AppLocalizations.of(context)!.availableSlots,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -310,7 +311,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Matin',
+            AppLocalizations.of(context)!.morning,
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -332,7 +333,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Après-midi',
+            AppLocalizations.of(context)!.afternoon,
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -392,7 +393,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Confirmer l\'adresse',
+                  AppLocalizations.of(context)!.confirmAddress,
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -449,7 +450,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               ),
               Expanded(
                 child: Text(
-                  'Utiliser mon adresse enregistrée',
+                  AppLocalizations.of(context)!.useRegisteredAddress,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: AppColors.textPrimary,
@@ -504,7 +505,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Note pour le prestataire',
+                AppLocalizations.of(context)!.noteForProvider,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -518,7 +519,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
             controller: _noteController,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: 'Ex: Code d\'entrée 1234, interphone B, 3ème porte à gauche au 4ème étage...',
+              hintText: AppLocalizations.of(context)!.noteHint,
               hintStyle: GoogleFonts.poppins(
                 fontSize: 13,
                 color: AppColors.textSecondary,
@@ -571,7 +572,7 @@ class _BookingDateTimeScreenState extends State<BookingDateTimeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Continuer',
+                  AppLocalizations.of(context)!.btnContinue,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

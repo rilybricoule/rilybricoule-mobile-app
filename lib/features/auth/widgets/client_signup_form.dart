@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../widgets/auth_textfield.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ClientSignUpForm extends StatelessWidget {
   final TextEditingController nameController;
@@ -28,12 +29,12 @@ class ClientSignUpForm extends StatelessWidget {
       children: [
         AuthTextField(
           controller: nameController,
-          label: 'Full Name',
-          hint: 'Enter your full name',
+          label: AppLocalizations.of(context)!.fullName,
+          hint: AppLocalizations.of(context)!.nameHint,
           prefixIcon: Icons.person_outline,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your name';
+              return AppLocalizations.of(context)!.errorNameRequired;
             }
             return null;
           },
@@ -41,13 +42,13 @@ class ClientSignUpForm extends StatelessWidget {
         const SizedBox(height: 16),
         AuthTextField(
           controller: emailController,
-          label: 'Email',
-          hint: 'Enter your email',
+          label: AppLocalizations.of(context)!.email,
+          hint: AppLocalizations.of(context)!.emailHint,
           prefixIcon: Icons.email_outlined,
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your email';
+              return AppLocalizations.of(context)!.errorEmailRequired;
             }
             return null;
           },
@@ -55,13 +56,13 @@ class ClientSignUpForm extends StatelessWidget {
         const SizedBox(height: 16),
         AuthTextField(
           controller: phoneController,
-          label: 'Phone',
-          hint: 'Enter your phone number',
+          label: AppLocalizations.of(context)!.phone,
+          hint: AppLocalizations.of(context)!.phoneHint,
           prefixIcon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your phone';
+              return AppLocalizations.of(context)!.errorPhoneRequired;
             }
             return null;
           },
@@ -69,8 +70,8 @@ class ClientSignUpForm extends StatelessWidget {
         const SizedBox(height: 16),
         AuthTextField(
           controller: passwordController,
-          label: 'Password',
-          hint: 'Enter your password',
+          label: AppLocalizations.of(context)!.password,
+          hint: AppLocalizations.of(context)!.passwordHint,
           prefixIcon: Icons.lock_outline,
           obscureText: isObscure,
           suffixIcon: IconButton(
@@ -82,10 +83,10 @@ class ClientSignUpForm extends StatelessWidget {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your password';
+              return AppLocalizations.of(context)!.errorPasswordRequired;
             }
             if (value.length < 6) {
-              return 'Password must be at least 6 characters';
+              return AppLocalizations.of(context)!.errorPasswordLength;
             }
             return null;
           },
@@ -93,16 +94,16 @@ class ClientSignUpForm extends StatelessWidget {
         const SizedBox(height: 16),
         AuthTextField(
           controller: confirmPasswordController,
-          label: 'Confirm Password',
-          hint: 'Confirm your password',
+          label: AppLocalizations.of(context)!.confirmPassword,
+          hint: AppLocalizations.of(context)!.confirmPasswordHint,
           prefixIcon: Icons.lock_outline,
           obscureText: isObscure,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please confirm your password';
+              return AppLocalizations.of(context)!.errorConfirmPasswordRequired;
             }
             if (value != passwordController.text) {
-              return 'Passwords do not match';
+              return AppLocalizations.of(context)!.errorPasswordsNotMatch;
             }
             return null;
           },

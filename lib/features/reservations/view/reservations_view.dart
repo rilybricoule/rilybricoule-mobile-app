@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../data/mock_reservations_repository.dart';
@@ -19,7 +20,7 @@ class ReservationsView extends StatelessWidget {
     final listRepository = MockReservationsRepository();
     
     return ChangeNotifierProvider(
-      create: (_) => ReservationsViewModel(listRepository)..loadReservations(),
+      create: (ctx) => ReservationsViewModel(listRepository)..loadReservations(ctx),
       child: _ReservationsContent(
         initialTabIndex: initialTabIndex,
         listRepository: listRepository,
@@ -56,6 +57,17 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh reservations when language changes to fetch localized mock data
+    Future.microtask(() {
+      if (mounted) {
+        context.read<ReservationsViewModel>().refresh(context);
+      }
+    });
+  }
+
+  @override
   void didUpdateWidget(_ReservationsContent oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTabIndex != null && widget.initialTabIndex != oldWidget.initialTabIndex) {
@@ -83,7 +95,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
     final viewModel = context.read<ReservationsViewModel>();
     viewModel.selectTab(ReservationStatus.cancelled);
     // Refresh to show updated data
-    viewModel.refresh();
+    viewModel.refresh(context);
   }
 
   @override
@@ -119,7 +131,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
         children: [
           Expanded(
             child: Text(
-              'Mes Réservations',
+              AppLocalizations.of(context)!.myReservations,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -152,7 +164,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
           fontWeight: FontWeight.w500,
         ),
         tabs: ReservationStatus.values.map((status) {
-          return Tab(text: status.tabLabel);
+          return Tab(text: status.getLocalizedTabLabel(context));
         }).toList(),
       ),
     );
@@ -192,7 +204,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
         }
 
         return RefreshIndicator(
-          onRefresh: viewModel.refresh,
+          onRefresh: () => viewModel.refresh(context),
           color: AppColors.mainAppPrimary,
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -215,7 +227,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
                   // If cancelled, refresh and navigate to cancelled tab
                   if (result == 'cancelled') {
                     final viewModel = context.read<ReservationsViewModel>();
-                    await viewModel.refresh();
+                    await viewModel.refresh(context);
                     _navigateToCancelledTab();
                   }
                 },
@@ -246,19 +258,20 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
   }
 
   Widget _buildEmptyState(BuildContext context, ReservationStatus status) {
+    final l10n = AppLocalizations.of(context)!;
     String message;
     switch (status) {
       case ReservationStatus.upcoming:
-        message = 'Aucune réservation à venir';
+        message = l10n.noUpcomingReservation;
         break;
       case ReservationStatus.ongoing:
-        message = 'Aucune réservation en cours';
+        message = l10n.noOngoingReservation;
         break;
       case ReservationStatus.completed:
-        message = 'Aucune réservation terminée';
+        message = l10n.noCompletedReservation;
         break;
       case ReservationStatus.cancelled:
-        message = 'Aucune réservation annulée';
+        message = l10n.noCancelledReservation;
         break;
     }
 
@@ -299,7 +312,7 @@ class _ReservationsContentState extends State<_ReservationsContent> with SingleT
                 elevation: 0,
               ),
               child: Text(
-                'Explorer des prestataires',
+                l10n.exploreProviders,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

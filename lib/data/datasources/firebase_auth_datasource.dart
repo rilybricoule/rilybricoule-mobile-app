@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import '../../core/errors/exceptions.dart';
 import '../models/app_user.dart';
-import '../../models/user_role.dart';
 
 /// DataSource Firebase Authentication
 /// Gère toutes les opérations d'authentification Firebase
