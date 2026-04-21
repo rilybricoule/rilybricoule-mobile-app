@@ -15,7 +15,7 @@ void main() {
 
       // Ensure import
       if (!content.contains('l10n/app_localizations.dart')) {
-        content = "import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';\n" + content;
+        content = "import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';\n$content";
         changed = true;
       }
       

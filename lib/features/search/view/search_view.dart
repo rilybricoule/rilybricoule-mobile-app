@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../home/widgets/provider_card.dart';
 import '../viewmodel/search_viewmodel.dart';
-import '../../discover_swipe/models/search_context_bundle.dart';
+
 import '../../../l10n/app_localizations.dart';
 import 'search_map_view.dart';
 
@@ -116,23 +116,7 @@ class _SearchViewState extends State<SearchView> {
     }
   }
 
-  void _navigateToSwipe(SearchViewModel viewModel) {
-    final bundle = SearchContextBundle(
-      query: viewModel.currentQuery,
-      categoryId: viewModel.categoryId,
-      minRating: viewModel.minRating,
-      maxDistanceKm: viewModel.maxDistance,
-      availableNow: viewModel.availableNow,
-      minPrice: viewModel.minPrice,
-      maxPrice: viewModel.maxPrice,
-    );
 
-    Navigator.pushNamed(
-      context,
-      '/discover-swipe',
-      arguments: bundle,
-    );
-  }
 
   void _showFilters() {
     showModalBottomSheet(
@@ -152,6 +136,8 @@ class _SearchViewState extends State<SearchView> {
           builder: (context, viewModel, child) {
             if (viewModel.viewMode == 'map') {
               return SearchMapView(
+                providers: viewModel.providers,
+                isLoading: viewModel.isLoading,
                 onShowFilters: (callback) => _showFilters(),
                 onSwitchToList: () => viewModel.setViewMode('list'),
                 onSearchTap: () => _focusNode.requestFocus(),
@@ -284,43 +270,67 @@ class _SearchViewState extends State<SearchView> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: GestureDetector(
-                        onTap: () => _navigateToSwipe(viewModel),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/dispatch/start');
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [
-                                AppColors.mainAppPrimary,
-                                AppColors.mainAppPrimary.withOpacity(0.8),
+                                Color(0xFFFF6B00),
+                                Color(0xFFFF8F00),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.mainAppPrimary.withOpacity(0.3),
+                                color: const Color(0xFFFF6B00).withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.explore, color: Colors.white, size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                AppLocalizations.of(context)!.discoverSwipe,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.flash_on, color: Colors.white, size: 18),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.dispatchSearchButton,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(context)!.dispatchSearchSubtext,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.85),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
                             ],
                           ),
                         ),
                       ),
                     ),
+
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(

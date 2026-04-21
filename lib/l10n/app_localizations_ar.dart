@@ -1510,4 +1510,164 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMessages => 'لا توجد رسائل';
+
+  @override
+  String get dispatchTitle => 'طلب سريع';
+
+  @override
+  String get dispatchSubtitle => 'احصل على مزود خدمة بسرعة دون بحث';
+
+  @override
+  String get dispatchChooseCategory => 'اختر خدمة';
+
+  @override
+  String get dispatchFormTitle => 'تفاصيل الطلب';
+
+  @override
+  String get dispatchAddress => 'العنوان';
+
+  @override
+  String get dispatchAddressHint => 'مثال: 123 شارع محمد الخامس، الدار البيضاء';
+
+  @override
+  String get dispatchAddressRequired => 'العنوان مطلوب';
+
+  @override
+  String get dispatchPhone => 'الهاتف';
+
+  @override
+  String get dispatchPhoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get dispatchPhoneInvalid => 'رقم هاتف غير صالح';
+
+  @override
+  String get dispatchNote => 'ملاحظة';
+
+  @override
+  String get dispatchNoteHint => 'تعليمات أو تفاصيل إضافية (اختياري)';
+
+  @override
+  String get dispatchUrgency => 'الاستعجال';
+
+  @override
+  String get dispatchASAP => 'في أقرب وقت';
+
+  @override
+  String get dispatchSchedule => 'جدولة';
+
+  @override
+  String get dispatchSendRequest => 'إرسال الطلب';
+
+  @override
+  String get dispatchSelectedService => 'الخدمة المختارة';
+
+  @override
+  String get dispatchChange => 'تغيير';
+
+  @override
+  String get dispatchStepCategory => 'الخدمة';
+
+  @override
+  String get dispatchStepDetails => 'التفاصيل';
+
+  @override
+  String get dispatchStepSearch => 'البحث';
+
+  @override
+  String get dispatchSearchingTitle => 'جاري البحث';
+
+  @override
+  String get dispatchSearching => 'جاري البحث عن مزودي خدمة…';
+
+  @override
+  String dispatchSearchingCategory(String category) {
+    return 'تم إرسال الطلب إلى مزودي $category';
+  }
+
+  @override
+  String get dispatchCancelButton => 'إلغاء البحث';
+
+  @override
+  String get dispatchCancelTitle => 'إلغاء الطلب؟';
+
+  @override
+  String get dispatchCancelMessage =>
+      'هل أنت متأكد أنك تريد إلغاء طلب الإرسال؟';
+
+  @override
+  String get dispatchNo => 'لا';
+
+  @override
+  String get dispatchYesCancel => 'نعم، إلغاء';
+
+  @override
+  String get dispatchExpiredTitle => 'لا يوجد مزود متاح';
+
+  @override
+  String get dispatchExpiredMessage =>
+      'لم يستجب أي مزود في الوقت المحدد. يمكنك إعادة البحث أو الاختيار يدوياً.';
+
+  @override
+  String get dispatchRelaunch => 'إعادة البحث';
+
+  @override
+  String get dispatchChooseManually => 'اختيار يدوي';
+
+  @override
+  String get dispatchMatchTitle => 'تم العثور على مزود';
+
+  @override
+  String get dispatchMatchFound => 'قبل مزود خدمة طلبك!';
+
+  @override
+  String get dispatchMatchSubtitle => 'هذا هو المزود الذي قبل طلبك';
+
+  @override
+  String get dispatchContinueWithProvider => 'المتابعة مع هذا المزود';
+
+  @override
+  String get dispatchReviews => 'تقييم';
+
+  @override
+  String get dispatchDistance => 'المسافة';
+
+  @override
+  String get dispatchPriceFrom => 'ابتداءً من';
+
+  @override
+  String get dispatchRequestDetails => 'تفاصيل الطلب';
+
+  @override
+  String get dispatchService => 'الخدمة';
+
+  @override
+  String get dispatchSearchButton => 'طلب سريع (إرسال)';
+
+  @override
+  String get dispatchSearchSubtext => 'احصل على مزود خدمة بسرعة';
+
+  @override
+  String get swipeFilterButton => 'تصفية';
+
+  @override
+  String get swipeFilterTitle => 'مرر للتصفية';
+
+  @override
+  String get swipeFilterHint => 'مرر للاحتفاظ بمقدمي الخدمات أو إخفائهم';
+
+  @override
+  String get swipeFilterDone => 'تم';
+
+  @override
+  String get swipeFilterReset => 'إعادة';
+
+  @override
+  String get swipeFilterDoneMessage => 'اكتملت التصفية!';
+
+  @override
+  String get swipeFilterKept => 'مزود تم الاحتفاظ بهم';
+
+  @override
+  String get swipeFilterActive => 'مزودين مصفّين';
 }

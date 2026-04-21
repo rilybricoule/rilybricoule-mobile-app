@@ -73,6 +73,13 @@ import 'features/profile/view/placeholder_screens.dart';
 import 'features/payment/views/payment_methods_screen.dart';
 import 'features/payment/views/add_payment_method_screen.dart';
 import 'features/payment/views/payment_policy_info_screen.dart';
+// Dispatch
+import 'features/dispatch/data/mock_dispatch_datasource.dart';
+import 'features/dispatch/viewmodel/dispatch_viewmodel.dart';
+import 'features/dispatch/view/dispatch_start_view.dart';
+import 'features/dispatch/view/dispatch_request_form_view.dart';
+import 'features/dispatch/view/dispatch_searching_view.dart';
+import 'features/dispatch/view/dispatch_match_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -135,6 +142,7 @@ class MyApp extends StatelessWidget {
     final swipeRepository = MockSwipeRepository();
     final notificationRepository = MockNotificationRepository();
     final chatRepository = ChatService().repository;
+    final dispatchRepository = MockDispatchDatasource();
     
     return MultiProvider(
       providers: [
@@ -149,6 +157,7 @@ class MyApp extends StatelessWidget {
             create: (_) => NotificationViewModel(notificationRepository)),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ProviderState()),
+        ChangeNotifierProvider(create: (_) => DispatchViewModel(dispatchRepository)),
       ],
       child: Consumer<LanguageViewModel>(
         builder: (context, langVM, child) {
@@ -243,6 +252,10 @@ class MyApp extends StatelessWidget {
               AppRoutes.help: (context) => const HelpScreen(),
               AppRoutes.about: (context) => const AboutScreen(),
               AppRoutes.discoverSwipe: (context) => const DiscoverSwipeView(),
+              AppRoutes.dispatchStart: (context) => const DispatchStartView(),
+              AppRoutes.dispatchForm: (context) => const DispatchRequestFormView(),
+              AppRoutes.dispatchSearching: (context) => const DispatchSearchingView(),
+              AppRoutes.dispatchMatch: (context) => const DispatchMatchView(),
             },
           );
         },

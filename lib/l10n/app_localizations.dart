@@ -2919,6 +2919,318 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun message'**
   String get noMessages;
+
+  /// No description provided for @dispatchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande rapide'**
+  String get dispatchTitle;
+
+  /// No description provided for @dispatchSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevez un prestataire rapidement sans chercher'**
+  String get dispatchSubtitle;
+
+  /// No description provided for @dispatchChooseCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un service'**
+  String get dispatchChooseCategory;
+
+  /// No description provided for @dispatchFormTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails de la demande'**
+  String get dispatchFormTitle;
+
+  /// No description provided for @dispatchAddress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse'**
+  String get dispatchAddress;
+
+  /// No description provided for @dispatchAddressHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex: 123 Rue Mohammed V, Casablanca'**
+  String get dispatchAddressHint;
+
+  /// No description provided for @dispatchAddressRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'adresse est obligatoire'**
+  String get dispatchAddressRequired;
+
+  /// No description provided for @dispatchPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get dispatchPhone;
+
+  /// No description provided for @dispatchPhoneRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le téléphone est obligatoire'**
+  String get dispatchPhoneRequired;
+
+  /// No description provided for @dispatchPhoneInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de téléphone invalide'**
+  String get dispatchPhoneInvalid;
+
+  /// No description provided for @dispatchNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note'**
+  String get dispatchNote;
+
+  /// No description provided for @dispatchNoteHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Instructions ou détails supplémentaires (optionnel)'**
+  String get dispatchNoteHint;
+
+  /// No description provided for @dispatchUrgency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Urgence'**
+  String get dispatchUrgency;
+
+  /// No description provided for @dispatchASAP.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dès que possible'**
+  String get dispatchASAP;
+
+  /// No description provided for @dispatchSchedule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifier'**
+  String get dispatchSchedule;
+
+  /// No description provided for @dispatchSendRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer la demande'**
+  String get dispatchSendRequest;
+
+  /// No description provided for @dispatchSelectedService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Service sélectionné'**
+  String get dispatchSelectedService;
+
+  /// No description provided for @dispatchChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer'**
+  String get dispatchChange;
+
+  /// No description provided for @dispatchStepCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Service'**
+  String get dispatchStepCategory;
+
+  /// No description provided for @dispatchStepDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails'**
+  String get dispatchStepDetails;
+
+  /// No description provided for @dispatchStepSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche'**
+  String get dispatchStepSearch;
+
+  /// No description provided for @dispatchSearchingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche en cours'**
+  String get dispatchSearchingTitle;
+
+  /// No description provided for @dispatchSearching.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche de prestataires…'**
+  String get dispatchSearching;
+
+  /// No description provided for @dispatchSearchingCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande envoyée aux prestataires de {category}'**
+  String dispatchSearchingCategory(String category);
+
+  /// No description provided for @dispatchCancelButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la recherche'**
+  String get dispatchCancelButton;
+
+  /// No description provided for @dispatchCancelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la demande ?'**
+  String get dispatchCancelTitle;
+
+  /// No description provided for @dispatchCancelMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voulez-vous vraiment annuler votre demande de dispatch ?'**
+  String get dispatchCancelMessage;
+
+  /// No description provided for @dispatchNo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get dispatchNo;
+
+  /// No description provided for @dispatchYesCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, annuler'**
+  String get dispatchYesCancel;
+
+  /// No description provided for @dispatchExpiredTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prestataire disponible'**
+  String get dispatchExpiredTitle;
+
+  /// No description provided for @dispatchExpiredMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prestataire n\'a répondu dans le délai imparti. Vous pouvez relancer la recherche ou choisir manuellement.'**
+  String get dispatchExpiredMessage;
+
+  /// No description provided for @dispatchRelaunch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Relancer la recherche'**
+  String get dispatchRelaunch;
+
+  /// No description provided for @dispatchChooseManually.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir manuellement'**
+  String get dispatchChooseManually;
+
+  /// No description provided for @dispatchMatchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prestataire trouvé'**
+  String get dispatchMatchTitle;
+
+  /// No description provided for @dispatchMatchFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un prestataire a accepté !'**
+  String get dispatchMatchFound;
+
+  /// No description provided for @dispatchMatchSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voici le prestataire qui a accepté votre demande'**
+  String get dispatchMatchSubtitle;
+
+  /// No description provided for @dispatchContinueWithProvider.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec ce prestataire'**
+  String get dispatchContinueWithProvider;
+
+  /// No description provided for @dispatchReviews.
+  ///
+  /// In fr, this message translates to:
+  /// **'avis'**
+  String get dispatchReviews;
+
+  /// No description provided for @dispatchDistance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Distance'**
+  String get dispatchDistance;
+
+  /// No description provided for @dispatchPriceFrom.
+  ///
+  /// In fr, this message translates to:
+  /// **'À partir de'**
+  String get dispatchPriceFrom;
+
+  /// No description provided for @dispatchRequestDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails de la demande'**
+  String get dispatchRequestDetails;
+
+  /// No description provided for @dispatchService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Service'**
+  String get dispatchService;
+
+  /// No description provided for @dispatchSearchButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande rapide (Dispatch)'**
+  String get dispatchSearchButton;
+
+  /// No description provided for @dispatchSearchSubtext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevez un prestataire rapidement'**
+  String get dispatchSearchSubtext;
+
+  /// No description provided for @swipeFilterButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer'**
+  String get swipeFilterButton;
+
+  /// No description provided for @swipeFilterTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par swipe'**
+  String get swipeFilterTitle;
+
+  /// No description provided for @swipeFilterHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glissez pour garder ou masquer les prestataires'**
+  String get swipeFilterHint;
+
+  /// No description provided for @swipeFilterDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get swipeFilterDone;
+
+  /// No description provided for @swipeFilterReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reset'**
+  String get swipeFilterReset;
+
+  /// No description provided for @swipeFilterDoneMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrage terminé !'**
+  String get swipeFilterDoneMessage;
+
+  /// No description provided for @swipeFilterKept.
+  ///
+  /// In fr, this message translates to:
+  /// **'prestataires gardés'**
+  String get swipeFilterKept;
+
+  /// No description provided for @swipeFilterActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'prestataires filtrés'**
+  String get swipeFilterActive;
 }
 
 class _AppLocalizationsDelegate

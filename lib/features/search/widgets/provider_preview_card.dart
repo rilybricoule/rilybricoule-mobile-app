@@ -7,67 +7,72 @@ class ProviderPreviewCard extends StatelessWidget {
   final ProviderLocation provider;
   final VoidCallback onTap;
   final VoidCallback onReserve;
+  final VoidCallback? onClose;
 
   const ProviderPreviewCard({
     super.key,
     required this.provider,
     required this.onTap,
     required this.onReserve,
+    this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                provider.imageUrl,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 80,
-                  height: 80,
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.person, size: 40),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, -2),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    provider.imageUrl,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.person, size: 40),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: Text(
-                          provider.name,
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              provider.name,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -122,11 +127,14 @@ class ProviderPreviewCard extends StatelessWidget {
                       const SizedBox(width: 12),
                       const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
                       const SizedBox(width: 2),
-                      Text(
-                        '${provider.distance} km',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
+                      Flexible(
+                        child: Text(
+                          '${provider.distance.toStringAsFixed(1)} km',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Spacer(),
@@ -140,11 +148,36 @@ class ProviderPreviewCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (onClose != null)
+            Positioned(
+              top: 4,
+              right: 4,
+              child: GestureDetector(
+                onTap: onClose,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.close, size: 16, color: AppColors.textSecondary),
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

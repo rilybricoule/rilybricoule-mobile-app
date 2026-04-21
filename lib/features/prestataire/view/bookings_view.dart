@@ -1,4 +1,3 @@
-import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';

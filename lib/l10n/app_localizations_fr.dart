@@ -1534,4 +1534,168 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noMessages => 'Aucun message';
+
+  @override
+  String get dispatchTitle => 'Demande rapide';
+
+  @override
+  String get dispatchSubtitle =>
+      'Recevez un prestataire rapidement sans chercher';
+
+  @override
+  String get dispatchChooseCategory => 'Choisissez un service';
+
+  @override
+  String get dispatchFormTitle => 'Détails de la demande';
+
+  @override
+  String get dispatchAddress => 'Adresse';
+
+  @override
+  String get dispatchAddressHint => 'Ex: 123 Rue Mohammed V, Casablanca';
+
+  @override
+  String get dispatchAddressRequired => 'L\'adresse est obligatoire';
+
+  @override
+  String get dispatchPhone => 'Téléphone';
+
+  @override
+  String get dispatchPhoneRequired => 'Le téléphone est obligatoire';
+
+  @override
+  String get dispatchPhoneInvalid => 'Numéro de téléphone invalide';
+
+  @override
+  String get dispatchNote => 'Note';
+
+  @override
+  String get dispatchNoteHint =>
+      'Instructions ou détails supplémentaires (optionnel)';
+
+  @override
+  String get dispatchUrgency => 'Urgence';
+
+  @override
+  String get dispatchASAP => 'Dès que possible';
+
+  @override
+  String get dispatchSchedule => 'Planifier';
+
+  @override
+  String get dispatchSendRequest => 'Envoyer la demande';
+
+  @override
+  String get dispatchSelectedService => 'Service sélectionné';
+
+  @override
+  String get dispatchChange => 'Changer';
+
+  @override
+  String get dispatchStepCategory => 'Service';
+
+  @override
+  String get dispatchStepDetails => 'Détails';
+
+  @override
+  String get dispatchStepSearch => 'Recherche';
+
+  @override
+  String get dispatchSearchingTitle => 'Recherche en cours';
+
+  @override
+  String get dispatchSearching => 'Recherche de prestataires…';
+
+  @override
+  String dispatchSearchingCategory(String category) {
+    return 'Demande envoyée aux prestataires de $category';
+  }
+
+  @override
+  String get dispatchCancelButton => 'Annuler la recherche';
+
+  @override
+  String get dispatchCancelTitle => 'Annuler la demande ?';
+
+  @override
+  String get dispatchCancelMessage =>
+      'Voulez-vous vraiment annuler votre demande de dispatch ?';
+
+  @override
+  String get dispatchNo => 'Non';
+
+  @override
+  String get dispatchYesCancel => 'Oui, annuler';
+
+  @override
+  String get dispatchExpiredTitle => 'Aucun prestataire disponible';
+
+  @override
+  String get dispatchExpiredMessage =>
+      'Aucun prestataire n\'a répondu dans le délai imparti. Vous pouvez relancer la recherche ou choisir manuellement.';
+
+  @override
+  String get dispatchRelaunch => 'Relancer la recherche';
+
+  @override
+  String get dispatchChooseManually => 'Choisir manuellement';
+
+  @override
+  String get dispatchMatchTitle => 'Prestataire trouvé';
+
+  @override
+  String get dispatchMatchFound => 'Un prestataire a accepté !';
+
+  @override
+  String get dispatchMatchSubtitle =>
+      'Voici le prestataire qui a accepté votre demande';
+
+  @override
+  String get dispatchContinueWithProvider => 'Continuer avec ce prestataire';
+
+  @override
+  String get dispatchReviews => 'avis';
+
+  @override
+  String get dispatchDistance => 'Distance';
+
+  @override
+  String get dispatchPriceFrom => 'À partir de';
+
+  @override
+  String get dispatchRequestDetails => 'Détails de la demande';
+
+  @override
+  String get dispatchService => 'Service';
+
+  @override
+  String get dispatchSearchButton => 'Demande rapide (Dispatch)';
+
+  @override
+  String get dispatchSearchSubtext => 'Recevez un prestataire rapidement';
+
+  @override
+  String get swipeFilterButton => 'Filtrer';
+
+  @override
+  String get swipeFilterTitle => 'Filtrer par swipe';
+
+  @override
+  String get swipeFilterHint =>
+      'Glissez pour garder ou masquer les prestataires';
+
+  @override
+  String get swipeFilterDone => 'Terminer';
+
+  @override
+  String get swipeFilterReset => 'Reset';
+
+  @override
+  String get swipeFilterDoneMessage => 'Filtrage terminé !';
+
+  @override
+  String get swipeFilterKept => 'prestataires gardés';
+
+  @override
+  String get swipeFilterActive => 'prestataires filtrés';
 }

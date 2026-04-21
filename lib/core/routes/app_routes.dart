@@ -25,6 +25,12 @@ class AppRoutes {
   static const String about = '/about';
   static const String discoverSwipe = '/discover-swipe';
   
+  // Dispatch routes
+  static const String dispatchStart = '/dispatch/start';
+  static const String dispatchForm = '/dispatch/form';
+  static const String dispatchSearching = '/dispatch/searching';
+  static const String dispatchMatch = '/dispatch/match';
+  
   // Dynamic route for chat thread
   static String chatThread(String conversationId) => '/chat/$conversationId';
 }

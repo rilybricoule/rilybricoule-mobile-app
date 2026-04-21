@@ -1517,4 +1517,166 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMessages => 'No messages';
+
+  @override
+  String get dispatchTitle => 'Quick Request';
+
+  @override
+  String get dispatchSubtitle => 'Get a provider quickly without searching';
+
+  @override
+  String get dispatchChooseCategory => 'Choose a service';
+
+  @override
+  String get dispatchFormTitle => 'Request Details';
+
+  @override
+  String get dispatchAddress => 'Address';
+
+  @override
+  String get dispatchAddressHint => 'E.g.: 123 Mohammed V Street, Casablanca';
+
+  @override
+  String get dispatchAddressRequired => 'Address is required';
+
+  @override
+  String get dispatchPhone => 'Phone';
+
+  @override
+  String get dispatchPhoneRequired => 'Phone number is required';
+
+  @override
+  String get dispatchPhoneInvalid => 'Invalid phone number';
+
+  @override
+  String get dispatchNote => 'Note';
+
+  @override
+  String get dispatchNoteHint =>
+      'Additional instructions or details (optional)';
+
+  @override
+  String get dispatchUrgency => 'Urgency';
+
+  @override
+  String get dispatchASAP => 'As soon as possible';
+
+  @override
+  String get dispatchSchedule => 'Schedule';
+
+  @override
+  String get dispatchSendRequest => 'Send Request';
+
+  @override
+  String get dispatchSelectedService => 'Selected service';
+
+  @override
+  String get dispatchChange => 'Change';
+
+  @override
+  String get dispatchStepCategory => 'Service';
+
+  @override
+  String get dispatchStepDetails => 'Details';
+
+  @override
+  String get dispatchStepSearch => 'Search';
+
+  @override
+  String get dispatchSearchingTitle => 'Searching';
+
+  @override
+  String get dispatchSearching => 'Searching for providers…';
+
+  @override
+  String dispatchSearchingCategory(String category) {
+    return 'Request sent to $category providers';
+  }
+
+  @override
+  String get dispatchCancelButton => 'Cancel Search';
+
+  @override
+  String get dispatchCancelTitle => 'Cancel request?';
+
+  @override
+  String get dispatchCancelMessage =>
+      'Are you sure you want to cancel your dispatch request?';
+
+  @override
+  String get dispatchNo => 'No';
+
+  @override
+  String get dispatchYesCancel => 'Yes, cancel';
+
+  @override
+  String get dispatchExpiredTitle => 'No provider available';
+
+  @override
+  String get dispatchExpiredMessage =>
+      'No provider responded in time. You can relaunch or choose manually.';
+
+  @override
+  String get dispatchRelaunch => 'Relaunch Search';
+
+  @override
+  String get dispatchChooseManually => 'Choose Manually';
+
+  @override
+  String get dispatchMatchTitle => 'Provider Found';
+
+  @override
+  String get dispatchMatchFound => 'A provider has accepted!';
+
+  @override
+  String get dispatchMatchSubtitle =>
+      'Here is the provider who accepted your request';
+
+  @override
+  String get dispatchContinueWithProvider => 'Continue with this provider';
+
+  @override
+  String get dispatchReviews => 'reviews';
+
+  @override
+  String get dispatchDistance => 'Distance';
+
+  @override
+  String get dispatchPriceFrom => 'Starting from';
+
+  @override
+  String get dispatchRequestDetails => 'Request Details';
+
+  @override
+  String get dispatchService => 'Service';
+
+  @override
+  String get dispatchSearchButton => 'Quick Request (Dispatch)';
+
+  @override
+  String get dispatchSearchSubtext => 'Get a provider quickly';
+
+  @override
+  String get swipeFilterButton => 'Filter';
+
+  @override
+  String get swipeFilterTitle => 'Swipe to filter';
+
+  @override
+  String get swipeFilterHint => 'Swipe to keep or hide providers on the map';
+
+  @override
+  String get swipeFilterDone => 'Done';
+
+  @override
+  String get swipeFilterReset => 'Reset';
+
+  @override
+  String get swipeFilterDoneMessage => 'Filtering complete!';
+
+  @override
+  String get swipeFilterKept => 'providers kept';
+
+  @override
+  String get swipeFilterActive => 'providers filtered';
 }
