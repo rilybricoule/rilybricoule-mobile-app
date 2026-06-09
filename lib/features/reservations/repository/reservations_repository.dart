@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../models/reservation_tracking.dart';
 import '../models/reservation_tracking_step.dart';
 import '../models/tracking_status.dart';
@@ -6,38 +7,39 @@ import '../data/mock_reservations_repository.dart';
 
 /// Abstract interface for reservation tracking
 abstract class ReservationsTrackingRepository {
-  Future<ReservationTracking> fetchReservationTracking(String reservationId);
+  Future<ReservationTracking> fetchReservationTracking(BuildContext context, String reservationId, [String? langCode]);
   Future<void> cancelReservation(String reservationId);
 }
 
 /// Builds the correct tracking steps based on the tracking status
 class TrackingStepBuilder {
-  static List<ReservationTrackingStep> buildSteps(TrackingStatus status) {
+  static List<ReservationTrackingStep> buildSteps(BuildContext context, TrackingStatus status) {
+    final localizations = AppLocalizations.of(context)!;
     switch (status) {
       case TrackingStatus.confirmed:
         return [
           ReservationTrackingStep(
-            title: 'Confirmé',
-            subtitle: 'Validé à 10:30',
+            title: localizations.statusConfirmed,
+            subtitle: localizations.validatedAt('10:30'),
             icon: Icons.check_circle,
             state: TrackingStepState.active,
             timeLabel: '10:30',
           ),
           ReservationTrackingStep(
-            title: 'En route',
-            subtitle: 'Le prestataire arrive chez vous',
+            title: localizations.statusEnRoute,
+            subtitle: localizations.providerArriving,
             icon: Icons.directions_car,
             state: TrackingStepState.pending,
           ),
           ReservationTrackingStep(
-            title: 'En cours',
-            subtitle: 'Non démarré',
+            title: localizations.statusInProgress,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.build,
             state: TrackingStepState.pending,
           ),
           ReservationTrackingStep(
-            title: 'Terminé',
-            subtitle: 'Non démarré',
+            title: localizations.statusCompleted,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.done_all,
             state: TrackingStepState.pending,
           ),
@@ -45,27 +47,27 @@ class TrackingStepBuilder {
       case TrackingStatus.enRoute:
         return [
           ReservationTrackingStep(
-            title: 'Confirmé',
-            subtitle: 'Validé à 10:30',
+            title: localizations.statusConfirmed,
+            subtitle: localizations.validatedAt('10:30'),
             icon: Icons.check_circle,
             state: TrackingStepState.done,
             timeLabel: '10:30',
           ),
           ReservationTrackingStep(
-            title: 'En route',
-            subtitle: 'Le prestataire arrive chez vous',
+            title: localizations.statusEnRoute,
+            subtitle: localizations.providerArriving,
             icon: Icons.directions_car,
             state: TrackingStepState.active,
           ),
           ReservationTrackingStep(
-            title: 'En cours',
-            subtitle: 'Non démarré',
+            title: localizations.statusInProgress,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.build,
             state: TrackingStepState.pending,
           ),
           ReservationTrackingStep(
-            title: 'Terminé',
-            subtitle: 'Non démarré',
+            title: localizations.statusCompleted,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.done_all,
             state: TrackingStepState.pending,
           ),
@@ -73,27 +75,27 @@ class TrackingStepBuilder {
       case TrackingStatus.inProgress:
         return [
           ReservationTrackingStep(
-            title: 'Confirmé',
-            subtitle: 'Validé à 10:30',
+            title: localizations.statusConfirmed,
+            subtitle: localizations.validatedAt('10:30'),
             icon: Icons.check_circle,
             state: TrackingStepState.done,
             timeLabel: '10:30',
           ),
           ReservationTrackingStep(
-            title: 'En route',
-            subtitle: 'Arrivé à 10:45',
+            title: localizations.statusEnRoute,
+            subtitle: localizations.arrivedAt('10:45'),
             icon: Icons.directions_car,
             state: TrackingStepState.done,
           ),
           ReservationTrackingStep(
-            title: 'En cours',
-            subtitle: 'Intervention en cours',
+            title: localizations.statusInProgress,
+            subtitle: localizations.interventionInProgress,
             icon: Icons.build,
             state: TrackingStepState.active,
           ),
           ReservationTrackingStep(
-            title: 'Terminé',
-            subtitle: 'Non démarré',
+            title: localizations.statusCompleted,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.done_all,
             state: TrackingStepState.pending,
           ),
@@ -101,27 +103,27 @@ class TrackingStepBuilder {
       case TrackingStatus.completed:
         return [
           ReservationTrackingStep(
-            title: 'Confirmé',
-            subtitle: 'Validé à 10:30',
+            title: localizations.statusConfirmed,
+            subtitle: localizations.validatedAt('10:30'),
             icon: Icons.check_circle,
             state: TrackingStepState.done,
             timeLabel: '10:30',
           ),
           ReservationTrackingStep(
-            title: 'En route',
-            subtitle: 'Arrivé à 10:45',
+            title: localizations.statusEnRoute,
+            subtitle: localizations.arrivedAt('10:45'),
             icon: Icons.directions_car,
             state: TrackingStepState.done,
           ),
           ReservationTrackingStep(
-            title: 'En cours',
-            subtitle: 'Terminé à 11:30',
+            title: localizations.statusInProgress,
+            subtitle: localizations.completedAt('11:30'),
             icon: Icons.build,
             state: TrackingStepState.done,
           ),
           ReservationTrackingStep(
-            title: 'Terminé',
-            subtitle: 'Prestation complète',
+            title: localizations.statusCompleted,
+            subtitle: localizations.serviceComplete,
             icon: Icons.done_all,
             state: TrackingStepState.done,
           ),
@@ -129,27 +131,27 @@ class TrackingStepBuilder {
       case TrackingStatus.cancelled:
         return [
           ReservationTrackingStep(
-            title: 'Confirmé',
-            subtitle: 'Validé à 10:30',
+            title: localizations.statusConfirmed,
+            subtitle: localizations.validatedAt('10:30'),
             icon: Icons.check_circle,
             state: TrackingStepState.done,
             timeLabel: '10:30',
           ),
           ReservationTrackingStep(
-            title: 'En route',
-            subtitle: 'Annulé',
+            title: localizations.statusEnRoute,
+            subtitle: localizations.statusCancelled,
             icon: Icons.directions_car,
             state: TrackingStepState.pending,
           ),
           ReservationTrackingStep(
-            title: 'En cours',
-            subtitle: 'Non démarré',
+            title: localizations.statusInProgress,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.build,
             state: TrackingStepState.pending,
           ),
           ReservationTrackingStep(
-            title: 'Terminé',
-            subtitle: 'Non démarré',
+            title: localizations.statusCompleted,
+            subtitle: localizations.statusNotStarted,
             icon: Icons.done_all,
             state: TrackingStepState.pending,
           ),
@@ -160,32 +162,33 @@ class TrackingStepBuilder {
 
 /// Builds header messages based on tracking status
 class HeaderMessageBuilder {
-  static ({String title, String subtitle}) build(TrackingStatus status, String providerName) {
+  static ({String title, String subtitle}) build(BuildContext context, TrackingStatus status, String providerName) {
+    final localizations = AppLocalizations.of(context)!;
     switch (status) {
       case TrackingStatus.confirmed:
         return (
-          title: 'Réservation confirmée',
-          subtitle: 'Votre prestataire va bientôt commencer.',
+          title: localizations.bookingConfirmedHeader,
+          subtitle: localizations.providerStartsSoon,
         );
       case TrackingStatus.enRoute:
         return (
-          title: 'Le prestataire est en route',
-          subtitle: '$providerName a quitté son précédent rendez-vous.',
+          title: localizations.providerEnRouteHeader,
+          subtitle: localizations.providerLeftAppointment(providerName),
         );
       case TrackingStatus.inProgress:
         return (
-          title: 'Intervention en cours',
-          subtitle: 'Le prestataire travaille actuellement chez vous.',
+          title: localizations.interventionInProgressHeader,
+          subtitle: localizations.providerWorkingNow,
         );
       case TrackingStatus.completed:
         return (
-          title: 'Prestation terminée',
-          subtitle: 'Merci ! Vous pouvez laisser un avis.',
+          title: localizations.serviceCompletedHeader,
+          subtitle: localizations.thanksLeaveReview,
         );
       case TrackingStatus.cancelled:
         return (
-          title: 'Réservation annulée',
-          subtitle: 'Cette réservation n\'est plus active.',
+          title: localizations.bookingCancelledHeader,
+          subtitle: localizations.bookingNoLongerActive,
         );
     }
   }
@@ -234,18 +237,20 @@ class MockReservationsRepositoryTracking implements ReservationsTrackingReposito
       : _listRepository = listRepository;
 
   @override
-  Future<ReservationTracking> fetchReservationTracking(String reservationId) async {
+  Future<ReservationTracking> fetchReservationTracking(BuildContext context, String reservationId, [String? langCode]) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
     final status = _reservationStatuses[reservationId] ?? TrackingStatus.enRoute;
     final etaMinutes = _reservationEtas[reservationId];
-    final providerName = 'Ahmed El Mansouri';
+    final providerName = langCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri';
+    final providerId = '1'; // Mock: All reservations use provider '1' for testing
 
-    final headerMessage = HeaderMessageBuilder.build(status, providerName);
-    final steps = TrackingStepBuilder.buildSteps(status);
+    final headerMessage = HeaderMessageBuilder.build(context, status, providerName);
+    final steps = TrackingStepBuilder.buildSteps(context, status);
 
     return ReservationTracking(
       reservationId: reservationId,
+      providerId: providerId,
       status: status,
       etaMinutes: etaMinutes,
       headerTitle: headerMessage.title,

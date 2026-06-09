@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class ProviderMiniCard extends StatelessWidget {
@@ -89,7 +90,7 @@ class ProviderMiniCard extends StatelessWidget {
                 ),
               ),
               Text(
-                ' ($reviewCount avis)',
+                ' (${AppLocalizations.of(context)!.avisText(reviewCount.toString())})',
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: AppColors.textSecondary,

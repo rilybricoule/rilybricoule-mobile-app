@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class StatCard extends StatelessWidget {
@@ -52,7 +53,7 @@ class StatCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: label == 'STATUT' ? AppColors.success : AppColors.textPrimary,
+              color: label == AppLocalizations.of(context)!.statusLabel ? AppColors.success : AppColors.textPrimary,
             ),
           ),
         ],

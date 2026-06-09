@@ -3,11 +3,12 @@ import '../domain/search_repository.dart';
 
 class MockSearchRepository implements SearchRepository {
   // Mock data
-  final List<ProviderModel> _allProviders = [
+  List<ProviderModel> _getAllProviders(String lang) {
+    return [
     ProviderModel(
       id: '1',
-      name: 'Ahmed El Mansouri',
-      service: 'Master Plomberie • 8 years exp.',
+      name: lang == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+      service: lang == 'en' ? 'Master Plumber • 8 years exp.' : lang == 'ar' ? 'سباك محترف • خبرة 8 سنوات' : 'Master Plomberie • 8 years exp.',
       imageUrl: 'assets/images/provider.png',
       rating: 4.9,
       reviewCount: 156,
@@ -17,11 +18,13 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 150.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 2,
     ),
     ProviderModel(
       id: '2',
-      name: 'Yassine Amrani',
-      service: 'Plomberie',
+      name: lang == 'ar' ? 'ياسين العمراني' : 'Yassine Amrani',
+      service: lang == 'en' ? 'Plumbing' : lang == 'ar' ? 'سباكة' : 'Plomberie',
       imageUrl: 'assets/images/provider.png',
       rating: 4.7,
       reviewCount: 98,
@@ -31,11 +34,13 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 120.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 1,
     ),
     ProviderModel(
       id: '3',
-      name: 'Karim Boulahrouz',
-      service: 'Bricolage Expert',
+      name: lang == 'ar' ? 'كريم بولحروز' : 'Karim Boulahrouz',
+      service: lang == 'en' ? 'DIY Expert' : lang == 'ar' ? 'خبير أعمال يدوية' : 'Bricolage Expert',
       imageUrl: 'assets/images/provider.png',
       rating: 4.5,
       reviewCount: 203,
@@ -45,11 +50,13 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 200.0,
       isVerified: false,
       isAvailable: false,
+      categoryId: '5',
+      activeJobsCount: 7,
     ),
     ProviderModel(
       id: '4',
-      name: 'Omar Hassan',
-      service: 'Leak Detection Specialist',
+      name: lang == 'ar' ? 'عمر حسن' : 'Omar Hassan',
+      service: lang == 'en' ? 'Leak Detection' : lang == 'ar' ? 'كشف التسربات' : 'Spécialiste Détection Fuites',
       imageUrl: 'assets/images/provider.png',
       rating: 4.8,
       reviewCount: 142,
@@ -59,11 +66,13 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 180.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '1',
+      activeJobsCount: 0,
     ),
     ProviderModel(
       id: '5',
-      name: 'Sarah Benjelloun',
-      service: 'Ménage Professionnel',
+      name: lang == 'ar' ? 'سارة بنجلون' : 'Sarah Benjelloun',
+      service: lang == 'en' ? 'Professional Cleaning' : lang == 'ar' ? 'تنظيف احترافي' : 'Ménage Professionnel',
       imageUrl: 'assets/images/provider.png',
       rating: 4.9,
       reviewCount: 85,
@@ -73,11 +82,13 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 100.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '3',
+      activeJobsCount: 3,
     ),
     ProviderModel(
       id: '6',
-      name: 'Fatima Zahra',
-      service: 'Expert Électricité',
+      name: lang == 'ar' ? 'فاطمة الزهراء' : 'Fatima Zahra',
+      service: lang == 'en' ? 'Electrical Expert' : lang == 'ar' ? 'خبير كهرباء' : 'Expert Électricité',
       imageUrl: 'assets/images/provider.png',
       rating: 4.6,
       reviewCount: 67,
@@ -87,8 +98,11 @@ class MockSearchRepository implements SearchRepository {
       priceValue: 160.0,
       isVerified: true,
       isAvailable: true,
+      categoryId: '2',
+      activeJobsCount: 4,
     ),
   ];
+  }
 
   @override
   Future<List<ProviderModel>> searchProviders({
@@ -98,11 +112,19 @@ class MockSearchRepository implements SearchRepository {
     double? minRating,
     double? maxDistance,
     bool? availableNow,
+    String? categoryId,
+    String? langCode,
   }) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
+    
+    final lang = langCode ?? 'fr';
+    List<ProviderModel> results = List.from(_getAllProviders(lang));
 
-    List<ProviderModel> results = List.from(_allProviders);
+    // Filter by category ID
+    if (categoryId != null && categoryId.isNotEmpty) {
+      results = results.where((p) => p.categoryId == categoryId).toList();
+    }
 
     // Filter by query
     if (query.isNotEmpty) {

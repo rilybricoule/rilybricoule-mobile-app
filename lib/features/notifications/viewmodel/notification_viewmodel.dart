@@ -30,13 +30,17 @@ class NotificationViewModel extends ChangeNotifier {
   bool _hasError = false;
   bool get hasError => _hasError;
 
-  Future<void> loadNotifications() async {
+  Future<void> loadNotifications([BuildContext? context]) async {
     _isLoading = true;
     _hasError = false;
     notifyListeners();
 
     try {
-      _notifications = await _repository.getNotifications();
+      String? langCode;
+      if (context != null) {
+        langCode = Localizations.localeOf(context).languageCode;
+      }
+      _notifications = await _repository.getNotifications(langCode);
     } catch (e) {
       _hasError = true;
       _notifications = [];

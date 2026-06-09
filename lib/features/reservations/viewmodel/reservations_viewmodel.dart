@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../data/mock_reservations_repository.dart';
 import '../models/reservation_model.dart';
 import '../models/reservation_status.dart';
@@ -35,13 +35,14 @@ class ReservationsViewModel extends ChangeNotifier {
     return _allReservations.where((r) => r.status == _selectedStatus).toList();
   }
 
-  Future<void> loadReservations() async {
+  Future<void> loadReservations([BuildContext? context]) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _allReservations = await _repository.fetchReservations();
+      final String? langCode = context != null ? Localizations.localeOf(context).languageCode : null;
+      _allReservations = await _repository.fetchReservations(langCode: langCode);
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -56,15 +57,15 @@ class ReservationsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> refresh() async {
-    await loadReservations();
+  Future<void> refresh([BuildContext? context]) async {
+    await loadReservations(context);
   }
 
-  Future<void> cancelReservation(String reservationId) async {
+  Future<void> cancelReservation(String reservationId, [BuildContext? context]) async {
     try {
       await _repository.cancelReservation(reservationId);
       // Reload to reflect the updated status
-      await loadReservations();
+      await loadReservations(context);
     } catch (e) {
       _error = e.toString();
       notifyListeners();

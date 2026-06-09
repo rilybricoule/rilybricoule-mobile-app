@@ -1,59 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../domain/repositories/profile_repository.dart';
+import 'edit_profile_view.dart';
+import '../viewmodel/edit_profile_viewmodel.dart';
 
+// Re-export the actual EditProfileView
+export 'edit_profile_view.dart';
+
+// EditProfileScreen with Provider setup
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Modifier le profil'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: Text(
-          'Modifier le profil\n(À implémenter)',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PaymentMethodsScreen extends StatelessWidget {
-  const PaymentMethodsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Modes de paiement'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: Text(
-          'Modes de paiement\n(À implémenter)',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ),
+    // Create the ViewModel with the ProfileRepository from context
+    return ChangeNotifierProvider(
+      create: (context) => EditProfileViewModel(
+        profileRepository: context.read<ProfileRepository>(),
+      )..loadProfile(),
+      child: const EditProfileView(),
     );
   }
 }
@@ -66,7 +34,7 @@ class FavoritesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Favoris'),
+        title: Text(AppLocalizations.of(context)!.favorites),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -74,7 +42,7 @@ class FavoritesScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          'Favoris\n(À implémenter)',
+          '${AppLocalizations.of(context)!.favorites}\n${AppLocalizations.of(context)!.toBeImplemented}',
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
             fontSize: 16,
@@ -94,7 +62,7 @@ class HelpScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Centre d\'aide'),
+        title: Text(AppLocalizations.of(context)!.helpCenter),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -102,7 +70,7 @@ class HelpScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          'Centre d\'aide\n(À implémenter)',
+          '${AppLocalizations.of(context)!.helpCenter}\n${AppLocalizations.of(context)!.toBeImplemented}',
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
             fontSize: 16,
@@ -122,7 +90,7 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('À propos'),
+        title: Text(AppLocalizations.of(context)!.about),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -130,7 +98,7 @@ class AboutScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          'À propos\n(À implémenter)',
+          '${AppLocalizations.of(context)!.about}\n${AppLocalizations.of(context)!.toBeImplemented}',
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
             fontSize: 16,

@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../home/widgets/provider_card.dart';
 import '../viewmodel/search_viewmodel.dart';
+
+import '../../../l10n/app_localizations.dart';
 import 'search_map_view.dart';
 
 class SearchView extends StatefulWidget {
@@ -29,6 +31,7 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  String? _currentLangCode;
 
   @override
   void initState() {
@@ -36,10 +39,9 @@ class _SearchViewState extends State<SearchView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Handle initial query if provided
       if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
-        _searchController.text = widget.initialQuery!;
-        context.read<SearchViewModel>().search(widget.initialQuery!);
+        applyInitialQuery(widget.initialQuery!);
       } else {
-        context.read<SearchViewModel>().initialSearch();
+        context.read<SearchViewModel>().initialSearch(context);
       }
       
       // Register the callbacks
@@ -56,8 +58,25 @@ class _SearchViewState extends State<SearchView> {
     _searchController.addListener(() {
       final query = _searchController.text;
       context.read<SearchViewModel>().setQuery(query);
-      context.read<SearchViewModel>().search();
+      context.read<SearchViewModel>().search(null, context);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final langCode = Localizations.localeOf(context).languageCode;
+    if (_currentLangCode != null && _currentLangCode != langCode) {
+      _currentLangCode = langCode;
+      // Refresh search when language changes
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<SearchViewModel>().search(null, context);
+        }
+      });
+    } else {
+      _currentLangCode = langCode;
+    }
   }
 
   @override
@@ -68,9 +87,36 @@ class _SearchViewState extends State<SearchView> {
   }
 
   void applyInitialQuery(String query) {
-    _searchController.text = query;
-    context.read<SearchViewModel>().search(query);
+    // Check if the query is a Category ID (numeric) or a text search
+    if (RegExp(r'^\d+$').hasMatch(query)) {
+      context.read<SearchViewModel>().setCategoryId(query);
+      context.read<SearchViewModel>().search(null, context);
+    } else {
+      _searchController.text = query;
+      context.read<SearchViewModel>().search(query, context);
+    }
   }
+
+  String _getCategoryName(BuildContext context, String categoryId) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (categoryId) {
+      case '1': return l10n.categoryPlumbing;
+      case '2': return l10n.categoryElectricity;
+      case '3': return l10n.categoryCleaning;
+      case '4': return l10n.categoryPainting;
+      case '5': return l10n.categoryHandyman;
+      case '6': return l10n.categoryGardening;
+      case '7': return l10n.categoryAC;
+      case '8': return l10n.categoryCarpentry;
+      case '9': return l10n.categoryLocksmith;
+      case '10': return l10n.categoryMoving;
+      case '11': return l10n.categoryRepair;
+      case '12': return l10n.categoryOther;
+      default: return 'Catégorie';
+    }
+  }
+
+
 
   void _showFilters() {
     showModalBottomSheet(
@@ -90,6 +136,8 @@ class _SearchViewState extends State<SearchView> {
           builder: (context, viewModel, child) {
             if (viewModel.viewMode == 'map') {
               return SearchMapView(
+                providers: viewModel.providers,
+                isLoading: viewModel.isLoading,
                 onShowFilters: (callback) => _showFilters(),
                 onSwitchToList: () => viewModel.setViewMode('list'),
                 onSearchTap: () => _focusNode.requestFocus(),
@@ -143,7 +191,7 @@ class _SearchViewState extends State<SearchView> {
                   controller: _searchController,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Rechercher un service...',
+                    hintText: AppLocalizations.of(context)!.searchService,
                     hintStyle: GoogleFonts.poppins(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -179,94 +227,200 @@ class _SearchViewState extends State<SearchView> {
           const SizedBox(height: 12),
           Consumer<SearchViewModel>(
             builder: (context, viewModel, child) {
-              return Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
+              return Column(
+                children: [
+                  if (viewModel.categoryId != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.mainAppPrimary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColors.mainAppPrimary),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _getCategoryName(context, viewModel.categoryId!),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.mainAppPrimary,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () {
+                                    viewModel.setCategoryId(null);
+                                    viewModel.search(null, context);
+                                  },
+                                  child: const Icon(Icons.close, size: 16, color: AppColors.mainAppPrimary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (viewModel.providers.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
                       child: GestureDetector(
-                        onTap: () => viewModel.setViewMode('list'),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/dispatch/start');
+                        },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            color: viewModel.viewMode == 'list'
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFFF6B00),
+                                Color(0xFFFF8F00),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B00).withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.format_list_bulleted,
-                                size: 18,
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.flash_on, color: Colors.white, size: 18),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.dispatchSearchButton,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(context)!.dispatchSearchSubtext,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => viewModel.setViewMode('list'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
                                 color: viewModel.viewMode == 'list'
-                                    ? AppColors.mainAppPrimary
-                                    : Colors.grey[600],
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Liste',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: viewModel.viewMode == 'list'
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                  color: viewModel.viewMode == 'list'
-                                      ? AppColors.mainAppPrimary
-                                      : Colors.grey[600],
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.format_list_bulleted,
+                                    size: 18,
+                                    color: viewModel.viewMode == 'list'
+                                        ? AppColors.mainAppPrimary
+                                        : Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    AppLocalizations.of(context)!.listView,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: viewModel.viewMode == 'list'
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: viewModel.viewMode == 'list'
+                                          ? AppColors.mainAppPrimary
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => viewModel.setViewMode('map'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: viewModel.viewMode == 'map'
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.map,
-                                size: 18,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => viewModel.setViewMode('map'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
                                 color: viewModel.viewMode == 'map'
-                                    ? AppColors.mainAppPrimary
-                                    : Colors.grey[600],
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Carte',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: viewModel.viewMode == 'map'
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                  color: viewModel.viewMode == 'map'
-                                      ? AppColors.mainAppPrimary
-                                      : Colors.grey[600],
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.map,
+                                    size: 18,
+                                    color: viewModel.viewMode == 'map'
+                                        ? AppColors.mainAppPrimary
+                                        : Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    AppLocalizations.of(context)!.mapView,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: viewModel.viewMode == 'map'
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: viewModel.viewMode == 'map'
+                                          ? AppColors.mainAppPrimary
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
@@ -281,7 +435,7 @@ class _SearchViewState extends State<SearchView> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          '$count PRESTATAIRES TROUVÉS PRÈS DE VOUS',
+          AppLocalizations.of(context)!.providersFoundNearby(count).toUpperCase(),
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -331,7 +485,7 @@ class _SearchViewState extends State<SearchView> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'OCCUPÉ',
+                          AppLocalizations.of(context)!.busy,
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -358,7 +512,7 @@ class _SearchViewState extends State<SearchView> {
           Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
-            'Aucun prestataire trouvé',
+            AppLocalizations.of(context)!.noProviderFound,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -423,7 +577,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Filtres',
+                    AppLocalizations.of(context)!.filters,
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -440,7 +594,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       });
                     },
                     child: Text(
-                      'Tout réinitialiser',
+                      AppLocalizations.of(context)!.resetAll,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -468,7 +622,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     viewModel.setRating(_minRating);
                     viewModel.setDistance(_maxDistance);
                     viewModel.setAvailableNow(_availableNow);
-                    viewModel.search();
+                    viewModel.search(null, context);
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
@@ -479,7 +633,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     ),
                   ),
                   child: Text(
-                    'Appliquer les filtres',
+                    AppLocalizations.of(context)!.applyFilters,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -503,7 +657,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           children: [
             Expanded(
               child: Text(
-                'Fourchette de prix (MAD)',
+                AppLocalizations.of(context)!.priceRange,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -511,7 +665,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               ),
             ),
             Text(
-              '${_minPrice.toInt()} - ${_maxPrice.toInt()} MAD',
+              AppLocalizations.of(context)!.priceRangeValue(_minPrice.toInt(), _maxPrice.toInt()),
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -543,7 +697,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Note',
+          AppLocalizations.of(context)!.rating,
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -553,7 +707,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
         Wrap(
           spacing: 8,
           children: [
-            _buildRatingChip('Toutes', null),
+            _buildRatingChip(AppLocalizations.of(context)!.ratingAll, null),
             _buildRatingChip('4.0+', 4.0),
             _buildRatingChip('4.5+', 4.5),
           ],
@@ -600,14 +754,14 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Distance',
+              AppLocalizations.of(context)!.distance,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'Dans un rayon de ${_maxDistance.toInt()}km',
+              AppLocalizations.of(context)!.distanceRadius(_maxDistance.toInt()),
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -641,14 +795,14 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Disponible maintenant',
+                AppLocalizations.of(context)!.availableNow,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                'Afficher seulement les prestataires prêts à travailler',
+                AppLocalizations.of(context)!.availableNowDescription,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: AppColors.textSecondary,
@@ -664,7 +818,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               _availableNow = value;
             });
           },
-          activeColor: AppColors.mainAppPrimary,
+          activeThumbColor: AppColors.mainAppPrimary,
         ),
       ],
     );

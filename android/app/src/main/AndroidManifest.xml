@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     
     <application
-        android:label="rilybricoule_mobile_app"
+        android:label="RilyBricoule"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

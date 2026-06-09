@@ -11,6 +11,13 @@ class ProviderModel {
   final bool isVerified;
   final double priceValue;
   final bool isAvailable;
+  final String categoryId;
+  final String? subCategoryId;
+  final int activeJobsCount;
+  final DateTime? lastAssignedAt;
+
+  double get distanceKm => distance;
+  bool get isAvailableNow => isAvailable;
 
   ProviderModel({
     required this.id,
@@ -23,7 +30,11 @@ class ProviderModel {
     required this.priceLabel,
     required this.price,
     required this.priceValue,
+    required this.categoryId,
+    this.subCategoryId,
     this.isVerified = false,
     this.isAvailable = true,
+    this.activeJobsCount = 0,
+    this.lastAssignedAt,
   });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../models/provider_model.dart';
 
@@ -104,7 +105,7 @@ class ProviderCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      ' (${provider.reviewCount} avis)',
+                      ' ${AppLocalizations.of(context)!.reviewsCount(provider.reviewCount)}',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -114,7 +115,7 @@ class ProviderCard extends StatelessWidget {
                     const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
                     const SizedBox(width: 2),
                     Text(
-                      '${provider.distance} km',
+                      AppLocalizations.of(context)!.distanceKm(provider.distance.toString()),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -138,6 +139,7 @@ class ProviderCard extends StatelessWidget {
                         ),
                         Text(
                           provider.price,
+                          textDirection: TextDirection.ltr,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -158,7 +160,7 @@ class ProviderCard extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'Voir profil',
+                        AppLocalizations.of(context)!.viewProfile,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,

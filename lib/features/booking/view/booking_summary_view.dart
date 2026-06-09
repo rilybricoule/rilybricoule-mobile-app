@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../map/widgets/map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,11 +23,11 @@ class BookingSummaryView extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 16),
-                    _buildProviderCard(),
+                    _buildProviderCard(context),
                     const SizedBox(height: 16),
-                    _buildBookingDetails(args),
+                    _buildBookingDetails(context, args),
                     const SizedBox(height: 16),
-                    _buildServiceCard(),
+                    _buildServiceCard(context),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -65,7 +66,7 @@ class BookingSummaryView extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Récapitulatif',
+                  AppLocalizations.of(context)!.summary,
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -80,7 +81,7 @@ class BookingSummaryView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PROGRESSION DE LA RÉSERVATION',
+                AppLocalizations.of(context)!.bookingProgress,
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -89,7 +90,7 @@ class BookingSummaryView extends StatelessWidget {
                 ),
               ),
               Text(
-                'Étape 3 sur 5',
+                AppLocalizations.of(context)!.stepOf(3, 5),
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -113,7 +114,7 @@ class BookingSummaryView extends StatelessWidget {
     );
   }
 
-  Widget _buildProviderCard() {
+  Widget _buildProviderCard(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -145,7 +146,7 @@ class BookingSummaryView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ahmed El Mansouri',
+                  Localizations.localeOf(context).languageCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -154,7 +155,7 @@ class BookingSummaryView extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Plombier Expert • 8 ans d\'exp.',
+                  Localizations.localeOf(context).languageCode == 'ar' ? 'سباك محترف • 8 سنوات خبرة' : 'Plombier Expert • 8 ans d\'exp.',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: AppColors.textSecondary,
@@ -199,7 +200,7 @@ class BookingSummaryView extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingDetails(Map? args) {
+  Widget _buildBookingDetails(BuildContext context, Map? args) {
     final date = args?['date'] as DateTime?;
     final time = args?['time'] as String?;
     final address = args?['address'] as String? ?? '69, avenue Abdelkrim Al Khattabi, Océan';
@@ -224,7 +225,7 @@ class BookingSummaryView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Détails de la réservation',
+            AppLocalizations.of(context)!.bookingDetails,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -234,13 +235,13 @@ class BookingSummaryView extends StatelessWidget {
           const SizedBox(height: 20),
           _buildDetailRow(
             Icons.calendar_today,
-            'Date',
-            date != null ? '${date.day}/${date.month}/${date.year}' : 'Non définie',
+            AppLocalizations.of(context)!.date,
+            date != null ? '${date.day}/${date.month}/${date.year}' : AppLocalizations.of(context)!.notDefined,
           ),
           const SizedBox(height: 16),
-          _buildDetailRow(Icons.access_time, 'Heure', time ?? 'Non définie'),
+          _buildDetailRow(Icons.access_time, AppLocalizations.of(context)!.time, time ?? AppLocalizations.of(context)!.notDefined),
           const SizedBox(height: 16),
-          _buildDetailRow(Icons.location_on, 'Adresse', address),
+          _buildDetailRow(Icons.location_on, AppLocalizations.of(context)!.address, address),
           if (addressDetails.isNotEmpty) ...[
             const SizedBox(height: 4),
             Padding(
@@ -256,7 +257,7 @@ class BookingSummaryView extends StatelessWidget {
           ],
           if (note != null && note.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _buildDetailRow(Icons.note_alt_outlined, 'Note', note),
+            _buildDetailRow(Icons.note_alt_outlined, AppLocalizations.of(context)!.note, note),
           ],
           const SizedBox(height: 16),
           MapPreview(
@@ -310,7 +311,7 @@ class BookingSummaryView extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceCard() {
+  Widget _buildServiceCard(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
@@ -329,7 +330,7 @@ class BookingSummaryView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Service sélectionné',
+            AppLocalizations.of(context)!.selectedService,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -353,7 +354,7 @@ class BookingSummaryView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Réparation de fuite',
+                      AppLocalizations.of(context)!.leakRepair,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -428,7 +429,7 @@ class BookingSummaryView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Continuer vers le paiement',
+                AppLocalizations.of(context)!.continueToPayment,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

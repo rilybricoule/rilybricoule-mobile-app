@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../controllers/chat_thread_controller.dart';
 import '../../domain/models/conversation.dart';
 import '../../domain/models/message.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/date_separator.dart';
 import '../widgets/message_bubble.dart';
@@ -138,7 +139,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  widget.conversation.otherUser.isOnline ? 'En ligne' : 'Hors ligne',
+                  widget.conversation.otherUser.isOnline ? AppLocalizations.of(context)!.onlineStatus : AppLocalizations.of(context)!.offlineStatus,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: widget.conversation.otherUser.isOnline
@@ -156,7 +157,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Appel (bientôt)', style: GoogleFonts.poppins()),
+                content: Text(AppLocalizations.of(context)!.comingSoon, style: GoogleFonts.poppins()),
               ),
             );
           },
@@ -166,7 +167,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Options (bientôt)', style: GoogleFonts.poppins()),
+                content: Text(AppLocalizations.of(context)!.comingSoon, style: GoogleFonts.poppins()),
               ),
             );
           },
@@ -188,7 +189,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         if (controller.error != null) {
           return Center(
             child: Text(
-              'Erreur: ${controller.error}',
+              AppLocalizations.of(context)!.errorLabel(controller.error!),
               style: GoogleFonts.poppins(color: AppColors.error),
             ),
           );
@@ -197,7 +198,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         if (controller.messages.isEmpty) {
           return Center(
             child: Text(
-              'Aucun message',
+              AppLocalizations.of(context)!.noMessages,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -271,7 +272,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               ListTile(
                 leading: const Icon(Icons.copy, color: AppColors.mainAppPrimary),
                 title: Text(
-                  'Copier',
+                  AppLocalizations.of(context)!.copyText,
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 ),
                 onTap: () {
@@ -279,7 +280,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   // TODO: Copy to clipboard
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Message copié', style: GoogleFonts.poppins()),
+                      content: Text(AppLocalizations.of(context)!.copiedMessage, style: GoogleFonts.poppins()),
                     ),
                   );
                 },
@@ -287,7 +288,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
             ListTile(
               leading: const Icon(Icons.delete, color: AppColors.error),
               title: Text(
-                'Supprimer',
+                AppLocalizations.of(context)!.deleteMessage,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: AppColors.error,
@@ -301,14 +302,14 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
             ListTile(
               leading: const Icon(Icons.flag, color: AppColors.warning),
               title: Text(
-                'Signaler',
+                AppLocalizations.of(context)!.reportMessage,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Signalement (bientôt)', style: GoogleFonts.poppins()),
+                    content: Text(AppLocalizations.of(context)!.comingSoon, style: GoogleFonts.poppins()),
                   ),
                 );
               },

@@ -18,12 +18,20 @@ class LocalChatRepository implements ChatRepository {
   Future<List<Conversation>> getConversations({String? query}) async {
     await Future.delayed(const Duration(milliseconds: 300));
     
+    // Filter conversations to only show those with confirmed bookings
+    final validConversations = _conversations.where((c) {
+      return c.bookingId != null && 
+             (c.bookingStatus == 'confirmed' || 
+              c.bookingStatus == 'en_route' || 
+              c.bookingStatus == 'in_progress');
+    }).toList();
+    
     if (query == null || query.isEmpty) {
-      return List.from(_conversations)..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
+      return List.from(validConversations)..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
     }
     
     final lowerQuery = query.toLowerCase();
-    return _conversations
+    return validConversations
         .where((c) =>
             c.otherUser.name.toLowerCase().contains(lowerQuery) ||
             c.lastMessagePreview.toLowerCase().contains(lowerQuery))
@@ -185,23 +193,56 @@ class LocalChatRepository implements ChatRepository {
   }
 
   @override
-  Future<Conversation> getOrCreateConversationWithUser(UserSummary userSummary) async {
+  Future<bool> hasConfirmedBookingWithProvider(String providerId) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    // Check if there's any conversation with confirmed booking for this provider
+    final existingConv = _conversations.where((c) => 
+      c.otherUser.id == providerId && 
+      c.bookingId != null && 
+      (c.bookingStatus == 'confirmed' || 
+       c.bookingStatus == 'en_route' || 
+       c.bookingStatus == 'in_progress')
+    );
+    return existingConv.isNotEmpty;
+  }
+
+  @override
+  Future<Conversation> getOrCreateConversationWithProvider(String providerId, {String? bookingId, String? langCode}) async {
     await Future.delayed(const Duration(milliseconds: 200));
     
     // Find existing conversation
-    final existingIndex = _conversations.indexWhere((c) => c.otherUser.id == userSummary.id);
+    final existingIndex = _conversations.indexWhere((c) => c.otherUser.id == providerId);
     
     if (existingIndex != -1) {
       return _conversations[existingIndex];
     }
     
-    // Create new conversation
+    // Map provider IDs to real names
+    final providerNames = {
+      '1': langCode == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri',
+      '2': langCode == 'ar' ? 'ياسين العمراني' : 'Yassine Amrani',
+      '3': langCode == 'ar' ? 'عمر منصور' : 'Omar Mansouri',
+      '4': langCode == 'ar' ? 'عمر حسن' : 'Omar Hassan',
+      '5': langCode == 'ar' ? 'سارة بنجلون' : 'Sarah Benjelloun',
+      '6': langCode == 'ar' ? 'فاطمة الزهراء' : 'Fatima Zahra',
+    };
+    
+    // Create new conversation with booking info (mock data)
+    final providerUser = UserSummary(
+      id: providerId,
+      name: providerNames[providerId] ?? 'Prestataire',
+      avatarUrl: 'assets/images/provider.png',
+      isOnline: true,
+    );
+    
     final newConv = Conversation(
       id: 'conv_${DateTime.now().millisecondsSinceEpoch}',
-      otherUser: userSummary,
+      otherUser: providerUser,
       lastMessagePreview: 'Commencez la conversation',
       lastMessageAt: DateTime.now(),
       unreadCount: 0,
+      bookingId: bookingId ?? 'booking_$providerId',
+      bookingStatus: 'confirmed',
     );
     
     _conversations.insert(0, newConv);

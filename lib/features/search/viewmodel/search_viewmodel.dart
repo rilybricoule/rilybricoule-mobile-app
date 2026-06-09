@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../../core/models/provider_filter.dart';
+import '../../../core/models/provider_sort_mode.dart';
+import '../../../core/models/user_search_context.dart';
+import '../../../core/services/provider_ranking_engine.dart';
 import '../../home/models/provider_model.dart';
 import '../domain/search_repository.dart';
 
 class SearchViewModel extends ChangeNotifier {
   final SearchRepository _searchRepository;
+  final _rankingEngine = ProviderRankingEngine();
   bool _disposed = false;
 
   SearchViewModel(this._searchRepository);
@@ -30,7 +35,6 @@ class SearchViewModel extends ChangeNotifier {
   String _currentQuery = '';
   String get currentQuery => _currentQuery;
 
-  // View mode: 'list' or 'map'
   String _viewMode = 'list';
   String get viewMode => _viewMode;
 
@@ -39,21 +43,27 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Filter values
   double _minPrice = 0;
   double _maxPrice = 2000;
   double? _minRating;
   double _maxDistance = 50;
   bool _availableNow = false;
+  String? _categoryId;
 
   double get minPrice => _minPrice;
   double get maxPrice => _maxPrice;
   double? get minRating => _minRating;
   double get maxDistance => _maxDistance;
   bool get availableNow => _availableNow;
+  String? get categoryId => _categoryId;
 
   void setQuery(String query) {
     _currentQuery = query;
+    notifyListeners();
+  }
+
+  void setCategoryId(String? id) {
+    _categoryId = id;
     notifyListeners();
   }
 
@@ -84,10 +94,11 @@ class SearchViewModel extends ChangeNotifier {
     _minRating = null;
     _maxDistance = 50;
     _availableNow = false;
+    _categoryId = null;
     notifyListeners();
   }
 
-  Future<void> search([String? query]) async {
+  Future<void> search([String? query, BuildContext? context]) async {
     if (query != null) {
       _currentQuery = query;
     }
@@ -96,13 +107,29 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _providers = await _searchRepository.searchProviders(
+      final String? langCode = context != null ? Localizations.localeOf(context).languageCode : null;
+      final rawProviders = await _searchRepository.searchProviders(
         query: _currentQuery,
         minPrice: _minPrice,
         maxPrice: _maxPrice,
         minRating: _minRating,
         maxDistance: _maxDistance,
         availableNow: _availableNow,
+        langCode: langCode,
+      );
+
+      _providers = _rankingEngine.filterAndRank(
+        providers: rawProviders,
+        context: UserSearchContext(query: _currentQuery),
+        filter: ProviderFilter(
+          categoryId: _categoryId,
+          minRating: _minRating,
+          maxDistanceKm: _maxDistance,
+          availableNow: _availableNow,
+          minPrice: _minPrice,
+          maxPrice: _maxPrice,
+        ),
+        sortMode: ProviderSortMode.bestMatch,
       );
     } catch (e) {
       _providers = [];
@@ -112,8 +139,8 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initialSearch() async {
+  Future<void> initialSearch([BuildContext? context]) async {
     _currentQuery = '';
-    await search();
+    await search(null, context);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 
 class ProviderNotificationsView extends StatefulWidget {
   const ProviderNotificationsView({super.key});
@@ -73,7 +74,8 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
 
   @override
   Widget build(BuildContext context) {
-    final title = _selectionMode ? '${_selected.length} selected' : 'Notifications';
+    final l10n = AppLocalizations.of(context)!;
+    final title = _selectionMode ? l10n.selectedCount(_selected.length) : l10n.notificationsTitle;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -88,22 +90,22 @@ class _ProviderNotificationsViewState extends State<ProviderNotificationsView> {
         actions: [
           if (_selectionMode) ...[
             IconButton(
-              tooltip: 'Delete',
+              tooltip: l10n.deleteAction,
               onPressed: _deleteSelected,
               icon: const Icon(Icons.delete_outline, color: AppColors.error),
             ),
             IconButton(
-              tooltip: 'Cancel',
+              tooltip: l10n.cancel,
               onPressed: _clearSelection,
               icon: const Icon(Icons.close),
             ),
           ],
         ],
       ),
-      body: _items.isEmpty
+        body: _items.isEmpty
           ? Center(
               child: Text(
-                'No notifications',
+                l10n.noNotificationsMsg,
                 style: GoogleFonts.poppins(
                   color: AppColors.textSecondary,
                   fontSize: 14,

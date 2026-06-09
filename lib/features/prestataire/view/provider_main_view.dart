@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
 import 'dashboard_view.dart';
 import 'bookings_view.dart';
 import 'chat/chat_list_view.dart';
 import 'planning_view.dart';
 import 'services_view.dart';
-import 'profile_view.dart';
 import '../widget/provider_bottom_nav_bar.dart';
 import '../widget/provider_drawer.dart';
 

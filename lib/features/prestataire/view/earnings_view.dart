@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_section_header.dart';
-import '../../../../core/widgets/app_status_chip.dart';
 
 class ProviderEarningsView extends StatelessWidget {
   const ProviderEarningsView({super.key});

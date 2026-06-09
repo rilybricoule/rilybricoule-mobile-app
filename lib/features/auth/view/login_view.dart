@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
@@ -49,7 +49,7 @@ class _LoginViewState extends State<LoginView> {
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top + 40,
+                  top: MediaQuery.of(context).padding.top + 10,
                   bottom: 80,
                 ),
                 decoration: BoxDecoration(
@@ -57,30 +57,48 @@ class _LoginViewState extends State<LoginView> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.primary,                    // Bleu
+                      AppColors.primary, // Bleu
                       AppColors.primary.withOpacity(0.9),
                       AppColors.secondary.withOpacity(0.3), // Touch d'orange
                     ],
                   ),
                 ),
-                child: Column(
+                child: Stack(
                   children: [
-                    Text(
-                      'Service Provider',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Welcome to the best service provider system!',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.9),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(top: 30),
+                      child: Column(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.serviceProvider,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            AppLocalizations.of(context)!.welcomeSubtitle,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -128,71 +146,51 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         // Email field
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: AuthTextField(
-                            controller: _emailController,
-                            label: 'Email Address',
-                            hint: 'johndoe@gmail.com',
-                            prefixIcon: Icons.alternate_email,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              return null;
-                            },
-                          ),
+                        AuthTextField(
+                          controller: _emailController,
+                          label: AppLocalizations.of(context)!.emailAddress,
+                          hint: AppLocalizations.of(context)!.emailHint,
+                          prefixIcon: Icons.alternate_email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!
+                                  .errorEmailRequired;
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 20),
 
                         // Password field
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: AuthTextField(
-                            controller: _passwordController,
-                            label: 'Password',
-                            hint: '••••••••••',
-                            prefixIcon: Icons.lock_outline,
-                            obscureText: authViewModel.isObscure,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                authViewModel.isObscure
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () {
-                                authViewModel.toggleVisibility();
-                              },
+                        AuthTextField(
+                          controller: _passwordController,
+                          label: AppLocalizations.of(context)!.password,
+                          hint: AppLocalizations.of(context)!.passwordHint,
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: authViewModel.isObscure,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              authViewModel.isObscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.grey,
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
+                            onPressed: () {
+                              authViewModel.toggleVisibility();
                             },
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!
+                                  .errorPasswordRequired;
+                            }
+                            if (value.length < 6) {
+                              return AppLocalizations.of(context)!
+                                  .errorPasswordLength;
+                            }
+                            return null;
+                          },
                         ),
 
                         const SizedBox(height: 20),
@@ -200,15 +198,18 @@ class _LoginViewState extends State<LoginView> {
 // Divider
                         Row(
                           children: [
-                            Expanded(child: Divider(color: Colors.grey.shade400)),
+                            Expanded(
+                                child: Divider(color: Colors.grey.shade400)),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
-                                'or continue with',
-                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                AppLocalizations.of(context)!.orContinueWith,
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 14),
                               ),
                             ),
-                            Expanded(child: Divider(color: Colors.grey.shade400)),
+                            Expanded(
+                                child: Divider(color: Colors.grey.shade400)),
                           ],
                         ),
 
@@ -223,48 +224,62 @@ class _LoginViewState extends State<LoginView> {
                               onPressed: () async {
                                 try {
                                   debugPrint('Starting Google Sign In...');
-                                  final user = await authViewModel.signInWithGoogle(UserRole.client);
+                                  final user = await authViewModel
+                                      .signInWithGoogle(UserRole.client);
                                   debugPrint('Google Sign In result: $user');
-                                  
+
                                   if (user != null && context.mounted) {
-                                    debugPrint('User signed in: ${user.uid}, role: ${user.role}');
+                                    debugPrint(
+                                        'User signed in: ${user.uid}, role: ${user.role}');
                                     await UserSession.saveUser(
                                       id: user.uid,
                                       name: user.fullName,
                                       email: user.email,
                                       memberSince: 'Janvier 2024',
                                     );
-                                    
+
                                     // Store role locally before async gap
-                                    final isClient = user.role == UserRole.client;
-                                    
+                                    final isClient =
+                                        user.role == UserRole.client;
+
                                     // COMPLETELY reset navigation stack
                                     if (context.mounted) {
                                       try {
-                                        debugPrint('LoginView: REPLACING all routes with ${isClient ? "ClientMainView" : "ProviderMainView"}');
-                                        
+                                        debugPrint(
+                                            'LoginView: REPLACING all routes with ${isClient ? "ClientMainView" : "ProviderMainView"}');
+
                                         // Use the root navigator and clear everything
-                                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pushAndRemoveUntil(
                                           PageRouteBuilder(
-                                            pageBuilder: (context, animation1, animation2) => isClient 
-                                              ? const ClientMainView() 
-                                              : const ProviderMainView(),
+                                            pageBuilder: (context, animation1,
+                                                    animation2) =>
+                                                isClient
+                                                    ? const ClientMainView()
+                                                    : const ProviderMainView(),
                                             transitionDuration: Duration.zero,
-                                            settings: const RouteSettings(name: '/home'),
+                                            settings: const RouteSettings(
+                                                name: '/home'),
                                           ),
                                           (route) => false,
                                         );
-                                        
-                                        debugPrint('LoginView: Navigation completed - should be on home now');
+
+                                        debugPrint(
+                                            'LoginView: Navigation completed - should be on home now');
                                       } catch (e, stackTrace) {
-                                        debugPrint('LoginView: Navigation ERROR: $e');
-                                        debugPrint('LoginView: StackTrace: $stackTrace');
+                                        debugPrint(
+                                            'LoginView: Navigation ERROR: $e');
+                                        debugPrint(
+                                            'LoginView: StackTrace: $stackTrace');
                                       }
                                     }
                                   } else if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Google Sign In Failed. User is null.'),
+                                      SnackBar(
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .loginFailed),
                                         backgroundColor: AppColors.error,
                                       ),
                                     );
@@ -275,7 +290,9 @@ class _LoginViewState extends State<LoginView> {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Google Sign In Error: $e'),
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .errorLabel(e.toString())),
                                         backgroundColor: AppColors.error,
                                       ),
                                     );
@@ -287,7 +304,8 @@ class _LoginViewState extends State<LoginView> {
                             SocialIconButton(
                               provider: 'facebook',
                               onPressed: () async {
-                                final user = await authViewModel.signInWithFacebook(UserRole.client);
+                                final user = await authViewModel
+                                    .signInWithFacebook(UserRole.client);
                                 if (user != null && context.mounted) {
                                   await UserSession.saveUser(
                                     id: user.uid,
@@ -295,24 +313,27 @@ class _LoginViewState extends State<LoginView> {
                                     email: user.email,
                                     memberSince: 'Janvier 2024',
                                   );
-                                  
+
                                   // Navigate directly using MaterialPageRoute
                                   final isClient = user.role == UserRole.client;
                                   if (context.mounted) {
-                                    debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                    debugPrint(
+                                        'LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
                                     Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
-                                        builder: (context) => isClient 
-                                          ? const ClientMainView() 
-                                          : const ProviderMainView(),
+                                        builder: (context) => isClient
+                                            ? const ClientMainView()
+                                            : const ProviderMainView(),
                                       ),
                                       (route) => false,
                                     );
                                   }
                                 } else if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Facebook Sign In Failed.'),
+                                    SnackBar(
+                                      content: Text(
+                                          AppLocalizations.of(context)!
+                                              .loginFailed),
                                       backgroundColor: AppColors.error,
                                     ),
                                   );
@@ -323,7 +344,8 @@ class _LoginViewState extends State<LoginView> {
                             SocialIconButton(
                               provider: 'apple',
                               onPressed: () async {
-                                final user = await authViewModel.signInWithApple(UserRole.client);
+                                final user = await authViewModel
+                                    .signInWithApple(UserRole.client);
                                 if (user != null && context.mounted) {
                                   await UserSession.saveUser(
                                     id: user.uid,
@@ -331,24 +353,27 @@ class _LoginViewState extends State<LoginView> {
                                     email: user.email,
                                     memberSince: 'Janvier 2024',
                                   );
-                                  
+
                                   // Navigate directly using MaterialPageRoute
                                   final isClient = user.role == UserRole.client;
                                   if (context.mounted) {
-                                    debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                    debugPrint(
+                                        'LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
                                     Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
-                                        builder: (context) => isClient 
-                                          ? const ClientMainView() 
-                                          : const ProviderMainView(),
+                                        builder: (context) => isClient
+                                            ? const ClientMainView()
+                                            : const ProviderMainView(),
                                       ),
                                       (route) => false,
                                     );
                                   }
                                 } else if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Apple Sign In Failed.'),
+                                    SnackBar(
+                                      content: Text(
+                                          AppLocalizations.of(context)!
+                                              .loginFailed),
                                       backgroundColor: AppColors.error,
                                     ),
                                   );
@@ -365,16 +390,18 @@ class _LoginViewState extends State<LoginView> {
                         Row(
                           children: [
                             Checkbox(
-                              value: _rememberMe, // TODO: Connect to state later
+                              value:
+                                  _rememberMe, // TODO: Connect to state later
                               onChanged: (value) {
                                 setState(() {
                                   _rememberMe = value ?? false;
                                 });
                               },
-                              activeColor: AppColors.secondary,  // CHANGÉ: Orange au lieu de bleu
+                              activeColor: AppColors
+                                  .secondary, // CHANGÉ: Orange au lieu de bleu
                             ),
                             Text(
-                              'Remember me',
+                              AppLocalizations.of(context)!.rememberMe,
                               style: TextStyle(
                                 color: Colors.grey[700],
                                 fontSize: 14,
@@ -383,17 +410,19 @@ class _LoginViewState extends State<LoginView> {
                           ],
                         ),
 
-                        const SizedBox(height: 5),  // Reduce spacing before social login
+                        const SizedBox(
+                            height: 5), // Reduce spacing before social login
 
                         // Forgot password
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                              Navigator.pushNamed(
+                                  context, AppRoutes.forgotPassword);
                             },
                             child: Text(
-                              'Forgot Password?',
+                              AppLocalizations.of(context)!.forgotPasswordLink,
                               style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
@@ -406,7 +435,7 @@ class _LoginViewState extends State<LoginView> {
 
                         // Login button
                         AuthButton(
-                          text: 'Login',
+                          text: AppLocalizations.of(context)!.login,
                           isLoading: authViewModel.isLoading,
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
@@ -422,24 +451,26 @@ class _LoginViewState extends State<LoginView> {
                                   email: user.email,
                                   memberSince: 'Janvier 2024',
                                 );
-                                
+
                                 // Navigate directly using MaterialPageRoute
                                 final isClient = user.role == UserRole.client;
                                 if (context.mounted) {
-                                  debugPrint('LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
+                                  debugPrint(
+                                      'LoginView: DIRECT navigation to ${isClient ? "ClientMainView" : "ProviderMainView"}');
                                   Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                      builder: (context) => isClient 
-                                        ? const ClientMainView() 
-                                        : const ProviderMainView(),
+                                      builder: (context) => isClient
+                                          ? const ClientMainView()
+                                          : const ProviderMainView(),
                                     ),
                                     (route) => false,
                                   );
                                 }
                               } else if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Login Failed. Check credentials.'),
+                                  SnackBar(
+                                    content: Text(AppLocalizations.of(context)!
+                                        .loginFailed),
                                     backgroundColor: AppColors.error,
                                   ),
                                 );
@@ -455,7 +486,7 @@ class _LoginViewState extends State<LoginView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "You don't have an account?",
+                              AppLocalizations.of(context)!.noAccount,
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 14,
@@ -465,11 +496,12 @@ class _LoginViewState extends State<LoginView> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const RegisterView()),
+                                  MaterialPageRoute(
+                                      builder: (_) => const RegisterView()),
                                 );
                               },
                               child: Text(
-                                'Register',
+                                AppLocalizations.of(context)!.register,
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.bold,

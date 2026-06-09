@@ -18,9 +18,18 @@ class AppRoutes {
   static const String messages = '/messages';
   static const String editProfile = '/edit-profile';
   static const String paymentMethods = '/payment-methods';
+  static const String addPaymentMethod = '/add-payment-method';
+  static const String paymentPolicyInfo = '/payment-policy-info';
   static const String favorites = '/favorites';
   static const String help = '/help';
   static const String about = '/about';
+  static const String discoverSwipe = '/discover-swipe';
+  
+  // Dispatch routes
+  static const String dispatchStart = '/dispatch/start';
+  static const String dispatchForm = '/dispatch/form';
+  static const String dispatchSearching = '/dispatch/searching';
+  static const String dispatchMatch = '/dispatch/match';
   
   // Dynamic route for chat thread
   static String chatThread(String conversationId) => '/chat/$conversationId';

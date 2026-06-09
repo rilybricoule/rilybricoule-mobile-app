@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../models/reservation_tracking.dart';
 import '../models/tracking_status.dart';
 import '../repository/reservations_repository.dart';
@@ -45,10 +46,10 @@ class ReservationDetailsViewModel extends ChangeNotifier {
   }
 
   /// Main action button text based on status
-  String get mainActionButtonText {
-    if (_tracking == null) return 'Discuter';
-    if (isCompleted) return 'Laisser un avis';
-    return 'Discuter avec ${_tracking!.providerName.split(' ')[0]}';
+  String mainActionButtonText(BuildContext context) {
+    if (_tracking == null) return AppLocalizations.of(context)!.discuss;
+    if (isCompleted) return AppLocalizations.of(context)!.leaveReview;
+    return AppLocalizations.of(context)!.chatWith(_tracking!.providerName.split(' ')[0]);
   }
 
   /// Main action button icon based on status
@@ -57,13 +58,15 @@ class ReservationDetailsViewModel extends ChangeNotifier {
     return Icons.chat_bubble_outline;
   }
 
-  Future<void> loadTracking() async {
+  Future<void> loadTracking([BuildContext? context]) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _tracking = await _repository.fetchReservationTracking(reservationId);
+      final langCode = context != null ? Localizations.localeOf(context).languageCode : null;
+      if (context == null) throw Exception('Context required for localization');
+      _tracking = await _repository.fetchReservationTracking(context, reservationId, langCode);
       _isLoading = false;
       notifyListeners();
     } catch (e) {

@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
+
 enum SortOption {
   bestRated,
   priceLowToHigh,
@@ -7,18 +10,19 @@ enum SortOption {
 }
 
 extension SortOptionExtension on SortOption {
-  String get displayName {
+  String getDisplayName(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (this) {
       case SortOption.bestRated:
-        return 'Mieux notés';
+        return l10n.sortBestRated;
       case SortOption.priceLowToHigh:
-        return 'Prix croissant';
+        return l10n.sortPriceLowToHigh;
       case SortOption.priceHighToLow:
-        return 'Prix décroissant';
+        return l10n.sortPriceHighToLow;
       case SortOption.nearest:
-        return 'Distance la plus proche';
+        return l10n.sortNearest;
       case SortOption.availableNow:
-        return 'Disponibles maintenant';
+        return l10n.sortAvailableNow;
     }
   }
 

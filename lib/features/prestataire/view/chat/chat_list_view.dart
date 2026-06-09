@@ -10,7 +10,7 @@ class ProviderChatListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final conversations = PrestataireMockData.conversations;
+    final conversations = PrestataireMockData.getConversations(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,

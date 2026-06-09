@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../controllers/conversations_controller.dart';
 import '../widgets/conversation_tile.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ConversationListScreen extends StatefulWidget {
   final Function() onNavigateToSearch;
@@ -31,7 +32,9 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             _buildAppBar(),
@@ -48,12 +51,13 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             builder: (context) => Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Nouveau message',
+                    AppLocalizations.of(context)!.msgNewMessage,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -61,7 +65,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Trouvez un prestataire pour commencer une conversation',
+                    AppLocalizations.of(context)!.msgFindProviderToStart,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -79,7 +83,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                     ),
                     child: Text(
-                      'Explorer des prestataires',
+                      AppLocalizations.of(context)!.exploreProviders,
                       style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -101,7 +105,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -111,7 +115,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
         children: [
           Expanded(
             child: Text(
-              'Messages',
+              AppLocalizations.of(context)!.msgMessagesTitle,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -138,7 +142,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Options (bientôt)', style: GoogleFonts.poppins()),
+                  content: Text(AppLocalizations.of(context)!.msgOptionsSoon, style: GoogleFonts.poppins()),
                 ),
               );
             },
@@ -153,13 +157,13 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
     if (!_isSearching) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Colors.white,
       child: TextField(
         controller: _searchController,
         autofocus: true,
         decoration: InputDecoration(
-          hintText: 'Rechercher une conversation...',
+          hintText: AppLocalizations.of(context)!.msgSearchConversation,
           hintStyle: GoogleFonts.poppins(
             fontSize: 14,
             color: AppColors.textSecondary,
@@ -236,115 +240,100 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.mainAppPrimary.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.chat_bubble_outline,
-                size: 60,
-                color: AppColors.mainAppPrimary.withOpacity(0.5),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Aucune conversation pour le moment',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Vos conversations avec les prestataires apparaîtront ici après une réservation ou un premier contact.',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: widget.onNavigateToSearch,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.mainAppPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.mainAppPrimary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.chat_bubble_outline,
+                  size: 60,
+                  color: AppColors.mainAppPrimary.withValues(alpha: 0.5),
                 ),
               ),
-              child: Text(
-                'Explorer des prestataires',
+              const SizedBox(height: 24),
+              Text(
+                AppLocalizations.of(context)!.msgNoConversations,
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                 ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                AppLocalizations.of(context)!.msgConversationsAppearHere,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildNoResultsState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.search_off,
-              size: 80,
-              color: AppColors.textSecondary.withOpacity(0.5),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Aucun résultat',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_off,
+                size: 80,
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Essayez avec un autre terme de recherche',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            TextButton(
-              onPressed: () {
-                _searchController.clear();
-                context.read<ConversationsController>().clearSearch();
-              },
-              child: Text(
-                'Réinitialiser la recherche',
+              const SizedBox(height: 24),
+              Text(
+                AppLocalizations.of(context)!.msgNoResults,
                 style: GoogleFonts.poppins(
-                  fontSize: 14,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.mainAppPrimary,
+                  color: AppColors.textPrimary,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                AppLocalizations.of(context)!.msgTryAnotherSearchTerm,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              TextButton(
+                onPressed: () {
+                  _searchController.clear();
+                  context.read<ConversationsController>().clearSearch();
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.msgResetSearch,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.mainAppPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

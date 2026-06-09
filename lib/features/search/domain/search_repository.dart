@@ -8,5 +8,7 @@ abstract class SearchRepository {
     double? minRating,
     double? maxDistance,
     bool? availableNow,
+    String? categoryId,
+    String? langCode,
   });
 }

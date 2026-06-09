@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../widgets/auth_textfield.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PrestataireSignUpForm extends StatefulWidget {
   final TextEditingController nameController;
@@ -38,14 +39,17 @@ class PrestataireSignUpForm extends StatefulWidget {
 class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
   String? _selectedCategory;
 
-  final List<String> _categories = [
-    'Plomberie',
-    'Électricité',
-    'Ménage',
-    'Peinture',
-    'Bricolage',
-    'Jardinage',
-  ];
+  List<String> _getCategories(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      l10n.categoryPlumbing,
+      l10n.categoryElectricity,
+      l10n.categoryCleaning,
+      l10n.categoryPainting,
+      l10n.categoryHandyman,
+      l10n.categoryGardening,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +57,12 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
       children: [
         AuthTextField(
           controller: widget.nameController,
-          label: 'Full Name',
-          hint: 'Enter your full name',
+          label: AppLocalizations.of(context)!.fullName,
+          hint: AppLocalizations.of(context)!.nameHint,
           prefixIcon: Icons.person_outline,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your name';
+              return AppLocalizations.of(context)!.errorNameRequired;
             }
             return null;
           },
@@ -66,13 +70,13 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.emailController,
-          label: 'Email',
-          hint: 'Enter your email',
+          label: AppLocalizations.of(context)!.email,
+          hint: AppLocalizations.of(context)!.emailHint,
           prefixIcon: Icons.email_outlined,
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your email';
+              return AppLocalizations.of(context)!.errorEmailRequired;
             }
             return null;
           },
@@ -80,13 +84,13 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.phoneController,
-          label: 'Phone',
-          hint: 'Enter your phone number',
+          label: AppLocalizations.of(context)!.phone,
+          hint: AppLocalizations.of(context)!.phoneHint,
           prefixIcon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your phone';
+              return AppLocalizations.of(context)!.errorPhoneRequired;
             }
             return null;
           },
@@ -94,8 +98,8 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.passwordController,
-          label: 'Password',
-          hint: 'Enter your password',
+          label: AppLocalizations.of(context)!.password,
+          hint: AppLocalizations.of(context)!.passwordHint,
           prefixIcon: Icons.lock_outline,
           obscureText: widget.isObscure,
           suffixIcon: IconButton(
@@ -107,10 +111,10 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your password';
+              return AppLocalizations.of(context)!.errorPasswordRequired;
             }
             if (value.length < 6) {
-              return 'Password must be at least 6 characters';
+              return AppLocalizations.of(context)!.errorPasswordLength;
             }
             return null;
           },
@@ -118,31 +122,31 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.confirmPasswordController,
-          label: 'Confirm Password',
-          hint: 'Confirm your password',
+          label: AppLocalizations.of(context)!.confirmPassword,
+          hint: AppLocalizations.of(context)!.confirmPasswordHint,
           prefixIcon: Icons.lock_outline,
           obscureText: widget.isObscure,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please confirm your password';
+              return AppLocalizations.of(context)!.errorConfirmPasswordRequired;
             }
             if (value != widget.passwordController.text) {
-              return 'Passwords do not match';
+              return AppLocalizations.of(context)!.errorPasswordsNotMatch;
             }
             return null;
           },
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          value: _selectedCategory,
+          initialValue: _selectedCategory,
           decoration: InputDecoration(
-            labelText: 'Service Category',
+            labelText: AppLocalizations.of(context)!.serviceCategory,
             prefixIcon: const Icon(Icons.work_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          items: _categories.map((category) {
+          items: _getCategories(context).map((category) {
             return DropdownMenuItem(
               value: category,
               child: Text(category),
@@ -156,7 +160,7 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
           },
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please select a category';
+              return AppLocalizations.of(context)!.errorCategoryRequired;
             }
             return null;
           },
@@ -164,13 +168,13 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.experienceController,
-          label: 'Years of Experience',
-          hint: 'Enter years of experience',
+          label: AppLocalizations.of(context)!.yearsOfExperience,
+          hint: AppLocalizations.of(context)!.experienceHint,
           prefixIcon: Icons.timeline,
           keyboardType: TextInputType.number,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your experience';
+              return AppLocalizations.of(context)!.errorExperienceRequired;
             }
             return null;
           },
@@ -178,12 +182,12 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.cityController,
-          label: 'City',
-          hint: 'Enter your city',
+          label: AppLocalizations.of(context)!.city,
+          hint: AppLocalizations.of(context)!.cityHint,
           prefixIcon: Icons.location_city,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your city';
+              return AppLocalizations.of(context)!.errorCityRequired;
             }
             return null;
           },
@@ -191,13 +195,13 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: widget.descriptionController,
-          label: 'Description',
-          hint: 'Tell us about your services',
+          label: AppLocalizations.of(context)!.description,
+          hint: AppLocalizations.of(context)!.descriptionHint,
           prefixIcon: Icons.description,
           maxLines: 3,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter a description';
+              return AppLocalizations.of(context)!.errorDescriptionRequired;
             }
             return null;
           },
@@ -207,12 +211,12 @@ class _PrestataireSignUpFormState extends State<PrestataireSignUpForm> {
           onPressed: () {
             // TODO: Implement file picker
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('ID upload - Coming soon')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.idUploadComingSoon)),
             );
           },
           icon: const Icon(Icons.upload_file),
           label: Text(
-            'Upload ID Document',
+            AppLocalizations.of(context)!.uploadIdDocument,
             style: GoogleFonts.poppins(),
           ),
           style: OutlinedButton.styleFrom(

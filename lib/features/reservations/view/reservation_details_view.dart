@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rilybricoule_mobile_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../chat/domain/chat_service.dart';
-import '../../chat/domain/models/user_summary.dart';
 import '../data/mock_reservations_repository.dart';
 import '../repository/reservations_repository.dart';
 import '../viewmodel/reservation_details_viewmodel.dart';
@@ -12,7 +12,7 @@ import '../widgets/eta_badge.dart';
 import '../widgets/provider_mini_card.dart';
 import '../widgets/tracking_timeline.dart';
 
-class ReservationDetailsView extends StatelessWidget {
+class ReservationDetailsView extends StatefulWidget {
   final String reservationId;
   final MockReservationsRepository? listRepository;
 
@@ -23,17 +23,35 @@ class ReservationDetailsView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Use the shared list repository if provided, otherwise create standalone
+  State<ReservationDetailsView> createState() => _ReservationDetailsViewState();
+}
+
+class _ReservationDetailsViewState extends State<ReservationDetailsView> {
+  late ReservationDetailsViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
     final trackingRepository = MockReservationsRepositoryTracking(
-      listRepository: listRepository,
+      listRepository: widget.listRepository,
     );
-    
-    return ChangeNotifierProvider(
-      create: (_) => ReservationDetailsViewModel(
-        trackingRepository,
-        reservationId,
-      )..loadTracking(),
+    _viewModel = ReservationDetailsViewModel(
+      trackingRepository,
+      widget.reservationId,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Safely load tracking with current localized context without listening
+    _viewModel.loadTracking(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: _viewModel,
       child: const _ReservationDetailsContent(),
     );
   }
@@ -55,7 +73,7 @@ class _ReservationDetailsContent extends StatelessWidget {
           }
 
           if (viewModel.error != null) {
-            return Center(child: Text('Erreur: ${viewModel.error}'));
+            return Center(child: Text(AppLocalizations.of(context)!.errorLabel(viewModel.error!)));
           }
 
           final tracking = viewModel.tracking;
@@ -82,7 +100,7 @@ class _ReservationDetailsContent extends StatelessWidget {
                           // Cancel button only visible when canCancel is true
                           if (viewModel.canCancel) _buildCancelButton(context, viewModel),
                           // Cancelled banner when reservation is cancelled
-                          if (viewModel.isCancelled) _buildCancelledBanner(),
+                          if (viewModel.isCancelled) _buildCancelledBanner(context),
                           const SizedBox(height: 24), // Extra space at bottom
                         ],
                       ),
@@ -124,7 +142,7 @@ class _ReservationDetailsContent extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                'Suivi de la réservation',
+                AppLocalizations.of(context)!.reservationTracking,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -341,7 +359,7 @@ class _ReservationDetailsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildCancelledBanner() {
+  Widget _buildCancelledBanner(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -356,7 +374,7 @@ class _ReservationDetailsContent extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Réservation annulée',
+              AppLocalizations.of(context)!.reservationCancelled,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -374,7 +392,7 @@ class _ReservationDetailsContent extends StatelessWidget {
       child: TextButton(
         onPressed: () => _showCancelDialog(context, viewModel),
         child: Text(
-          'Annuler la réservation',
+          AppLocalizations.of(context)!.cancelReservation,
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -398,7 +416,7 @@ class _ReservationDetailsContent extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Annuler la réservation ?',
+              AppLocalizations.of(context)!.cancelReservationQuestion,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -407,7 +425,7 @@ class _ReservationDetailsContent extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Vous pouvez annuler cette réservation. Cette action est irréversible.',
+              AppLocalizations.of(context)!.cancelWarningText,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -428,7 +446,7 @@ class _ReservationDetailsContent extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Retour',
+                      AppLocalizations.of(context)!.back,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -446,7 +464,7 @@ class _ReservationDetailsContent extends StatelessWidget {
                       if (success && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Réservation annulée', style: GoogleFonts.poppins()),
+                            content: Text(AppLocalizations.of(context)!.reservationCancelled, style: GoogleFonts.poppins()),
                             backgroundColor: AppColors.success,
                           ),
                         );
@@ -462,7 +480,7 @@ class _ReservationDetailsContent extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Annuler',
+                      AppLocalizations.of(context)!.cancel,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -531,7 +549,7 @@ class _ReservationDetailsContent extends StatelessWidget {
               onPressed: null, // Disabled
               icon: const Icon(Icons.chat_bubble_outline, size: 20),
               label: Text(
-                'Chat désactivé',
+                AppLocalizations.of(context)!.chatDisabled,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -577,7 +595,7 @@ class _ReservationDetailsContent extends StatelessWidget {
               },
               icon: const Icon(Icons.star_outline, size: 20),
               label: Text(
-                'Laisser un avis',
+                AppLocalizations.of(context)!.leaveReview,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -624,28 +642,40 @@ class _ReservationDetailsContent extends StatelessWidget {
               // Open chat with provider
               final tracking = viewModel.tracking;
               if (tracking != null) {
-                final chatRepo = ChatService().repository;
-                final providerUser = UserSummary(
-                  id: tracking.reservationId, // Use reservation ID as unique identifier
-                  name: tracking.providerName,
-                  avatarUrl: tracking.providerImageUrl,
-                  isOnline: tracking.isOnline,
-                );
-                
-                final conversation = await chatRepo.getOrCreateConversationWithUser(providerUser);
-                
-                if (context.mounted) {
-                  Navigator.pushNamed(
-                    context,
-                    '/chat/${conversation.id}',
-                    arguments: conversation,
+                try {
+                  final chatRepo = ChatService().repository;
+                  final conversation = await chatRepo.getOrCreateConversationWithProvider(
+                    tracking.providerId,
+                    bookingId: tracking.reservationId,
                   );
+                  
+                  if (context.mounted) {
+                    Navigator.pushNamed(
+                      context,
+                      '/chat/${conversation.id}',
+                      arguments: conversation,
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.chatOnlyAfterBooking,
+                          style: GoogleFonts.poppins(),
+                        ),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
                 }
               }
             },
             icon: const Icon(Icons.chat_bubble_outline, size: 20),
             label: Text(
-              'Discuter',
+              viewModel.isCompleted 
+                ? AppLocalizations.of(context)!.leaveReview 
+                : AppLocalizations.of(context)!.discuss,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -671,7 +701,7 @@ class _ReservationDetailsContent extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Appel (bientôt)', style: GoogleFonts.poppins()),
+                  content: Text(AppLocalizations.of(context)!.callComingSoon, style: GoogleFonts.poppins()),
                 ),
               );
             },
@@ -689,13 +719,13 @@ class _ReservationDetailsContent extends StatelessWidget {
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Fonction bientôt disponible', style: GoogleFonts.poppins()),
+              content: Text(AppLocalizations.of(context)!.comingSoon, style: GoogleFonts.poppins()),
             ),
           );
         },
         icon: const Icon(Icons.support_agent, size: 20),
         label: Text(
-          'Contacter le support',
+          AppLocalizations.of(context)!.contactSupport,
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -720,7 +750,7 @@ class _ReservationDetailsContent extends StatelessWidget {
         onPressed: () => Navigator.pop(context),
         icon: const Icon(Icons.arrow_back, size: 20),
         label: Text(
-          'Retour à mes réservations',
+          AppLocalizations.of(context)!.returnToReservations,
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w600,

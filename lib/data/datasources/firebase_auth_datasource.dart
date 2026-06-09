@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import '../../core/errors/exceptions.dart';
 import '../models/app_user.dart';
-import '../../models/user_role.dart';
 
 /// DataSource Firebase Authentication
 /// Gère toutes les opérations d'authentification Firebase
@@ -67,7 +66,9 @@ class FirebaseAuthDataSource {
   /// ========== SIGN IN WITH FACEBOOK ==========
   Future<firebase_auth.UserCredential> signInWithFacebook() async {
     try {
-      final LoginResult result = await FacebookAuth.instance.login();
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['public_profile'],
+      );
 
       if (result.status == LoginStatus.cancelled) {
         throw AuthException('Connexion Facebook annulée', 'facebook_sign_in_cancelled');

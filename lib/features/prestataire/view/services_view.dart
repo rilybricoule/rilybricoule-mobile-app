@@ -11,7 +11,17 @@ class ProviderServicesView extends StatefulWidget {
 }
 
 class _ProviderServicesViewState extends State<ProviderServicesView> {
-  final List<Map<String, dynamic>> _myServices = List.from(PrestataireMockData.services);
+  bool _isInit = false;
+  late List<Map<String, dynamic>> _myServices;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      _myServices = List.from(PrestataireMockData.getServices(context));
+      _isInit = true;
+    }
+  }
 
   void _showAddServiceSheet() {
     final nameController = TextEditingController();

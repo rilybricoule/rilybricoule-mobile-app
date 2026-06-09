@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/booking_status_step.dart';
 
 class BookingStatusViewModel extends ChangeNotifier {
@@ -8,10 +9,29 @@ class BookingStatusViewModel extends ChangeNotifier {
 
   // Mock data - will be replaced with API data
   final String bookingId = 'BK-2024-001';
-  final String providerName = 'Ahmed El Mansouri';
-  final String providerCategory = 'Plombier Expert';
-  final String serviceName = 'Réparation de fuite';
-  final String dateLabel = 'Lundi 25 Octobre, 2023';
+  final String providerId = '1';
+
+  String providerName(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    return lang == 'ar' ? 'أحمد المنصوري' : 'Ahmed El Mansouri';
+  }
+
+  String providerCategory(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    return lang == 'ar' ? 'سباك محترف' : lang == 'en' ? 'Expert Plumber' : 'Plombier Expert';
+  }
+  
+  String getServiceName(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    return lang == 'ar' ? 'إصلاح التسرب' : lang == 'en' ? 'Leak Repair' : 'Réparation de fuite';
+  }
+  
+  String getDateLabel(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final date = DateTime(2024, 10, 25);
+    return DateFormat.yMMMMEEEEd(locale).format(date);
+  }
+
   final String timeLabel = '14:30 - 16:30';
   final String addressLabel = '69, avenue Abdelkrim Al Khattabi, Océan';
   final double totalPrice = 350.0;
